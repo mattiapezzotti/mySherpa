@@ -3,7 +3,10 @@ package it.unimib.camminatori.mysherpa;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +14,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.location.NominatimPOIProvider;
+import org.osmdroid.bonuspack.location.POI;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.util.StorageUtils;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -30,6 +38,8 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
 
         String[] permissions = new String[3];
@@ -39,9 +49,10 @@ public class MainActivity extends AppCompatActivity{
         requestPermissionsIfNecessary(permissions);
 
         //load/initialize the osmdroid configuration
-        Context ctx = getApplicationContext();
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        Configuration.getInstance().setUserAgentValue(getPackageName());
+        Context context = getApplicationContext();
+        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+        //if(StorageUtils.isWritable(Configuration.getInstance().getOsmdroidTileCache()))
 
         //inflate and create the map
         setContentView(R.layout.activity_main);
@@ -55,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         rotationController.setEnabled(true);
         map.getOverlays().add(rotationController);
 
-        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(this),map);
+        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(context),map);
         myLocation.enableMyLocation();
         map.getOverlays().add(myLocation);
 
@@ -66,7 +77,6 @@ public class MainActivity extends AppCompatActivity{
 
         GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
         mapController.setCenter(provaglio);
-
     }
 
     @Override
