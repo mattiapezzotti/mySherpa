@@ -33,64 +33,44 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    private MapView map;
-    private MyLocationNewOverlay myLocation;
+
+    public MainActivity(){
+        super(R.layout.activity_main);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
+        if(savedInstanceState == null){
 
-        String[] permissions = new String[3];
-        permissions[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        permissions[1] = Manifest.permission.ACCESS_COARSE_LOCATION;
-        permissions[2] = Manifest.permission.ACCESS_FINE_LOCATION;
-        requestPermissionsIfNecessary(permissions);
+            MapFragment map = new MapFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_container_view, map, null)
+                    .commit();
 
-        //load/initialize the osmdroid configuration
-        Context context = getApplicationContext();
-        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-        //if(StorageUtils.isWritable(Configuration.getInstance().getOsmdroidTileCache()))
+            String[] permissions = new String[3];
+            permissions[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            permissions[1] = Manifest.permission.ACCESS_COARSE_LOCATION;
+            permissions[2] = Manifest.permission.ACCESS_FINE_LOCATION;
+            requestPermissionsIfNecessary(permissions);
 
-        //inflate and create the map
-        setContentView(R.layout.activity_main);
-
-        this.map = findViewById(R.id.map);
-        this.map.setTileSource(TileSourceFactory.WIKIMEDIA);
-        this.map.setMultiTouchControls(true);
-        this.map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
-
-        RotationGestureOverlay rotationController = new RotationGestureOverlay(map);
-        rotationController.setEnabled(true);
-        map.getOverlays().add(rotationController);
-
-        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(context),map);
-        myLocation.enableMyLocation();
-        map.getOverlays().add(myLocation);
-
-        IMapController mapController = this.map.getController();
-        mapController.setZoom(17.0);
-        map.setMinZoomLevel(6.5);
-        //mapController.setCenter(location.getMyLocation());
-
-        GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
-        mapController.setCenter(provaglio);
+            //load/initialize the osmdroid configuration
+            Context context = getApplicationContext();
+            Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+            Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+            //if(StorageUtils.isWritable(Configuration.getInstance().getOsmdroidTileCache()))
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        this.map.onResume();
-        this.myLocation.enableMyLocation();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.map.onPause();
-        this.myLocation.disableMyLocation();
     }
 
     @Override
