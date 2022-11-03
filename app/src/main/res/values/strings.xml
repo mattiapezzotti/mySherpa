@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">mySherpa</string>
     <string name="searchbar_placeholder">Cerca qui</string>
+    <string name="bottom_nav_m1">Saved</string>
+    <string name="bottom_nav_m2">Navigate</string>
+    <string name="bottom_nav_m3">Explore</string>
+    <string name="bottom_nav_m4">Record</string>
+    <string name="bottom_nav_m5">Profile</string>
 </resources>

@@ -16,7 +16,9 @@
         app:endIconDrawable="@drawable/ic_baseline_cancel_24"
         app:endIconMode="clear_text"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.ExtraLarge"
+        app:boxBackgroundColor="@color/md_theme_light_background"
         app:startIconDrawable="@drawable/ic_baseline_search_24">
+
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="380dp"
