@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Example1</string>
+    <string name="bookmark">Salvati</string>
+    <string name="explore">Esplora</string>
+    <string name="route">Naviga</string>
+    <string name="record">Record</string>
+    <string name="profile">Profilo</string>
+</resources>

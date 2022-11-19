@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fragment_bookmark"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_bookmark_border_24"
+        android:title="@string/bookmark" />
+    <item
+        android:id="@+id/fragment_route"
+        android:enabled="true"
+        android:icon="@drawable/ic_route"
+        android:title="@string/route"/>
+    <item
+        android:id="@+id/fragment_explore"
+        android:enabled="true"
+        android:icon="@drawable/ic_explore"
+        android:title="@string/explore"/>
+    <item
+        android:id="@+id/fragment_record"
+        android:enabled="true"
+        android:icon="@drawable/ic_record"
+        android:title="@string/record"/>
+    <item
+        android:id="@+id/fragment_profile"
+        android:enabled="true"
+        android:icon="@drawable/ic_person"
+        android:title="@string/profile"/>
+</menu>

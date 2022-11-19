@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package com.example.example1;
 
 import org.junit.Test;
 
