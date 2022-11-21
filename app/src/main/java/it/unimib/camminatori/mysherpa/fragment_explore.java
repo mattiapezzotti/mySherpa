@@ -16,8 +16,7 @@ public class fragment_explore extends Fragment {
     }
 
     public static fragment_explore newInstance(String param1, String param2) {
-        fragment_explore fragment = new fragment_explore();
-        return fragment;
+        return new fragment_explore();
     }
 
     @Override
