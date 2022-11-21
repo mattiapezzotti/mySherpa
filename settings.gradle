@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
-rootProject.name = "mySherpa"
+rootProject.name = "Example1"
 include ':app'
