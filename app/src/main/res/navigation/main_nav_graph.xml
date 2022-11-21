@@ -6,27 +6,27 @@
     app:startDestination="@id/fragment_explore">
     <fragment
         android:id="@+id/fragment_explore"
-        android:name="com.example.example1.fragment_explore"
+        android:name="it.unimib.camminatori.mysherpa.fragment_explore"
         android:label="fragment_explore"
         tools:layout="@layout/fragment_explore" />
     <fragment
         android:id="@+id/fragment_bookmark"
-        android:name="com.example.example1.fragment_bookmark"
+        android:name="it.unimib.camminatori.mysherpa.fragment_bookmark"
         android:label="fragment_bookmark"
         tools:layout="@layout/fragment_bookmark" />
     <fragment
         android:id="@+id/fragment_route"
-        android:name="com.example.example1.fragment_route"
+        android:name="it.unimib.camminatori.mysherpa.fragment_route"
         android:label="fragment_route"
         tools:layout="@layout/fragment_route" />
     <fragment
         android:id="@+id/fragment_record"
-        android:name="com.example.example1.fragment_record"
+        android:name="it.unimib.camminatori.mysherpa.fragment_record"
         android:label="fragment_record"
         tools:layout="@layout/fragment_record" />
     <fragment
         android:id="@+id/fragment_profile"
-        android:name="com.example.example1.fragment_profile"
+        android:name="it.unimib.camminatori.mysherpa.fragment_profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

@@ -3,30 +3,21 @@ package it.unimib.camminatori.mysherpa;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.location.NominatimPOIProvider;
-import org.osmdroid.bonuspack.location.POI;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.tileprovider.util.StorageUtils;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.FolderOverlay;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +33,11 @@ public class MainActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null){
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
+                    findFragmentById(R.id.nav_host_fragment);
+            NavController navController = navHostFragment.getNavController();
+            BottomNavigationView bottomNav = findViewById(R.id.fragment_bottom_bar);
+            NavigationUI.setupWithNavController(bottomNav, navController);
 
             MapFragment map = new MapFragment();
             getSupportFragmentManager().beginTransaction()

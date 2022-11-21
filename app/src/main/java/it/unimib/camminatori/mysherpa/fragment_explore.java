@@ -1,4 +1,4 @@
-package com.example.example1;
+package it.unimib.camminatori.mysherpa;
 
 import android.os.Bundle;
 
@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link fragment_bookmark#newInstance} factory method to
+ * Use the {@link fragment_explore#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class fragment_bookmark extends Fragment {
+public class fragment_explore extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +24,7 @@ public class fragment_bookmark extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public fragment_bookmark() {
+    public fragment_explore() {
         // Required empty public constructor
     }
 
@@ -34,11 +34,11 @@ public class fragment_bookmark extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment fragment_bookmark.
+     * @return A new instance of fragment fragment_explore.
      */
     // TODO: Rename and change types and number of parameters
-    public static fragment_bookmark newInstance(String param1, String param2) {
-        fragment_bookmark fragment = new fragment_bookmark();
+    public static fragment_explore newInstance(String param1, String param2) {
+        fragment_explore fragment = new fragment_explore();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +59,6 @@ public class fragment_bookmark extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bookmark, container, false);
+        return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 }
