@@ -36,14 +36,8 @@ public class MainActivity extends AppCompatActivity{
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
                     findFragmentById(R.id.nav_host_fragment);
             NavController navController = navHostFragment.getNavController();
-            BottomNavigationView bottomNav = findViewById(R.id.fragment_bottom_bar);
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
             NavigationUI.setupWithNavController(bottomNav, navController);
-
-            MapFragment map = new MapFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, map, null)
-                    .commit();
 
             String[] permissions = new String[3];
             permissions[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;

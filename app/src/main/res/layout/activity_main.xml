@@ -22,22 +22,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_nav_graph" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.MapFragment"
-        android:id="@+id/fragment_container_view"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.SearchBarFragment"
-        android:id="@+id/fragment_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.BottomNavigationFragment"
-        android:id="@+id/fragment_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_navigation_menu" />
 </FrameLayout>

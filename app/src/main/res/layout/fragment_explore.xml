@@ -3,12 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_explore"
     tools:context=".fragment_explore">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.fragment.app.FragmentContainerView
+        android:name="it.unimib.camminatori.mysherpa.MapFragment"
+        android:id="@+id/fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:name="it.unimib.camminatori.mysherpa.SearchBarFragment"
+        android:id="@+id/fragment_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/bottom_nav_explore" />
+
 
 </FrameLayout>
