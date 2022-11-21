@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace 'com.example.example1'
-    compileSdk 32
+    namespace 'it.unimib.camminatori.mysherpa'
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.example1"
-        minSdk 22
-        targetSdk 32
+        applicationId "it.unimib.camminatori.mysherpa"
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -40,6 +40,12 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+    implementation 'org.osmdroid:osmdroid-android:6.1.14'
+    implementation 'org.osmdroid:osmdroid-wms:6.1.14'
+    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.14'
+    implementation 'org.osmdroid:osmdroid-geopackage:6.1.14'
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
+    implementation "androidx.fragment:fragment:1.5.4"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

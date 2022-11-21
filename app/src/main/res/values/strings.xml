@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Example1</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="bookmark">Bookmark</string>
-    <string name="route">Route</string>
-    <string name="explore">Explore</string>
-    <string name="record">Record</string>
-    <string name="profile">Profile</string>
+    <string name="app_name">mySherpa</string>
+    <string name="searchbar_placeholder">Cerca qui</string>
+    <string name="bottom_nav_bookmark">Saved</string>
+    <string name="bottom_nav_route">Route</string>
+    <string name="bottom_nav_explore">Explore</string>
+    <string name="bottom_nav_record">Record</string>
+    <string name="bottom_nav_profile">Profile</string>
 </resources>
