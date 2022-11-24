@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/page_1"
+        android:id="@+id/fragment_bookmark"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_bookmark_24"
-        android:title="@string/bottom_nav_m1"/>
+        android:title="@string/bottom_nav_bookmark" />
     <item
-        android:id="@+id/page_2"
+        android:id="@+id/fragment_route"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_route_24"
-        android:title="@string/bottom_nav_m2"/>
+        android:title="@string/bottom_nav_route"/>
     <item
-        android:id="@+id/page_3"
+        android:id="@+id/fragment_explore"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_explore_24"
-        android:title="@string/bottom_nav_m3"/>
+        android:title="@string/bottom_nav_explore"/>
     <item
-        android:id="@+id/page_4"
+        android:id="@+id/fragment_record"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_radio_button_checked_24"
-        android:title="@string/bottom_nav_m4"/>
+        android:title="@string/bottom_nav_record"/>
     <item
-        android:id="@+id/page_5"
+        android:id="@+id/fragment_profile"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="@string/bottom_nav_m5"/>
+        android:title="@string/bottom_nav_profile"/>
 </menu>
