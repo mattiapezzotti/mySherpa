@@ -8,25 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.util.Objects;
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MapFragment extends Fragment {
-    private MapView map;
-    private MyLocationNewOverlay myLocation;
+    private MapManager mapManager;
 
     public MapFragment() {
         super(R.layout.fragment_map);
@@ -47,42 +34,22 @@ public class MapFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-
-        map = rootView.findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.WIKIMEDIA);
-        map.setMultiTouchControls(true);
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
-
-        RotationGestureOverlay rotationController = new RotationGestureOverlay(map);
-        rotationController.setEnabled(true);
-        map.getOverlays().add(rotationController);
-
-        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(requireActivity()), map);
-        myLocation.enableMyLocation();
-        map.getOverlays().add(myLocation);
-
-        IMapController mapController = this.map.getController();
-        mapController.setZoom(17.0);
-        map.setMinZoomLevel(6.5);
-        //mapController.setCenter(location.getMyLocation());
-
-        GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
-        mapController.setCenter(provaglio);
-
+        MapView map = rootView.findViewById(R.id.map);
+        this.mapManager = new MapManager(
+                map, new MyLocationNewOverlay(new GpsMyLocationProvider(requireActivity()), map)
+        );
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        this.map.onResume();
-        this.myLocation.enableMyLocation();
+        this.mapManager.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.map.onPause();
-        this.myLocation.disableMyLocation();
+        this.mapManager.pause();
     }
 }

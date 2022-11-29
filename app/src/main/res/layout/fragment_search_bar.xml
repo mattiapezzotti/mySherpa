@@ -7,7 +7,7 @@
     tools:context=".SearchBarFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/search_bar"
+        android:id="@+id/search_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -21,6 +21,7 @@
 
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search_bar_text"
             android:layout_width="380dp"
             android:layout_height="55dp"
             android:fadingEdge="horizontal"
