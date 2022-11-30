@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
 
@@ -8,15 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class fragment_explore extends Fragment {
+import it.unimib.camminatori.mysherpa.R;
+
+public class Explore_Fragment extends Fragment {
 
 
-    public fragment_explore() {
+    public Explore_Fragment() {
         // Required empty public constructor
     }
 
-    public static fragment_explore newInstance(String param1, String param2) {
-        return new fragment_explore();
+    public static Explore_Fragment newInstance(String param1, String param2) {
+        return new Explore_Fragment();
     }
 
     @Override

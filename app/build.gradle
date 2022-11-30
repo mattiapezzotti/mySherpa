@@ -2,9 +2,18 @@ plugins {
     id 'com.android.application'
 }
 
+
 android {
     namespace 'it.unimib.camminatori.mysherpa'
     compileSdk 33
+
+    dataBinding {
+        enabled = true
+    }
+
+    viewBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "it.unimib.camminatori.mysherpa"
@@ -51,11 +60,16 @@ dependencies {
     implementation 'org.osmdroid:osmdroid-geopackage:6.1.14'
     implementation 'com.github.MKergall:osmbonuspack:6.9.0'
 
-    //API libraries
+    // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+    // RXJava
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
     //test
     testImplementation 'junit:junit:4.13.2'

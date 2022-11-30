@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_profile">
+    tools:context=".ui.fragment.Profile_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

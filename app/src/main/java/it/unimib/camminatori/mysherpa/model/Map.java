@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.model;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -8,19 +8,36 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-public class MapManager {
+public class Map {
     private final MapView mapView;
     private final MyLocationNewOverlay myLocation;
     private final IMapController mapController;
     private final RotationGestureOverlay rotationController;
 
-    public MapManager(MapView map, MyLocationNewOverlay myLocation){
+    public Map(MapView map, MyLocationNewOverlay myLocation){
         this.mapView = map;
         this.myLocation = myLocation;
         this.mapController = this.mapView.getController();
         this.rotationController = new RotationGestureOverlay(this.mapView);
         init();
     }
+
+    public MapView getMapView() {
+        return mapView;
+    }
+
+    public MyLocationNewOverlay getMyLocation() {
+        return myLocation;
+    }
+
+    public IMapController getMapController() {
+        return mapController;
+    }
+
+    public RotationGestureOverlay getRotationController() {
+        return rotationController;
+    }
+
 
     private void init(){
         this.mapView.setTileSource(TileSourceFactory.WIKIMEDIA);

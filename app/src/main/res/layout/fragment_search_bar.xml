@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchBarFragment">
+    tools:context=".ui.fragment.SearchBar_Fragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_bar_layout"

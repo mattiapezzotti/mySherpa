@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,6 +21,9 @@ import org.osmdroid.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import it.unimib.camminatori.mysherpa.BuildConfig;
+import it.unimib.camminatori.mysherpa.R;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
