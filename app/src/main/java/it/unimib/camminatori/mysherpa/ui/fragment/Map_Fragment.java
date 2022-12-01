@@ -93,10 +93,7 @@ public class Map_Fragment extends Fragment {
         mapController = this.map.getController();
         mapController.setZoom(17.0);
         map.setMinZoomLevel(6.5);
-        //mapController.setCenter(location.getMyLocation());
-
-        //GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
-        //mapController.setCenter(provaglio);
+        mapController.setCenter(myLocation.getMyLocation());
 
         return rootView;
     }

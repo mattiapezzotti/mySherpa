@@ -8,20 +8,11 @@ import it.unimib.camminatori.mysherpa.pojo.Location;
 import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
 public class Explore_ViewModel extends ViewModel {
-    //private static Explore_ViewModel instance = null;
-    private MutableLiveData<Location> geocodedLocation = new MutableLiveData<>();
+    private LiveData<Location> geocodedLocation;
 
     public Explore_ViewModel(){
-
+        geocodedLocation = LocationRepository.getInstance().searchGeocoding("Iseo");
     }
-
-    /*
-    public static Explore_ViewModel getInstance(){
-        if(instance == null)
-            instance = new Explore_ViewModel();
-        return instance;
-    }
-     */
 
     public LiveData<Location> getGeocodedLocation(){
         return geocodedLocation;

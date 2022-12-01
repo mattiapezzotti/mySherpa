@@ -1,7 +1,11 @@
 package it.unimib.camminatori.mysherpa.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
 
 import it.unimib.camminatori.mysherpa.network.geocoding.GeocodingAPI;
 import it.unimib.camminatori.mysherpa.pojo.Location;
@@ -24,71 +28,57 @@ public class LocationRepository {
     }
 
         public MutableLiveData<Location> reverseGeocoding(double lat, double lon){
-            Call<Location> location = GeocodingAPI.getInstance().getApi_interface().doReverseGeocoding(lat, lon);
-            location.enqueue(new Callback<Location>() {
+            Call<List<Location>> location = GeocodingAPI.getInstance().getApi_interface().doReverseGeocoding(lat, lon);
+            location.enqueue(new Callback<List<Location>>() {
                 @Override
-                public void onResponse(Call<Location> call, Response<Location> response) {
+                public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
                     if(response.isSuccessful()) {
-                        int statusCode = response.code();
-                        locationResponse.setValue(response.body());
+                        locationResponse.postValue(response.body().get(0));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Location> call, Throwable t) {
-                    // Log error here since request failed
+                public void onFailure(Call<List<Location>> call, Throwable t) {
+                    Log.e("ERROR", t.toString());
                 }
             });
             return locationResponse;
         }
 
         public MutableLiveData<Location> searchGeocoding(String text){
-            Call<Location> location = GeocodingAPI.getInstance().getApi_interface().doGeocodingSearch(text);
-            location.enqueue(new Callback<Location>() {
+            Call<List<Location>> location = GeocodingAPI.getInstance().getApi_interface().doGeocodingSearch(text);
+            location.enqueue(new Callback<List<Location>>() {
                 @Override
-                public void onResponse(Call<Location> call, Response<Location> response) {
+                public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
                     if(response.isSuccessful()) {
-                        int statusCode = response.code();
-                        locationResponse.setValue(response.body());
+                        locationResponse.postValue(response.body().get(0));
                     }
+                    else
+                        Log.e("response", response.errorBody().toString());
                 }
 
                 @Override
-                public void onFailure(Call<Location> call, Throwable t) {
-                    // Log error here since request failed
+                public void onFailure(Call<List<Location>> call, Throwable t) {
+                    Log.e("ERROR", t.toString());
                 }
             });
             return locationResponse;
         }
 
         public void fowardGeocoding(String street){
-            Call<Location> location = GeocodingAPI.getInstance().getApi_interface().doForwardGeocoding(street);
-            location.enqueue(new Callback<Location>() {
+            Call<List<Location>> location = GeocodingAPI.getInstance().getApi_interface().doForwardGeocoding(street);
+            location.enqueue(new Callback<List<Location>>() {
                 @Override
-                public void onResponse(Call<Location> call, Response<Location> response) {
+                public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
                     if(response.isSuccessful()) {
-                        int statusCode = response.code();
-                        locationResponse.setValue(response.body());
+                        locationResponse.postValue(response.body().get(0));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Location> call, Throwable t) {
-                    // Log error here since request failed
+                public void onFailure(Call<List<Location>> call, Throwable t) {
+                    Log.e("ERROR", t.toString());
                 }
             });
         }
-    /* ----------- OLD CONTENT -----------------
-
-    public void reverseGeocoding(int lat, int lon){
-        geocodingAPI.getApi_interface().doReverseGeocoding(lat, lon);
-    }
-    public Single<Location> searchGeocoding(String text){
-        return geocodingAPI.getApi_interface().doGeocodingSearch(text);
-    }
-
-    public void fowardGeocoding(String street){
-        geocodingAPI.getApi_interface().doForwardGeocoding(street);
-    }
-    */
 }
