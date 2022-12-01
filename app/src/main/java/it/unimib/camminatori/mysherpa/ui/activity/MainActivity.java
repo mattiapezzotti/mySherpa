@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,8 +23,13 @@ import org.osmdroid.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.unimib.camminatori.mysherpa.BuildConfig;
+import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
+
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+    private Explore_ViewModel explore_viewModel;
 
     public MainActivity(){
         super(R.layout.activity_main);

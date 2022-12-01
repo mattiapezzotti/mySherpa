@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
 
@@ -8,15 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SearchBarFragment extends Fragment {
+import it.unimib.camminatori.mysherpa.R;
 
-    public SearchBarFragment() {
+public class Explore_Fragment extends Fragment {
+
+
+    public Explore_Fragment() {
         // Required empty public constructor
     }
 
-    public static SearchBarFragment newInstance() {
-        SearchBarFragment searchBarFragment = new SearchBarFragment();
-        return searchBarFragment;
+    public static Explore_Fragment newInstance(String param1, String param2) {
+        return new Explore_Fragment();
     }
 
     @Override
@@ -28,6 +30,6 @@ public class SearchBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_bar, container, false);
+        return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 }

@@ -2,9 +2,18 @@ plugins {
     id 'com.android.application'
 }
 
+
 android {
     namespace 'it.unimib.camminatori.mysherpa'
     compileSdk 33
+
+    dataBinding {
+        enabled = true
+    }
+
+    viewBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "it.unimib.camminatori.mysherpa"
@@ -30,21 +39,41 @@ android {
 
 dependencies {
 
+    //layout
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-base:18.1.0'
+    implementation 'androidx.lifecycle:lifecycle-common:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.fragment:fragment:1.5.4"
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.7'
+
+    //play services
+    implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation "androidx.security:security-crypto:1.1.0-alpha04"
     implementation "androidx.navigation:navigation-fragment:2.5.3"
     implementation "androidx.navigation:navigation-ui:2.5.3"
+
+    //osmdroid
     implementation 'org.osmdroid:osmdroid-android:6.1.14'
     implementation 'org.osmdroid:osmdroid-wms:6.1.14'
     implementation 'org.osmdroid:osmdroid-mapsforge:6.1.14'
     implementation 'org.osmdroid:osmdroid-geopackage:6.1.14'
     implementation 'com.github.MKergall:osmbonuspack:6.9.0'
-    implementation "androidx.fragment:fragment:1.5.4"
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+    // RXJava
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+
+    //test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
