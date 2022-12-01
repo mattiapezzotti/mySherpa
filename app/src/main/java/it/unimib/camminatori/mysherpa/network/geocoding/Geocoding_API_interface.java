@@ -1,7 +1,7 @@
 package it.unimib.camminatori.mysherpa.network.geocoding;
 
-import io.reactivex.rxjava3.core.Single;
 import it.unimib.camminatori.mysherpa.pojo.Location;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
@@ -12,13 +12,13 @@ public interface Geocoding_API_interface {
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("v1/search")
-    Single<Location> doGeocodingSearch(@Query("q") String q);
+    Call<Location> doGeocodingSearch(@Query("q") String q);
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("/v1/foward")
-    Single<Location> doForwardGeocoding(@Query("street") String street);
+    Call<Location> doForwardGeocoding(@Query("street") String street);
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("/v1/reverse")
-    Single<Location> doReverseGeocoding(@Query("lat") long lat, @Query("long") long lon);
+    Call<Location> doReverseGeocoding(@Query("lat") double lat, @Query("long") double lon);
 }

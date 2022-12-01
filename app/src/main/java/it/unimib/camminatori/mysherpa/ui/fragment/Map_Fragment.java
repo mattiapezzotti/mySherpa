@@ -2,7 +2,11 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +22,8 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +34,9 @@ public class Map_Fragment extends Fragment {
 
     private MapView map;
     private MyLocationNewOverlay myLocation;
+    private Explore_ViewModel explore_viewModel;
+    private IMapController mapController;
+    private RotationGestureOverlay rotationController;
 
     public Map_Fragment() {
         super(R.layout.fragment_map);
@@ -40,6 +49,25 @@ public class Map_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        explore_viewModel = new ViewModelProvider(requireParentFragment()).get(Explore_ViewModel.class);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        final Observer<Location> updateLocation = l -> {
+            if(l.getLon() != null && l.getLat() != null) {
+                System.out.println(l);
+                mapController.setCenter(
+                        new GeoPoint(
+                                Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
+                        )
+                );
+            }
+        };
+
+        explore_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
     }
 
     @Override
@@ -54,7 +82,7 @@ public class Map_Fragment extends Fragment {
         map.setMultiTouchControls(true);
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
 
-        RotationGestureOverlay rotationController = new RotationGestureOverlay(map);
+        rotationController = new RotationGestureOverlay(map);
         rotationController.setEnabled(true);
         map.getOverlays().add(rotationController);
 
@@ -62,13 +90,13 @@ public class Map_Fragment extends Fragment {
         myLocation.enableMyLocation();
         map.getOverlays().add(myLocation);
 
-        IMapController mapController = this.map.getController();
+        mapController = this.map.getController();
         mapController.setZoom(17.0);
         map.setMinZoomLevel(6.5);
         //mapController.setCenter(location.getMyLocation());
 
-        GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
-        mapController.setCenter(provaglio);
+        //GeoPoint provaglio = new GeoPoint(45.6374,10.0430);
+        //mapController.setCenter(provaglio);
 
         return rootView;
     }
