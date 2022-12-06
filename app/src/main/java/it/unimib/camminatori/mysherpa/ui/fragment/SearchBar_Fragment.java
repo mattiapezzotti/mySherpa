@@ -51,10 +51,6 @@ public class SearchBar_Fragment extends Fragment {
         return view;
     }
 
-    private void sendLocationTextToGeocode(String text){
-        explore_viewModel.geocodePlace(text);
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -64,7 +60,7 @@ public class SearchBar_Fragment extends Fragment {
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 String input = String.valueOf(searchBarText.getText()).trim();
                 if(input.length() > 0) {
-                    sendLocationTextToGeocode(input);
+                    explore_viewModel.geocodePlace(input);
                     handled = true;
                 }
                 this.searchBarText.clearFocus();

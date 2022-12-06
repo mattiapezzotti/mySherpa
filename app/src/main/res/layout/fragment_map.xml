@@ -20,10 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="85dp"
         android:layout_marginEnd="15dp"
         android:backgroundTint="@color/md_theme_light_background"
         android:contentDescription="@string/mypositionbutton"
-        app:srcCompat="@drawable/ic_baseline_radio_button_checked_24" />
+        app:srcCompat="@drawable/ic_baseline_my_location_24" />
 
 </FrameLayout>

@@ -15,6 +15,11 @@ import retrofit2.Response;
 
 public class LocationRepository {
     private static LocationRepository instance = null;
+
+    public MutableLiveData<Location> getLocationResponse() {
+        return locationResponse;
+    }
+
     private final MutableLiveData<Location> locationResponse;
 
     private LocationRepository(){
@@ -27,25 +32,24 @@ public class LocationRepository {
         return instance;
     }
 
-        public MutableLiveData<Location> reverseGeocoding(double lat, double lon){
-            Call<List<Location>> location = GeocodingAPI.getInstance().getApi_interface().doReverseGeocoding(lat, lon);
-            location.enqueue(new Callback<List<Location>>() {
+        public void reverseGeocoding(double lat, double lon){
+            Call<Location> location = GeocodingAPI.getInstance().getApi_interface().doReverseGeocoding(lat, lon);
+            location.enqueue(new Callback<Location>() {
                 @Override
-                public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
+                public void onResponse(Call<Location> call, Response<Location> response) {
                     if(response.isSuccessful()) {
-                        locationResponse.postValue(response.body().get(0));
+                        locationResponse.postValue(response.body());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<List<Location>> call, Throwable t) {
+                public void onFailure(Call<Location> call, Throwable t) {
                     Log.e("ERROR", t.toString());
                 }
             });
-            return locationResponse;
         }
 
-        public MutableLiveData<Location> searchGeocoding(String text){
+        public void searchGeocoding(String text){
             Call<List<Location>> location = GeocodingAPI.getInstance().getApi_interface().doGeocodingSearch(text);
             location.enqueue(new Callback<List<Location>>() {
                 @Override
@@ -62,7 +66,6 @@ public class LocationRepository {
                     Log.e("ERROR", t.toString());
                 }
             });
-            return locationResponse;
         }
 
         public void fowardGeocoding(String street){

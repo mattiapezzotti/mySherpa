@@ -22,5 +22,5 @@ public interface Geocoding_API_interface {
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("/v1/reverse")
-    Call<List<Location>> doReverseGeocoding(@Query("lat") double lat, @Query("long") double lon);
+    Call<Location> doReverseGeocoding(@Query("lat") double lat, @Query("lon") double lon);
 }
