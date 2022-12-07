@@ -2,13 +2,12 @@ package it.unimib.camminatori.mysherpa.repository;
 
 import android.util.Log;
 
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
 import it.unimib.camminatori.mysherpa.network.geocoding.GeocodingAPI;
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.model.Location;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

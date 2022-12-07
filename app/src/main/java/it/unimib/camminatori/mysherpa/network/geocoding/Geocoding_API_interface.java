@@ -2,7 +2,7 @@ package it.unimib.camminatori.mysherpa.network.geocoding;
 
 import java.util.List;
 
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.model.Location;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;

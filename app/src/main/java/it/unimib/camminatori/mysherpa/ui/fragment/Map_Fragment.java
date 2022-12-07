@@ -17,8 +17,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.osmdroid.util.GeoPoint;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.model.MapWrapper;
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.MapWrapper;
+import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
 /**
@@ -29,7 +29,7 @@ import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 public class Map_Fragment extends Fragment{
     private MapWrapper mapWrapper;
     private Explore_ViewModel explore_viewModel;
-    private FloatingActionButton getMyLocationFAB;
+    private FloatingActionButton myLocationFAB;
 
     public Map_Fragment() {
         super(R.layout.fragment_map);
@@ -52,7 +52,7 @@ public class Map_Fragment extends Fragment{
         final Observer<Location> updateLocation = l -> {
             if(l.getLon() != null && l.getLat() != null) {
                 System.out.println(l);
-                mapWrapper.getMapController().setCenter(
+                mapWrapper.setCenter(
                         new GeoPoint(
                                 Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
@@ -72,8 +72,11 @@ public class Map_Fragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mapWrapper = new MapWrapper(rootView.findViewById(R.id.mappa));
 
-        getMyLocationFAB = rootView.findViewById(R.id.fab_getMyLocation);
-        getMyLocationFAB.setOnClickListener(v -> {
+        myLocationFAB = rootView.findViewById(R.id.fab_getMyLocation);
+
+        myLocationFAB.clearFocus();
+
+        myLocationFAB.setOnClickListener(v -> {
             mapWrapper.resetCenter();
             mapWrapper.updateLabelLocation(null);
         });

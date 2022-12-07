@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa.pojo;
+package it.unimib.camminatori.mysherpa.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

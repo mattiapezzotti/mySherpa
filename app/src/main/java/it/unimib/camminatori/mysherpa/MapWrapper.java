@@ -1,10 +1,13 @@
-package it.unimib.camminatori.mysherpa.model;
+package it.unimib.camminatori.mysherpa;
+
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_BOTTOM;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.lifecycle.MutableLiveData;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.events.MapEventsReceiver;
@@ -18,9 +21,7 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.Utils;
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.utils.ImageUtils;
 import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
 public class MapWrapper implements MapEventsReceiver {
@@ -80,16 +81,16 @@ public class MapWrapper implements MapEventsReceiver {
         this.myLocationOverlay.enableFollowLocation();
         this.marker.setInfoWindow(null);
 
+        //TODO: fix size
         Drawable userIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_userposition);
         Drawable markerIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker);
 
-        this.myLocationOverlay.setDirectionIcon(Utils.drawableToBitmap(userIcon));
+        this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
+        this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
         this.marker.setIcon(markerIcon);
 
         this.mapView.getOverlays().add(0, mapEventsOverlay);
         this.mapView.getOverlays().add(myLocationOverlay);
-
-
     }
 
     public void setCenter(GeoPoint point){
@@ -117,9 +118,11 @@ public class MapWrapper implements MapEventsReceiver {
     @Override
     public boolean longPressHelper(GeoPoint p) {
         mapView.getOverlays().remove(marker);
+
         marker.setPosition(p);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setTitle("Start point");
+
         mapView.getOverlays().add(marker);
         mapController.animateTo(marker.getPosition());
         updateLabelLocation(marker.getPosition());
