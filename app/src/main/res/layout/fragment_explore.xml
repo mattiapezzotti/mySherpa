@@ -16,5 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Card_fragment"
+        android:id="@+id/fragment_explorecard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </FrameLayout>

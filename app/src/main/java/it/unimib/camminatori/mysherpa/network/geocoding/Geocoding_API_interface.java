@@ -2,7 +2,7 @@ package it.unimib.camminatori.mysherpa.network.geocoding;
 
 import java.util.List;
 
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.model.Location;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -22,5 +22,5 @@ public interface Geocoding_API_interface {
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("/v1/reverse")
-    Call<List<Location>> doReverseGeocoding(@Query("lat") double lat, @Query("long") double lon);
+    Call<Location> doReverseGeocoding(@Query("lat") double lat, @Query("lon") double lon);
 }

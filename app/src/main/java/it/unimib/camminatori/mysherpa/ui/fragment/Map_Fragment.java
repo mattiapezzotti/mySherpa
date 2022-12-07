@@ -12,17 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.pojo.Location;
+import it.unimib.camminatori.mysherpa.MapWrapper;
+import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
 /**
@@ -30,13 +26,10 @@ import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
  * Use the {@link Map_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Map_Fragment extends Fragment {
-
-    private MapView map;
-    private MyLocationNewOverlay myLocation;
+public class Map_Fragment extends Fragment{
+    private MapWrapper mapWrapper;
     private Explore_ViewModel explore_viewModel;
-    private IMapController mapController;
-    private RotationGestureOverlay rotationController;
+    private FloatingActionButton myLocationFAB;
 
     public Map_Fragment() {
         super(R.layout.fragment_map);
@@ -59,7 +52,7 @@ public class Map_Fragment extends Fragment {
         final Observer<Location> updateLocation = l -> {
             if(l.getLon() != null && l.getLat() != null) {
                 System.out.println(l);
-                mapController.setCenter(
+                mapWrapper.setCenter(
                         new GeoPoint(
                                 Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
@@ -68,6 +61,7 @@ public class Map_Fragment extends Fragment {
         };
 
         explore_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
+        mapWrapper.resetCenter();
     }
 
     @Override
@@ -76,24 +70,16 @@ public class Map_Fragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mapWrapper = new MapWrapper(rootView.findViewById(R.id.mappa));
 
-        map = rootView.findViewById(R.id.mappa);
-        map.setTileSource(TileSourceFactory.WIKIMEDIA);
-        map.setMultiTouchControls(true);
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+        myLocationFAB = rootView.findViewById(R.id.fab_getMyLocation);
 
-        rotationController = new RotationGestureOverlay(map);
-        rotationController.setEnabled(true);
-        map.getOverlays().add(rotationController);
+        myLocationFAB.clearFocus();
 
-        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(requireActivity()), map);
-        myLocation.enableMyLocation();
-        map.getOverlays().add(myLocation);
-
-        mapController = this.map.getController();
-        mapController.setZoom(17.0);
-        map.setMinZoomLevel(6.5);
-        mapController.setCenter(myLocation.getMyLocation());
+        myLocationFAB.setOnClickListener(v -> {
+            mapWrapper.resetCenter();
+            mapWrapper.updateLabelLocation(null);
+        });
 
         return rootView;
     }
@@ -101,14 +87,12 @@ public class Map_Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        this.map.onResume();
-        this.myLocation.enableMyLocation();
+        this.mapWrapper.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.map.onPause();
-        this.myLocation.disableMyLocation();
+        this.mapWrapper.pause();
     }
 }

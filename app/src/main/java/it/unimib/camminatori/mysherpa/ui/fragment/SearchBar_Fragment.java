@@ -9,9 +9,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -48,31 +51,22 @@ public class SearchBar_Fragment extends Fragment {
         return view;
     }
 
-    private void sendLocationTextToGeocode(String text){
-        explore_viewModel.geocodePlace(text);
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //TODO: cambiare questo
-        searchBarText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        searchBarText.setOnEditorActionListener((v, actionId, event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                String input = String.valueOf(searchBarText.getText()).trim();
+                if(input.length() > 0) {
+                    explore_viewModel.geocodePlace(input);
+                    handled = true;
+                }
+                this.searchBarText.clearFocus();
+                this.searchBarLayout.clearFocus();
             }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0)
-                    sendLocationTextToGeocode(String.valueOf(searchBarText.getText()).trim());
-            }
+            return handled;
         });
     }
 

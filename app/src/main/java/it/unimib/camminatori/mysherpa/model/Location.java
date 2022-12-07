@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa.pojo;
+package it.unimib.camminatori.mysherpa.model;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
@@ -11,7 +11,7 @@ public class Location {
     private String licence;
     @SerializedName("osm_id")
     @Expose
-    private int osmId;
+    private long osmId;
     @SerializedName("address")
     @Expose
     private Address address;
@@ -42,7 +42,7 @@ public class Location {
         this.licence = licence;
     }
 
-    public int getOsmId() {
+    public long getOsmId() {
         return osmId;
     }
 
