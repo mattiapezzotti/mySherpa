@@ -21,15 +21,11 @@ import it.unimib.camminatori.mysherpa.MapWrapper;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Map_Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+// Per vedere la logica dietro la Mappa, vedere la classe MapWrapper
 public class Map_Fragment extends Fragment{
     private MapWrapper mapWrapper;
     private Explore_ViewModel explore_viewModel;
-    private FloatingActionButton myLocationFAB;
+    private FloatingActionButton myLocationFAB; // Tasto per centrare sulla posizione attuale
 
     public Map_Fragment() {
         super(R.layout.fragment_map);
@@ -49,6 +45,7 @@ public class Map_Fragment extends Fragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
             if(l.getLon() != null && l.getLat() != null) {
                 System.out.println(l);

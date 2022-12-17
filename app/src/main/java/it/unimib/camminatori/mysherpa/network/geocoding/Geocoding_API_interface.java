@@ -8,6 +8,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
+/**
+ * Definisce gli endpoint HTTP esterni
+ */
 public interface Geocoding_API_interface {
     String apikey = "012fb08a52msh67d0ca5257aba78p1c95adjsnc55e706a40e3";
     String apiHost = "forward-reverse-geocoding.p.rapidapi.com";

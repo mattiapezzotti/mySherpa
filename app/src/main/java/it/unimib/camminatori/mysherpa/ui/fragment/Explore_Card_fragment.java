@@ -20,11 +20,6 @@ import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Explore_Card_fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Explore_Card_fragment extends Fragment {
 
     public Explore_Card_fragment() {
@@ -60,12 +55,17 @@ public class Explore_Card_fragment extends Fragment {
         card = view.findViewById(R.id.standard_bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(card);
         cardText = card.findViewById(R.id.place_text);
+
+        // Il tasto "Navigate"
         cardButton = card.findViewById(R.id.bottomsheet_button);
 
+        // Cliccando il tasto nagigate, inizia la naviazione dalla posizione attuale fino al luogo
+        // nella sezione navigate dell'app
         cardButton.setOnClickListener(l -> {
             //TODO: cambio fragment
         });
 
+        // Observer che aggiorna la label del posto nel BottomSheet
         final Observer<Location> updateLabel = l -> {
             if(l.getDisplayName() != null) {
                 cardText.setText(l.getDisplayName().split(",")[0]);

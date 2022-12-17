@@ -69,7 +69,6 @@ public class MapWrapper implements MapEventsReceiver {
         this.mapView.setMultiTouchControls(true);
         this.mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
 
-
         this.rotationController.setEnabled(true);
         this.mapView.getOverlays().add(rotationController);
 
@@ -109,12 +108,15 @@ public class MapWrapper implements MapEventsReceiver {
         this.mapEventsOverlay.onPause();
     }
 
+    // Un single tap rimuove tutti i marker rossi
     @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
         mapView.getOverlays().remove(marker);
         return true;
     }
 
+    // Un long tap inserisce un marker rosso nel punto premuto, centra la mappa su quello e
+    // aggiorna la location in focus in modo da comunicarlo alle altre classi
     @Override
     public boolean longPressHelper(GeoPoint p) {
         mapView.getOverlays().remove(marker);

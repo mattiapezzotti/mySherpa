@@ -6,6 +6,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class ImageUtils {
+    /** Converte un Drawable in una Bitmap
+        @param drawable: il drawable da convertire
+        @return bitmap: la bitmap convertita
+    */
     public static Bitmap drawableToBitmap (Drawable drawable) {
         Bitmap bitmap = null;
 

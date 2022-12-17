@@ -6,6 +6,9 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Istanza retrofit e i vari adapter di retrofit
+ */
 public class GeocodingAPI {
     private static GeocodingAPI instance = null;
     private static final String BASE_URL = "https://forward-reverse-geocoding.p.rapidapi.com/";

@@ -55,6 +55,8 @@ public class SearchBar_Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Metodo per evitare che ogni volta che si scriva parta l'action event
+        // L'evento viene triggerato solo dopo aver premuto "invio" sulla tastiera
         searchBarText.setOnEditorActionListener((v, actionId, event) -> {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
