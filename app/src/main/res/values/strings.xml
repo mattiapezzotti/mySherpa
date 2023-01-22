@@ -6,7 +6,12 @@
     <string name="bottom_nav_explore">Explore</string>
     <string name="bottom_nav_record">Record</string>
     <string name="bottom_nav_profile">Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="mypositionbutton">myPositionButton</string>
+    <string name="gps_not_enabled">Impossbile acquisire il GPS</string>
+    <string name="default_timer_text">00:00:00</string>
+    <string name="default_meters_text">0 m</string>
+    <string name="default_elevation_description">Elevazione Attuale</string>
+    <string name="default_time_description">Tempo Trascorso</string>
+    <string name="default_distance_description">Distanza Percorsa</string>
+    <string name="registrazioni_passate">Registrazioni Passate</string>
+    <string name="mypositionbutton">mypositionbutton</string>
 </resources>

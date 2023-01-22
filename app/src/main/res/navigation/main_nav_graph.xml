@@ -11,9 +11,9 @@
         tools:layout="@layout/fragment_explore" />
     <fragment
         android:id="@+id/fragment_bookmark"
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Bookmark_Fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment"
         android:label="fragment_bookmark"
-        tools:layout="@layout/fragment_bookmark" />
+        tools:layout="@layout/fragment_saved_records" />
     <fragment
         android:id="@+id/fragment_route"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Route_Fragment"

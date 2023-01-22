@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fav_date_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fav_location_text_view"
+        app:srcCompat="@drawable/ic_baseline_radio_button_checked_24"
+        app:tint="@color/md_theme_dark_primaryContainer" />
+
+    <TextView
+        android:id="@+id/fav_location_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Location Name" />
+
+    <TextView
+        android:id="@+id/fav_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/md_theme_light_outline"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@+id/fav_location_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/fav_location_text_view"
+        tools:text="12-09-2022" />
+
+    <ImageButton
+        android:id="@+id/fav_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/fav_date_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fav_location_text_view"
+        app:srcCompat="@drawable/ic_round_delete_outline_24"
+        app:tint="#841717" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
