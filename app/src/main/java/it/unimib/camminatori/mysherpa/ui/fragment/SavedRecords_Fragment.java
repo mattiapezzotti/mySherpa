@@ -1,5 +1,7 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,10 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -23,8 +32,14 @@ import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
+    final static public String FAVOURITES_RECORDS_SHAREDPREFS = "FAVOURITES_RECORDS";
+    final static public String FAVOURITES_RECORDS = "FAVOURITE_RECORDS_LIST";
+
     final private String TAG = "SavedRecordsFragment";
     protected RecyclerView favRecordsView;
+
+    // View Model
+    private RecordViewModel recordViewModel;
 
     public SavedRecords_Fragment() {
         // Required empty public constructor
@@ -45,7 +60,7 @@ public class SavedRecords_Fragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_saved_records, container, false);
 
-        favRecordsView = (RecyclerView) v.findViewById(R.id.fav_records_recycler_view);
+        favRecordsView = v.findViewById(R.id.fav_records_recycler_view);
         LinearLayoutManager favLinearLayout = new LinearLayoutManager(getContext());
         favRecordsView.setLayoutManager(favLinearLayout);
 
@@ -54,11 +69,38 @@ public class SavedRecords_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        RecordViewModel recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords;
+        recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+
+        String saveJson = favRecordsPreferences.getString(FAVOURITES_RECORDS, "");
+        if (saveJson.equals("")) {
+            savedRecords = new ArrayList<>();
+        } else {
+            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
+            }.getType());
+        }
+
+        Log.i(TAG, "Model Fav: " + recordViewModel.getFavList());
+        Log.i(TAG, "From sharedpref: " + savedRecords);
+
+        recordViewModel.getRecordInfo(getContext(), savedRecords);
 
         ArrayList<RecordViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
 
+
         final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(favRecords);
+        favRecordsRecyclerViewAdapter.setOnItemsChangedListener(size -> {
+            TextView noBookmarksTextView = view.findViewById(R.id.no_bookmarks_text_view);
+
+            if (size == 0)
+                noBookmarksTextView.setVisibility(View.VISIBLE);
+            else
+                noBookmarksTextView.setVisibility(View.GONE);
+        });
+
         favRecordsView.setAdapter(favRecordsRecyclerViewAdapter);
 
         EditText favSearch = (EditText) view.findViewById(R.id.fav_text_search);
@@ -80,5 +122,24 @@ public class SavedRecords_Fragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = favRecordsPreferences.edit();
+
+        ArrayList<RecordViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
+
+        Log.i(TAG, "saving " + favList);
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(favList);
+
+        editor.putString(FAVOURITES_RECORDS, json);
+        editor.apply();
     }
 }
