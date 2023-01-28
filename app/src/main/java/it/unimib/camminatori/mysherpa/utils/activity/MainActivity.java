@@ -1,9 +1,10 @@
-package it.unimib.camminatori.mysherpa.ui.activity;
+package it.unimib.camminatori.mysherpa.utils.activity;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +24,9 @@ import org.osmdroid.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import it.unimib.camminatori.mysherpa.BuildConfig;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
+import mil.nga.geopackage.BuildConfig;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity{
             NavController navController = navHostFragment.getNavController();
             BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
             NavigationUI.setupWithNavController(bottomNav, navController);
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
             String[] permissions = new String[3];
             permissions[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;

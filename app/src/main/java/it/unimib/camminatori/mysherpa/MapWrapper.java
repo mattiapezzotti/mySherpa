@@ -1,11 +1,9 @@
 package it.unimib.camminatori.mysherpa;
 
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_BOTTOM;
 import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import androidx.appcompat.content.res.AppCompatResources;
 
@@ -82,7 +80,7 @@ public class MapWrapper implements MapEventsReceiver {
 
         //TODO: fix size
         Drawable userIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_userposition);
-        Drawable markerIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker);
+        Drawable markerIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_red);
 
         this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
         this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
