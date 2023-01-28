@@ -1,14 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.Route_Fragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_explore">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/bottom_nav_route" />
+    <org.osmdroid.views.MapView android:id="@+id/map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </org.osmdroid.views.MapView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card2"
+        style="@style/Widget.Material3.CardView.Filled"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        android:layout_gravity="top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="top">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_circle_24_marker2"
+                    android:layout_gravity="center"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_bar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="15dp"
+                    app:startIconDrawable="@drawable/ic_baseline_search_24"
+                    android:hint="@string/partenza"
+                    app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                    app:endIconMode="clear_text"
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:boxBackgroundColor="@color/md_theme_light_background"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_text"
+                        android:layout_width="380dp"
+                        android:layout_height="wrap_content"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true"
+                       />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_circle_24_marker"
+                    android:layout_gravity="center" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_bar_layout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="15dp"
+                    app:startIconDrawable="@drawable/ic_baseline_search_24"
+                    android:hint="@string/arrivo"
+                    app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                    app:endIconMode="clear_text"
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:boxBackgroundColor="@color/md_theme_light_background"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_text2"
+                        android:layout_width="380dp"
+                        android:layout_height="wrap_content"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                    <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_navigate"
+                    style="?attr/materialButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Naviga"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

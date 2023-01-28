@@ -14,4 +14,8 @@
     <string name="default_distance_description">Distanza Percorsa</string>
     <string name="registrazioni_passate">Registrazioni Passate</string>
     <string name="mypositionbutton">mypositionbutton</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="partenza">Partenza</string>
+    <string name="arrivo">Destinazione</string>
 </resources>
