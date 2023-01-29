@@ -17,28 +17,28 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.osmdroid.util.GeoPoint;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.MapWrapper;
+import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.model.Location;
-import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 
-// Per vedere la logica dietro la Mappa, vedere la classe MapWrapper
-public class Map_Fragment extends Fragment{
-    private MapWrapper mapWrapper;
-    private Explore_ViewModel explore_viewModel;
+// Per vedere la logica dietro la Mappa, vedere la classe ExploreMap
+public class Explore_Map_Fragment extends Fragment{
+    private ExploreMap exploreMap;
+    private Location_ViewModel location_viewModel;
     private FloatingActionButton myLocationFAB; // Tasto per centrare sulla posizione attuale
 
-    public Map_Fragment() {
-        super(R.layout.fragment_map);
+    public Explore_Map_Fragment() {
+        super(R.layout.fragment_explore_map);
     }
 
-    public Map_Fragment newInstance() {
-        return new Map_Fragment();
+    public Explore_Map_Fragment newInstance() {
+        return new Explore_Map_Fragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        explore_viewModel = new ViewModelProvider(requireParentFragment()).get(Explore_ViewModel.class);
+        location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
     }
 
     @Override
@@ -48,8 +48,7 @@ public class Map_Fragment extends Fragment{
         // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
             if(l.getLon() != null && l.getLat() != null) {
-                System.out.println(l);
-                mapWrapper.setCenter(
+                exploreMap.setCenter(
                         new GeoPoint(
                                 Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
@@ -57,8 +56,8 @@ public class Map_Fragment extends Fragment{
             }
         };
 
-        explore_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
-        mapWrapper.resetCenter();
+        location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
+        exploreMap.resetCenter();
     }
 
     @Override
@@ -66,16 +65,16 @@ public class Map_Fragment extends Fragment{
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        mapWrapper = new MapWrapper(rootView.findViewById(R.id.mappa));
+        View rootView = inflater.inflate(R.layout.fragment_explore_map, container, false);
+        exploreMap = new ExploreMap(rootView.findViewById(R.id.mappa_esplora));
 
         myLocationFAB = rootView.findViewById(R.id.fab_getMyLocation);
 
         myLocationFAB.clearFocus();
 
         myLocationFAB.setOnClickListener(v -> {
-            mapWrapper.resetCenter();
-            mapWrapper.updateLabelLocation(null);
+            exploreMap.resetCenter();
+            exploreMap.updateLabelLocation(null);
         });
 
         return rootView;
@@ -84,12 +83,12 @@ public class Map_Fragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        this.mapWrapper.resume();
+        this.exploreMap.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        this.mapWrapper.pause();
+        this.exploreMap.pause();
     }
 }

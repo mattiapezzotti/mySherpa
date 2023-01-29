@@ -5,8 +5,8 @@
     android:id="@+id/fragment_explore">
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Map_Fragment"
-        android:id="@+id/fragment_map_fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Map_Fragment"
+        android:id="@+id/fragment_map_explore"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

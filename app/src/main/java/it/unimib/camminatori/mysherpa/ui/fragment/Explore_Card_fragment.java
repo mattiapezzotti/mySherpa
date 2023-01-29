@@ -15,12 +15,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 import it.unimib.camminatori.mysherpa.model.Location;
-import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 
 public class Explore_Card_fragment extends Fragment {
 
@@ -41,7 +39,7 @@ public class Explore_Card_fragment extends Fragment {
     private TextView precipitation;
     private TextView pressure;
     private String location;
-    private Explore_ViewModel explore_viewModel;
+    private Location_ViewModel location_viewModel;
 
     public static Explore_Card_fragment newInstance() {
         return new Explore_Card_fragment();
@@ -50,7 +48,7 @@ public class Explore_Card_fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        explore_viewModel = new ViewModelProvider(requireParentFragment()).get(Explore_ViewModel.class);
+        location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class Explore_Card_fragment extends Fragment {
         kilometers = view.findViewById(R.id.kilometers_text);
         altitude = view.findViewById(R.id.altitude_text);
         time = view.findViewById(R.id.time_text);
-        temperature = view.findViewById(R.id.temperature);
+        cardText = view.findViewById(R.id.temperature);
         wind = view.findViewById(R.id.wind);
         precipitation = view.findViewById(R.id.precipitation);
         pressure = view.findViewById(R.id.pressure);
@@ -96,6 +94,6 @@ public class Explore_Card_fragment extends Fragment {
             }
         };
 
-        explore_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLabel);
+        location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLabel);
     }
 }
