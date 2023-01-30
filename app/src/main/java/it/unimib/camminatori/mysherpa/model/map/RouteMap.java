@@ -40,6 +40,8 @@ public class RouteMap extends Map {
 
     private ArrayList<GeoPoint> waypoints = new ArrayList<>();
     private RoadManager roadManager;
+    private Marker startMarker;
+    private Marker endMarker;
 
     public RouteMap(MapView map){
         super(map);
@@ -55,7 +57,7 @@ public class RouteMap extends Map {
     }
 
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){
-        Marker startMarker = new Marker(mapView);
+        startMarker= new Marker(mapView);
 
         startMarker.setPosition(startPoint);
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -75,7 +77,7 @@ public class RouteMap extends Map {
 
     // Definizione punto di arrivo e creazione del tragitto(road) e della polyline sulla mappa
     public void updateDestinationNavigationPath(GeoPoint endPoint, String endPointText){
-        Marker endMarker = new Marker(mapView);
+        endMarker = new Marker(mapView);
 
         endMarker.setPosition(endPoint);
         endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);

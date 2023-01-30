@@ -9,13 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import org.osmdroid.util.GeoPoint;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.RouteMap;
@@ -28,6 +32,7 @@ public class Route_Fragment extends Fragment {
     private ImageButton deletePath;
     private ImageButton invertPath;
     private RouteMap routeMap;
+    private FloatingActionButton myLocationFAB;
 
     public Route_Fragment() {
     }
@@ -57,10 +62,18 @@ public class Route_Fragment extends Fragment {
         navigateButton = view.findViewById(R.id.button_navigate);
         invertPath = view.findViewById(R.id.swapPath);
         deletePath = view.findViewById(R.id.deletePath);
+        Route_Map_Fragment rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
+
+        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
+
+        myLocationFAB.clearFocus();
+
+        myLocationFAB.setOnClickListener(v -> {
+            rmf.resetCenter();
+        });
 
         navigateButton.setOnClickListener(v -> {
-            Route_Map_Fragment rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
-            rmf.findPath(
+            rmf.findPathTextOnly(
                     String.valueOf(textPartenza.getText()).trim(),
                     String.valueOf(textDestinazione.getText()).trim()
             );
@@ -77,5 +90,19 @@ public class Route_Fragment extends Fragment {
             textPartenza.setText("");
             textDestinazione.setText("");
         });
+
+        if(getArguments() != null) {
+
+                textPartenza.setText("myLocation");
+                textDestinazione.setText(getArguments().getString("destText"));
+
+                String destText = getArguments().getString("destText");
+                Double lat = getArguments().getDouble("destLat");
+                Double lon = getArguments().getDouble("destLon");
+
+                (new Handler()).postDelayed(()
+                        -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
+                );
+            }
     }
 }

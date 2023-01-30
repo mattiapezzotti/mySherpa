@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="550dp"
+        android:layout_marginTop="255dp"
         android:layout_marginEnd="15dp"
         android:backgroundTint="@color/md_theme_light_background"
         android:contentDescription="@string/mypositionbutton"
@@ -27,9 +27,6 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardInfo"
         style="@style/Widget.Material3.CardView.Outlined"
-        android:clickable="false"
-        android:focusable="true"
-        android:checkable="false"
         android:layout_gravity="top"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">

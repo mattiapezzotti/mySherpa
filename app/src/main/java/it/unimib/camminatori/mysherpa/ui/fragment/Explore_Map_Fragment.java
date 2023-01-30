@@ -68,15 +68,6 @@ public class Explore_Map_Fragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_explore_map, container, false);
         exploreMap = new ExploreMap(rootView.findViewById(R.id.mappa_esplora));
 
-        myLocationFAB = rootView.findViewById(R.id.fab_getMyLocation);
-
-        myLocationFAB.clearFocus();
-
-        myLocationFAB.setOnClickListener(v -> {
-            exploreMap.resetCenter();
-            exploreMap.updateLabelLocation(null);
-        });
-
         return rootView;
     }
 
@@ -90,5 +81,9 @@ public class Explore_Map_Fragment extends Fragment{
     public void onPause() {
         super.onPause();
         this.exploreMap.pause();
+    }
+
+    public void resetCenter() {
+        this.exploreMap.resetCenter();
     }
 }
