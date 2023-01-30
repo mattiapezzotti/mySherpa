@@ -9,14 +9,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -26,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,7 +45,7 @@ public class Record_Fragment extends Fragment {
     private TextView distanceView;
 
     // View Model
-    private RecordViewModel recordViewModel;
+    private Record_ViewModel recordViewModel;
 
     public Record_Fragment() {
         // Required empty public constructor
@@ -61,9 +59,9 @@ public class Record_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
 
-        ArrayList<RecordViewModel.SaveRecordInfo> favList;
+        ArrayList<Record_ViewModel.SaveRecordInfo> favList;
 
         SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
 
@@ -73,11 +71,11 @@ public class Record_Fragment extends Fragment {
         if (saveJson.equals("")) {
             favList = new ArrayList<>();
         } else {
-            favList = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
+            favList = gson.fromJson(saveJson, new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
             }.getType());
         }
 
-        final Observer<RecordViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
+        final Observer<Record_ViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
             recordTimeView.setText(recordInfo.timerText);
             distanceView.setText(recordInfo.metersText);
 
@@ -133,7 +131,7 @@ public class Record_Fragment extends Fragment {
         SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = favRecordsPreferences.edit();
 
-        ArrayList<RecordViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
+        ArrayList<Record_ViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
 
         Gson gson = new Gson();
 

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         app:startIconDrawable="@drawable/ic_baseline_search_24"
         android:hint="@string/searchbar_placeholder"
         app:endIconDrawable="@drawable/ic_baseline_cancel_24"
@@ -20,8 +20,9 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/search_bar_text"
-            android:layout_width="380dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_margin="8dp"
             android:selectAllOnFocus="false"
             android:imeOptions="actionSend"
             android:singleLine="true" />

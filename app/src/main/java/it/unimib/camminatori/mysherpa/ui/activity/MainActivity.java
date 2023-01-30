@@ -4,16 +4,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,13 +21,13 @@ import org.osmdroid.config.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import it.unimib.camminatori.mysherpa.BuildConfig;
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import mil.nga.geopackage.BuildConfig;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    private Explore_ViewModel explore_viewModel;
+    private Location_ViewModel location_viewModel;
 
     public MainActivity(){
         super(R.layout.activity_main);
@@ -44,6 +42,9 @@ public class MainActivity extends AppCompatActivity{
             NavController navController = navHostFragment.getNavController();
             BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
             NavigationUI.setupWithNavController(bottomNav, navController);
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
             String[] permissions = new String[3];
             permissions[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;

@@ -2,10 +2,7 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +11,10 @@ import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.Explore_ViewModel;
 
 public class Explore_Fragment extends Fragment {
 
-
+    Explore_Map_Fragment rme;
 
     public Explore_Fragment() {
         // Required empty public constructor
@@ -36,6 +32,17 @@ public class Explore_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_explore, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore, container, false);
+
+        rme = (Explore_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_explore);
+
+        FloatingActionButton myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
+
+        myLocationFAB.clearFocus();
+
+        myLocationFAB.setOnClickListener(v -> {
+            rme.resetCenter();
+        });
+        return view;
     }
 }

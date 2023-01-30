@@ -1,60 +1,49 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
+import static androidx.databinding.DataBindingUtil.setContentView;
+
+import android.media.Image;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import org.osmdroid.util.GeoPoint;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.map.RouteMap;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Route_Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Route_Fragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private TextInputEditText textPartenza;
+    private TextInputEditText textDestinazione;
+    private Button navigateButton;
+    private ImageButton deletePath;
+    private ImageButton invertPath;
+    private RouteMap routeMap;
+    private FloatingActionButton myLocationFAB;
 
     public Route_Fragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment fragment_route.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Route_Fragment newInstance(String param1, String param2) {
-        Route_Fragment fragment = new Route_Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static Route_Fragment newInstance() {
+        return new Route_Fragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +51,58 @@ public class Route_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_route, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        textPartenza = view.findViewById(R.id.search_bar_textStart);
+        textDestinazione = view.findViewById(R.id.search_bar_textEnd);
+        navigateButton = view.findViewById(R.id.button_navigate);
+        invertPath = view.findViewById(R.id.swapPath);
+        deletePath = view.findViewById(R.id.deletePath);
+        Route_Map_Fragment rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
+
+        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
+
+        myLocationFAB.clearFocus();
+
+        myLocationFAB.setOnClickListener(v -> {
+            rmf.resetCenter();
+        });
+
+        navigateButton.setOnClickListener(v -> {
+            rmf.findPathTextOnly(
+                    String.valueOf(textPartenza.getText()).trim(),
+                    String.valueOf(textDestinazione.getText()).trim()
+            );
+        });
+
+        invertPath.setOnClickListener(v -> {
+            String a = String.valueOf(textPartenza.getText()).trim();
+            String b = String.valueOf(textDestinazione.getText()).trim();
+            textPartenza.setText(b);
+            textDestinazione.setText(a);
+        });
+
+        deletePath.setOnClickListener(v -> {
+            textPartenza.setText("");
+            textDestinazione.setText("");
+        });
+
+        if(getArguments() != null) {
+
+                textPartenza.setText("myLocation");
+                textDestinazione.setText(getArguments().getString("destText"));
+
+                String destText = getArguments().getString("destText");
+                Double lat = getArguments().getDouble("destLat");
+                Double lon = getArguments().getDouble("destLon");
+
+                (new Handler()).postDelayed(()
+                        -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
+                );
+            }
     }
 }

@@ -22,7 +22,7 @@ import java.util.Calendar;
 import it.unimib.camminatori.mysherpa.R;
 
 
-public class RecordViewModel extends ViewModel {
+public class Record_ViewModel extends ViewModel {
     final private String TAG = "RecordViewModel";
 
     private ModelInfo modelInfo;
@@ -47,7 +47,7 @@ public class RecordViewModel extends ViewModel {
         if (this.context == null)
             this.context = context;
 
-        RecordViewModel.favList = favList;
+        Record_ViewModel.favList = favList;
 
         return recordInfo;
     }
