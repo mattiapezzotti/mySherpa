@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
 public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecordsRecyclerViewAdapter.ViewHolder> {
     final private String TAG = "FavRecordsRecyclerViewAdapter";
 
-    private ArrayList<RecordViewModel.SaveRecordInfo> localFavData;
-    private ArrayList<RecordViewModel.SaveRecordInfo> localFavDataBkp;
+    private ArrayList<Record_ViewModel.SaveRecordInfo> localFavData;
+    private ArrayList<Record_ViewModel.SaveRecordInfo> localFavDataBkp;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView locationTextView;
@@ -48,7 +48,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         }
     }
 
-    public FavRecordsRecyclerViewAdapter(ArrayList<RecordViewModel.SaveRecordInfo> data) {
+    public FavRecordsRecyclerViewAdapter(ArrayList<Record_ViewModel.SaveRecordInfo> data) {
         this.localFavData = data;
         this.localFavDataBkp = new ArrayList<>();
 
@@ -71,7 +71,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         viewHolder.getDateTextView().setText(localFavData.get(position).dateString);
 
         viewHolder.getDeleteButton().setOnClickListener(v -> {
-            localFavData = RecordViewModel.removeRecord(viewHolder.getAdapterPosition());
+            localFavData = Record_ViewModel.removeRecord(viewHolder.getAdapterPosition());
             notifyItemRemoved(viewHolder.getAdapterPosition());
             localFavDataBkp.clear();
             localFavDataBkp.addAll(localFavData);
@@ -89,10 +89,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     public void filter(CharSequence sequence) {
         Log.i(TAG, "data backup: " + localFavDataBkp.toString());
 
-        ArrayList<RecordViewModel.SaveRecordInfo> tmp = new ArrayList<>();
+        ArrayList<Record_ViewModel.SaveRecordInfo> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
-            for (RecordViewModel.SaveRecordInfo record : localFavData) {
+            for (Record_ViewModel.SaveRecordInfo record : localFavData) {
                 if (record.locationString.toLowerCase().contains(sequence)) {
                     tmp.add(record);
                 }

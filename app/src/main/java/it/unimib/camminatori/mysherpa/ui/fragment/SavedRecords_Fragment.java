@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
     final private String TAG = "SavedRecordsFragment";
@@ -54,9 +54,9 @@ public class SavedRecords_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        RecordViewModel recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        Record_ViewModel recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
 
-        ArrayList<RecordViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
+        ArrayList<Record_ViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
 
         final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(favRecords);
         favRecordsView.setAdapter(favRecordsRecyclerViewAdapter);

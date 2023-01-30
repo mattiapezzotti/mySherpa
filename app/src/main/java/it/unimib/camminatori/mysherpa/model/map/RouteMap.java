@@ -57,6 +57,11 @@ public class RouteMap extends Map {
     }
 
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){
+        waypoints.clear();
+        mapView.getOverlays().clear();
+        mapView.getOverlays().add(myLocationOverlay);
+
+
         startMarker= new Marker(mapView);
 
         startMarker.setPosition(startPoint);

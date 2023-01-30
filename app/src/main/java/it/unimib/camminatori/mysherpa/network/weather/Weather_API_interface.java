@@ -3,6 +3,7 @@ package it.unimib.camminatori.mysherpa.network.weather;
 import java.util.List;
 
 import it.unimib.camminatori.mysherpa.model.Location;
+import it.unimib.camminatori.mysherpa.model.Weather;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -17,9 +18,9 @@ public interface Weather_API_interface {
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("v1/weather")
-    Call<List<Location>> getCityWeather(@Query("city") String city);
+    Call<Weather> doCityWeather(@Query("city") String city);
 
     @Headers({"X-RapidAPI-Key: " + apikey, "X-RapidAPI-Host: "+ apiHost})
     @GET("v1/weather")
-    Call<List<Location>> getCoordinatesWeather(@Query("lat") double lat, @Query("lon") double lon);
+    Call<Weather> doCoordinatesWeather(@Query("lat") double lat, @Query("lon") double lon);
 }

@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa.utils.activity;
+package it.unimib.camminatori.mysherpa.ui.activity;
 
 import android.Manifest;
 import android.content.Context;

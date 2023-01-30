@@ -20,11 +20,13 @@ import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
 // Per vedere la logica dietro la Mappa, vedere la classe ExploreMap
 public class Explore_Map_Fragment extends Fragment{
     private ExploreMap exploreMap;
     private Location_ViewModel location_viewModel;
+    private Weather_ViewModel weather_viewModel;
     private FloatingActionButton myLocationFAB; // Tasto per centrare sulla posizione attuale
 
     public Explore_Map_Fragment() {
@@ -39,6 +41,7 @@ public class Explore_Map_Fragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
+        weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
     }
 
     @Override
@@ -85,5 +88,14 @@ public class Explore_Map_Fragment extends Fragment{
 
     public void resetCenter() {
         this.exploreMap.resetCenter();
+        this.exploreMap.getMapController().setZoom(17.0);
+        this.location_viewModel.reverseGeocode(
+                this.exploreMap.getMyLocationOverlay().getMyLocation().getLatitude(),
+                this.exploreMap.getMyLocationOverlay().getMyLocation().getLongitude()
+        );
+        this.weather_viewModel.getCoordinatesWeather(
+                this.exploreMap.getMyLocationOverlay().getMyLocation().getLatitude(),
+                this.exploreMap.getMyLocationOverlay().getMyLocation().getLongitude()
+        );
     }
 }

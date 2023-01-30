@@ -89,7 +89,7 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:padding="5dp"
-                        android:src="@drawable/ic_baseline_sun_with_cloud" />
+                        android:src="@drawable/ic_outline_device_thermostat_24" />
 
                     <TextView
                         android:id="@+id/temperature"
@@ -118,15 +118,15 @@
                         android:textSize="20sp"/>
 
                     <ImageView
-                        android:id="@+id/rainIcon"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:id="@+id/humidityIcon"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
                         android:paddingLeft="10dp"
                         android:padding="5dp"
                         android:src="@drawable/ic_round_water_drop_24" />
 
                     <TextView
-                        android:id="@+id/rainInfo"
+                        android:id="@+id/humidityInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

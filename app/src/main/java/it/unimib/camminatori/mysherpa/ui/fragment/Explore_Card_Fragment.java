@@ -19,7 +19,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
+import it.unimib.camminatori.mysherpa.model.Weather;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
 public class Explore_Card_Fragment extends Fragment {
 
@@ -28,13 +30,22 @@ public class Explore_Card_Fragment extends Fragment {
     }
 
     private View card;
+
     private TextView locationName;
     private TextView locationInfo2;
     private TextView locationInfo1;
+
+    private TextView temperature;
+    private TextView humidity;
+    private TextView wind;
+
     private Button cardButtonNavigate;
     private Button cardButtonSave;
+
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private Location_ViewModel location_viewModel;
+    private Weather_ViewModel weather_viewModel;
+
     private double lat;
     private double lon;
 
@@ -46,6 +57,7 @@ public class Explore_Card_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
+        weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
     }
 
     @Override
@@ -66,18 +78,17 @@ public class Explore_Card_Fragment extends Fragment {
         locationInfo1 = view.findViewById(R.id.placeInfo1);
         locationInfo2 = view.findViewById(R.id.placeInfo2);
 
+        temperature = view.findViewById(R.id.temperature);
+        wind = view.findViewById(R.id.windInfo);
+        humidity = view.findViewById(R.id.humidityInfo);
+
         cardButtonNavigate = card.findViewById(R.id.bottomsheet_button_navigate);
         cardButtonSave = card.findViewById(R.id.bottomsheet_button_save);
 
         // Cliccando il tasto nagigate, inizia la naviazione dalla posizione attuale fino al luogo
         // nella sezione navigate dell'app
         cardButtonNavigate.setOnClickListener(l -> {
-            //TODO : fix bug che non permette di ricliccare l'icona explore se non si torna indietro prima
-            Bundle bundle = new Bundle();
-            bundle.putDouble("destLon", lon);
-            bundle.putDouble("destLat", lat);
-            bundle.putString("destText", locationName.getText().toString());
-            Navigation.findNavController(l).navigate(R.id.fragment_route, bundle);
+            this.transaction();
         });
 
         // Cliccando il tasto save, si salva il luogo nei preferiti
@@ -86,17 +97,43 @@ public class Explore_Card_Fragment extends Fragment {
         });
 
         // Observer che aggiorna la label del posto nel BottomSheet
-        final Observer<Location> updateLabel = l -> {
+        final Observer<Location> updateLocationLabels = l -> {
             if(l != null) {
-                locationName.setText(l.getDisplayName().split(",")[0]);
-                locationInfo1.setText(l.getDisplayName().split(",")[2] + ", ");
-                locationInfo2.setText(l.getDisplayName().split(",")[1]);
+                String[] locationInfoText = l.getDisplayName().split(",", -1);
+                locationName.setText(locationInfoText[0]);
+                if(locationInfoText.length >= 2) {
+                    locationInfo1.setText(locationInfoText[2] + ", ");
+                    locationInfo2.setText(locationInfoText[1]);
+                }
+                else{
+                    locationInfo1.setText("");
+                    locationInfo2.setText("");
+                }
                 lat = Double.parseDouble(l.getLat());
                 lon = Double.parseDouble(l.getLon());
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         };
 
-        location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLabel);
+        final Observer<Weather> updateWeatherLabels = l -> {
+            if(l != null) {
+                humidity.setText(l.getHumidity() + " %");
+                temperature.setText(l.getTemp() + "°");
+                wind.setText(l.getWindSpeed() + " km/h");
+            }
+        };
+
+        location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocationLabels);
+        weather_viewModel.getWeather().observe(getViewLifecycleOwner(), updateWeatherLabels);
+    }
+
+    private void transaction(){
+        Bundle bundle = new Bundle();
+        bundle.putDouble("destLon", lon);
+        bundle.putDouble("destLat", lat);
+        bundle.putString("destText", locationName.getText().toString());
+        Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
+        Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_route, bundle);
+
     }
 }

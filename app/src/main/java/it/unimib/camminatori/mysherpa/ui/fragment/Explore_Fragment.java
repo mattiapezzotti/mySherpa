@@ -14,7 +14,7 @@ import it.unimib.camminatori.mysherpa.R;
 
 public class Explore_Fragment extends Fragment {
 
-
+    Explore_Map_Fragment rme;
 
     public Explore_Fragment() {
         // Required empty public constructor
@@ -34,7 +34,7 @@ public class Explore_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
-        Explore_Map_Fragment rme = (Explore_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_explore);
+        rme = (Explore_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_explore);
 
         FloatingActionButton myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 

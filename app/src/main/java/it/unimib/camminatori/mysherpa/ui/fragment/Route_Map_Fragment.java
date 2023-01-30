@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ public class Route_Map_Fragment extends Fragment{
     private RouteMap routeMap;
     private Location_ViewModel location_viewModel;
     private boolean start = true;
+    private boolean pathStart = false;
 
     public Route_Map_Fragment() { super(R.layout.fragment_route_map); }
 
@@ -63,19 +65,19 @@ public class Route_Map_Fragment extends Fragment{
                         Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                 );
 
-                if(start) {
-                    routeMap.updateStartNavigationPath(p, l.getDisplayName());
-                    start = false;
-                }
-                else {
-                    routeMap.updateDestinationNavigationPath(p, l.getDisplayName());
-                    start = true;
-                }
+                if(pathStart)
+                    if(start) {
+                        routeMap.updateStartNavigationPath(p, l.getDisplayName());
+                        start = false;
+                    }
+                    else {
+                        routeMap.updateDestinationNavigationPath(p, l.getDisplayName());
+                        start = true;
+                        pathStart = false;
+                    }
             }
         };
-
         location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
-
         return rootView;
     }
 
@@ -85,8 +87,12 @@ public class Route_Map_Fragment extends Fragment{
 
     public void findPathTextOnly(String startText, String endText){
         start = true;
+        pathStart = true;
         location_viewModel.geocodePlace(startText);
-        location_viewModel.geocodePlace(endText);
+        (new Handler()).postDelayed(()
+                -> location_viewModel.geocodePlace(endText), 500
+        );
+
     }
 
     public void findPathWithNode(GeoPoint endNode, String endText){

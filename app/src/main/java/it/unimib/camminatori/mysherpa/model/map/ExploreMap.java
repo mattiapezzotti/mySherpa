@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.BuildConfig;
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.repository.WeatherRepository;
 import it.unimib.camminatori.mysherpa.utils.ImageUtils;
 import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
@@ -75,5 +76,6 @@ public class ExploreMap extends Map {
         if(position == null)
             position = myLocationOverlay.getMyLocation();
         LocationRepository.getInstance().reverseGeocoding(position.getLatitude(), position.getLongitude());
+        WeatherRepository.getInstance().getWeatherFromCoordinates(position.getLatitude(), position.getLongitude());
     }
 }

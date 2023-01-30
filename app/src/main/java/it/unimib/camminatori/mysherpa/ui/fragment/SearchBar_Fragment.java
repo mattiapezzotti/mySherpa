@@ -17,11 +17,13 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
 public class SearchBar_Fragment extends Fragment {
     private Location_ViewModel location_viewModel;
     private TextInputEditText searchBarText;
     private TextInputLayout searchBarLayout;
+    private Weather_ViewModel weather_viewModel;
 
     public SearchBar_Fragment() {
         // Required empty public constructor
@@ -35,6 +37,7 @@ public class SearchBar_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
+        weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
     }
 
     @Override
@@ -57,6 +60,7 @@ public class SearchBar_Fragment extends Fragment {
                 String input = String.valueOf(searchBarText.getText()).trim();
                 if(input.length() > 0) {
                     location_viewModel.geocodePlace(input);
+                    weather_viewModel.getCityWeather(input);
                     handled = true;
                 }
                 this.searchBarText.clearFocus();
