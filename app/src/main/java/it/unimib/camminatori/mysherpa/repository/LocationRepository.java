@@ -55,6 +55,7 @@ public class LocationRepository {
             @Override
             public void onFailure(Call<Location> call, Throwable t) {
                 Log.e("ERROR", t.toString());
+                locationResponse.postValue(null);
             }
         });
     }
@@ -78,6 +79,7 @@ public class LocationRepository {
             @Override
             public void onFailure(Call<List<Location>> call, Throwable t) {
                 Log.e("ERROR", t.toString());
+                locationResponse.postValue(null);
             }
         });
     }
@@ -99,6 +101,7 @@ public class LocationRepository {
             @Override
             public void onFailure(Call<List<Location>> call, Throwable t) {
                 Log.e("ERROR", t.toString());
+                locationResponse.postValue(null);
             }
         });
     }

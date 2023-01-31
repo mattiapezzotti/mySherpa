@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -56,6 +57,10 @@ public class Explore_Map_Fragment extends Fragment{
                                 Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
                 );
+            }
+            else{
+                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                        .show();
             }
         };
 

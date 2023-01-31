@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,9 +47,6 @@ public class Route_Map_Fragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
-        Location_ViewModel location_viewModel = new Location_ViewModel();
     }
 
     @Override
@@ -75,6 +74,10 @@ public class Route_Map_Fragment extends Fragment{
                         start = true;
                         pathStart = false;
                     }
+            }
+            else{
+                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                        .show();
             }
         };
         location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
@@ -110,5 +113,17 @@ public class Route_Map_Fragment extends Fragment{
     public void onPause() {
         super.onPause();
         this.routeMap.pause();
+    }
+
+    public String getPathLength() {
+        return routeMap.getPathLength();
+    }
+
+    public String getPathTime() {
+        return routeMap.getPathTime();
+    }
+
+    public void invertPath() {
+        this.routeMap.invertPath();
     }
 }

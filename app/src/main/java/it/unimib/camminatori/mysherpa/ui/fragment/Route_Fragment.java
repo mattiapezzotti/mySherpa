@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -15,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.osmdroid.util.GeoPoint;
@@ -28,11 +31,19 @@ public class Route_Fragment extends Fragment {
 
     private TextInputEditText textPartenza;
     private TextInputEditText textDestinazione;
+
     private Button navigateButton;
+
     private ImageButton deletePath;
     private ImageButton invertPath;
-    private RouteMap routeMap;
+
+    private TextView timeText;
+    private TextView kmText;
+
+    private CardView cardInfo;
     private FloatingActionButton myLocationFAB;
+
+    private Route_Map_Fragment rmf;
 
     public Route_Fragment() {
     }
@@ -62,28 +73,49 @@ public class Route_Fragment extends Fragment {
         navigateButton = view.findViewById(R.id.button_navigate);
         invertPath = view.findViewById(R.id.swapPath);
         deletePath = view.findViewById(R.id.deletePath);
-        Route_Map_Fragment rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
+
+        cardInfo = view.findViewById(R.id.cardInfo);
+        timeText = view.findViewById(R.id.time_text);
+        kmText = view.findViewById(R.id.kilometers_text);
+
+        cardInfo.setVisibility(View.GONE);
+
+        rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
 
         myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 
         myLocationFAB.clearFocus();
 
-        myLocationFAB.setOnClickListener(v -> {
-            rmf.resetCenter();
-        });
+        myLocationFAB.setOnClickListener(v ->
+                rmf.resetCenter()
+        );
 
         navigateButton.setOnClickListener(v -> {
-            rmf.findPathTextOnly(
-                    String.valueOf(textPartenza.getText()).trim(),
-                    String.valueOf(textDestinazione.getText()).trim()
-            );
+            String a = String.valueOf(textPartenza.getText()).trim();
+            String b = String.valueOf(textDestinazione.getText()).trim();
+
+            if(!a.isEmpty() && !b.isEmpty()) {
+                rmf.findPathTextOnly(a, b);
+                (new Handler()).postDelayed(()
+                        -> updateInfoCard(), 1000
+                );
+            }
+            else{
+                Snackbar.make(this.getView().getRootView(),"Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
+                                .show();
+            }
         });
 
         invertPath.setOnClickListener(v -> {
             String a = String.valueOf(textPartenza.getText()).trim();
             String b = String.valueOf(textDestinazione.getText()).trim();
-            textPartenza.setText(b);
-            textDestinazione.setText(a);
+
+            if(!a.isEmpty() && !b.isEmpty()) {
+                textPartenza.setText(b);
+                textDestinazione.setText(a);
+                rmf.invertPath();
+            }
+
         });
 
         deletePath.setOnClickListener(v -> {
@@ -92,17 +124,27 @@ public class Route_Fragment extends Fragment {
         });
 
         if(getArguments() != null) {
+            textPartenza.setText("myLocation");
+            textDestinazione.setText(getArguments().getString("destText"));
 
-                textPartenza.setText("myLocation");
-                textDestinazione.setText(getArguments().getString("destText"));
+            String destText = getArguments().getString("destText");
+            Double lat = getArguments().getDouble("destLat");
+            Double lon = getArguments().getDouble("destLon");
 
-                String destText = getArguments().getString("destText");
-                Double lat = getArguments().getDouble("destLat");
-                Double lon = getArguments().getDouble("destLon");
+            (new Handler()).postDelayed(()
+                    -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
+            );
 
-                (new Handler()).postDelayed(()
-                        -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
-                );
-            }
+            (new Handler()).postDelayed(()
+                    -> updateInfoCard(), 1000
+            );
+
+        }
+    }
+
+    public void updateInfoCard(){
+        kmText.setText(rmf.getPathLength());
+        timeText.setText(rmf.getPathTime());
+        cardInfo.setVisibility(View.VISIBLE);
     }
 }

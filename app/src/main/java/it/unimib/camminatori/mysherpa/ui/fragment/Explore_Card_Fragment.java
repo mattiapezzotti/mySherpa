@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
@@ -113,6 +114,10 @@ public class Explore_Card_Fragment extends Fragment {
                 lon = Double.parseDouble(l.getLon());
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
+            else{
+                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                        .show();
+            }
         };
 
         final Observer<Weather> updateWeatherLabels = l -> {
@@ -121,6 +126,11 @@ public class Explore_Card_Fragment extends Fragment {
                 temperature.setText(l.getTemp() + "°");
                 wind.setText(l.getWindSpeed() + " km/h");
             }
+            else{
+                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+
         };
 
         location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocationLabels);

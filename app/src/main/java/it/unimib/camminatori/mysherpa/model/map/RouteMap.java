@@ -1,35 +1,22 @@
 package it.unimib.camminatori.mysherpa.model.map;
 
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
-
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.content.res.AppCompatResources;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
-import org.osmdroid.events.MapEventsReceiver;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.BuildConfig;
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.repository.LocationRepository;
-import it.unimib.camminatori.mysherpa.utils.ImageUtils;
+import mil.nga.geopackage.BuildConfig;
 
 public class RouteMap extends Map {
 
@@ -43,6 +30,13 @@ public class RouteMap extends Map {
     private Marker startMarker;
     private Marker endMarker;
 
+    private GeoPoint startPoint;
+    private GeoPoint endPoint;
+    private boolean inverted;
+
+    private String pathLenght;
+    private String pathTime;
+
     public RouteMap(MapView map){
         super(map);
 
@@ -50,6 +44,8 @@ public class RouteMap extends Map {
         blue_Marker = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_blue);
         black_Marker = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_black);
         upward_arrow = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_arrow_upward_24);
+
+        inverted = false;
 
         this.roadManager = new OSRMRoadManager(mapView.getContext(), BuildConfig.APPLICATION_ID);
         ((OSRMRoadManager)roadManager).setMean(OSRMRoadManager.MEAN_BY_FOOT);
@@ -76,6 +72,7 @@ public class RouteMap extends Map {
 
         startMarker.setSubDescription(Road.getLengthDurationText(mapView.getContext(), 0, 0));
 
+        this.startPoint = startPoint;
         mapView.invalidate();
 
     }
@@ -100,6 +97,9 @@ public class RouteMap extends Map {
         mapView.getOverlays().add(roadOverlay);
         endMarker.setSubDescription(Road.getLengthDurationText(mapView.getContext(), road.mLength, road.mDuration));
 
+        pathTime = (Math.round((road.mDuration)/3600) + "h " + Math.round((road.mDuration)/60%60) + "min");
+        pathLenght = (Math.round((road.mLength)*10.0) / 10.0 + "km");
+
         for (int i=0; i<road.mNodes.size(); i++){
             RoadNode node = road.mNodes.get(i);
             Marker roadMarker= new Marker(mapView);
@@ -112,6 +112,31 @@ public class RouteMap extends Map {
             roadMarker.setImage(upward_arrow);
         }
 
+        this.endPoint = endPoint;
+        mapView.invalidate();
+    }
+
+    public String getPathLength() {
+        return this.pathLenght;
+    }
+
+    public String getPathTime(){
+        return this.pathTime;
+    }
+
+    public void invertPath() {
+        if(startMarker != null && endMarker != null)
+            if(!inverted) {
+                startMarker.setPosition(endPoint);
+                endMarker.setPosition(startPoint);
+                inverted = true;
+
+            }
+            else{
+                startMarker.setPosition(startPoint);
+                endMarker.setPosition(endPoint);
+                inverted = false;
+            }
         mapView.invalidate();
     }
 }

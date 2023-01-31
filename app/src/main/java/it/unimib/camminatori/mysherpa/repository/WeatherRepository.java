@@ -57,6 +57,7 @@ public class WeatherRepository {
             @Override
             public void onFailure(Call<Weather> call, Throwable t) {
                 Log.e("ERROR", t.toString());
+                weatherResponse.postValue(null);
             }
         });
     }
@@ -78,6 +79,7 @@ public class WeatherRepository {
             @Override
             public void onFailure(Call<Weather> call, Throwable t) {
                 Log.e("ERROR", t.toString());
+                weatherResponse.postValue(null);
             }
         });
     }
