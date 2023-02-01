@@ -2,7 +2,6 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,19 +15,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
-import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Observable;
 
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment;
 
 
-public class RecordViewModel extends ViewModel {
+public class Record_ViewModel extends ViewModel {
     final private String TAG = "RecordViewModel";
 
     private ModelInfo modelInfo;
@@ -54,13 +50,13 @@ public class RecordViewModel extends ViewModel {
         if (this.context == null)
             this.context = context;
 
-        if (RecordViewModel.favList == null)
-            RecordViewModel.favList = new ArrayList<>();
+        if (Record_ViewModel.favList == null)
+            Record_ViewModel.favList = new ArrayList<>();
 
-        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords = SavedRecords_Fragment.getSavedRecords(context);
+        ArrayList<Record_ViewModel.SaveRecordInfo> savedRecords = SavedRecords_Fragment.getSavedRecords(context);
 
         if (!favAdded) {
-            RecordViewModel.favList.addAll(savedRecords);
+            Record_ViewModel.favList.addAll(savedRecords);
             favAdded = true;
         }
         Log.i(TAG, "Saved Records: " + savedRecords);

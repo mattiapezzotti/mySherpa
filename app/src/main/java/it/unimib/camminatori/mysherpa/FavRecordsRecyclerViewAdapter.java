@@ -1,8 +1,6 @@
 package it.unimib.camminatori.mysherpa;
 
 import android.annotation.SuppressLint;
-import android.os.ParcelUuid;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,21 +11,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
 public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecordsRecyclerViewAdapter.ViewHolder> {
     final private String TAG = "FavRecordsRecyclerViewAdapter";
 
-    private ArrayList<RecordViewModel.SaveRecordInfo> localFavData;
-    private final ArrayList<RecordViewModel.SaveRecordInfo> localFavDataBkp;
+    private ArrayList<Record_ViewModel.SaveRecordInfo> localFavData;
+    private final ArrayList<Record_ViewModel.SaveRecordInfo> localFavDataBkp;
     private OnItemsChangedListener changedListener;
     private OnShareClickedListener shareClickedListener;
 
@@ -88,7 +83,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         }
     }
 
-    public FavRecordsRecyclerViewAdapter(ArrayList<RecordViewModel.SaveRecordInfo> data) {
+    public FavRecordsRecyclerViewAdapter(ArrayList<Record_ViewModel.SaveRecordInfo> data) {
         if (data == null)
             localFavData = new ArrayList<>();
         else
@@ -120,7 +115,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         totalTimeView.setText(String.format("%s %s", viewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), timeStringFormat(localFavData.get(position).millisecondsTime)));
 
         viewHolder.getDeleteButton().setOnClickListener(v -> {
-            localFavData = RecordViewModel.removeRecord(viewHolder.getAdapterPosition());
+            localFavData = Record_ViewModel.removeRecord(viewHolder.getAdapterPosition());
             notifyItemRemoved(viewHolder.getAdapterPosition());
             localFavDataBkp.clear();
             localFavDataBkp.addAll(localFavData);
@@ -162,10 +157,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     public void filter(CharSequence sequence) {
         Log.i(TAG, "data backup: " + localFavDataBkp.toString());
 
-        ArrayList<RecordViewModel.SaveRecordInfo> tmp = new ArrayList<>();
+        ArrayList<Record_ViewModel.SaveRecordInfo> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
-            for (RecordViewModel.SaveRecordInfo record : localFavDataBkp) {
+            for (Record_ViewModel.SaveRecordInfo record : localFavDataBkp) {
                 if (record.locationString.toLowerCase().contains(sequence)) {
                     tmp.add(record);
                 }

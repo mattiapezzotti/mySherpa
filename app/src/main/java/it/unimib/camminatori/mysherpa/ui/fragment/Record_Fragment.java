@@ -1,45 +1,28 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
-import android.os.SystemClock;
 import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.xmlpull.v1.XmlSerializer;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Objects;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,7 +42,7 @@ public class Record_Fragment extends Fragment {
     private TextView elevationView;
 
     // View Model
-    private RecordViewModel recordViewModel;
+    private Record_ViewModel recordViewModel;
 
     public Record_Fragment() {
         // Required empty public constructor
@@ -73,10 +56,10 @@ public class Record_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
         Log.i(TAG, "viewmodel: " + recordViewModel);
 
-        final Observer<RecordViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
+        final Observer<Record_ViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
             String timerText = (recordInfo.timerText != null) ? recordInfo.timerText : requireContext().getResources().getString(R.string.default_timer_text);
             String metersText = (recordInfo.metersText != null) ? recordInfo.metersText : requireContext().getResources().getString(R.string.default_meters_text);
             String elevationText = (recordInfo.elevationText != null) ? recordInfo.elevationText : requireContext().getResources().getString(R.string.default_meters_text);
