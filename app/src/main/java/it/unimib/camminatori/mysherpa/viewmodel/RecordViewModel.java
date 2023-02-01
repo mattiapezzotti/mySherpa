@@ -2,6 +2,7 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,14 +16,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
 
-import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment;
 
 
 public class RecordViewModel extends ViewModel {
@@ -35,17 +38,8 @@ public class RecordViewModel extends ViewModel {
     private MyLocationListener gpsLocationListener;
     private LocationManager locationManager;
     private static ArrayList<SaveRecordInfo> favList;
-    private boolean favAdded;
+    private boolean favAdded = false;
 
-
-    public void getRecordInfo(Context context, ArrayList<SaveRecordInfo> favList) {
-        getRecordInfo(context);
-
-        if ((favList != null) && !favAdded)
-            RecordViewModel.favList.addAll(favList);
-
-        favAdded = true;
-    }
 
     public MutableLiveData<RecordInfo> getRecordInfo(Context context) {
         if (recordInfo == null)
@@ -62,6 +56,14 @@ public class RecordViewModel extends ViewModel {
 
         if (RecordViewModel.favList == null)
             RecordViewModel.favList = new ArrayList<>();
+
+        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords = SavedRecords_Fragment.getSavedRecords(context);
+
+        if (!favAdded) {
+            RecordViewModel.favList.addAll(savedRecords);
+            favAdded = true;
+        }
+        Log.i(TAG, "Saved Records: " + savedRecords);
 
         return recordInfo;
     }
@@ -125,7 +127,13 @@ public class RecordViewModel extends ViewModel {
         saveRecordInfo.locationString = localityName;
         saveRecordInfo.millisecondsTime = localRecordInfo.recordMilliseconds;
         saveRecordInfo.metersDistance = localRecordInfo.recordMeters;
+        saveRecordInfo.fileUUID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
+        if (gpsLocationListener != null)
+            saveRecordInfo.path = gpsLocationListener.getPath();
+        else
+            saveRecordInfo.path = new ArrayList<>();
 
+        Log.d(TAG, "file UUID: " + saveRecordInfo.fileUUID);
 
         favList.add(saveRecordInfo);
     }
@@ -144,8 +152,6 @@ public class RecordViewModel extends ViewModel {
         timerHandler.post(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "recordTimer running");
-
                 if (modelInfo.recordStarted) {
                     long milliseconds = SystemClock.elapsedRealtime() - modelInfo.startRecordTime;
 
@@ -255,10 +261,18 @@ public class RecordViewModel extends ViewModel {
     }
 
     public static class SaveRecordInfo {
+        @Expose
         public String dateString;
+        @Expose
         public String locationString;
+        @Expose
         public long millisecondsTime;
+        @Expose
         public long metersDistance;
+        @Expose
+        public String fileUUID;
+        @Expose
+        public ArrayList<Location> path;
     }
 
     private static class MyLocationListener implements LocationListener {
@@ -268,12 +282,14 @@ public class RecordViewModel extends ViewModel {
         private double metersCount;
         private double currElevation;
         private final ModelInfo modelInfo;
+        public ArrayList<Location> path;
 
         MyLocationListener(ModelInfo modelInfo) {
             super();
 
             this.modelInfo = modelInfo;
             this.resetInfo();
+            this.path = new ArrayList<>();
         }
 
         @Override
@@ -282,6 +298,7 @@ public class RecordViewModel extends ViewModel {
             double longMeters;
             double longRad;
 
+            //TODO sarebbe meglio gestirlo con requestLocationUpdates e il contrario
             if (!modelInfo.recordStarted || modelInfo.recordPaused)
                 return;
 
@@ -298,7 +315,7 @@ public class RecordViewModel extends ViewModel {
                 metersCount += Math.sqrt(latMeters * latMeters + longMeters * longMeters) * 1000;
                 metersCount += Math.abs(currElevation - previousLocation.getAltitude());
 
-                Log.i(TAG, "Meters: " + metersCount);
+                path.add(location);
             }
 
             previousLocation = location;
@@ -330,6 +347,10 @@ public class RecordViewModel extends ViewModel {
 
         public double getCurrentElevation() {
             return currElevation;
+        }
+
+        public ArrayList<Location> getPath() {
+            return path;
         }
 
         private void resetInfo() {

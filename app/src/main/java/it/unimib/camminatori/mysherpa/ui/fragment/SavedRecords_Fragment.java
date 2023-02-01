@@ -1,31 +1,54 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.UriMatcher;
+import android.content.res.AssetManager;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.FileUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Text;
+import org.xmlpull.v1.XmlSerializer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
@@ -69,29 +92,14 @@ public class SavedRecords_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords;
         recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
-        SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
 
-        Gson gson = new Gson();
-
-        String saveJson = favRecordsPreferences.getString(FAVOURITES_RECORDS, "");
-        if (saveJson.equals("")) {
-            savedRecords = new ArrayList<>();
-        } else {
-            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
-            }.getType());
-        }
-
-        Log.i(TAG, "Model Fav: " + recordViewModel.getFavList());
-        Log.i(TAG, "From sharedpref: " + savedRecords);
-
-        recordViewModel.getRecordInfo(getContext(), savedRecords);
+        recordViewModel.getRecordInfo(requireContext());
 
         ArrayList<RecordViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
 
-
         final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(favRecords);
+
         favRecordsRecyclerViewAdapter.setOnItemsChangedListener(size -> {
             TextView noBookmarksTextView = view.findViewById(R.id.no_bookmarks_text_view);
 
@@ -101,9 +109,44 @@ public class SavedRecords_Fragment extends Fragment {
                 noBookmarksTextView.setVisibility(View.GONE);
         });
 
+        favRecordsRecyclerViewAdapter.setOnShareClickedListener(index -> {
+            try {
+                String filename = recordViewModel.getFavList().get(index).fileUUID + ".gpx";
+
+                File gpxDir = new File(requireContext().getFilesDir(), "gpx");
+                File xmlFile = new File(gpxDir, filename);
+                if (!xmlFile.exists()) {
+                    Log.w(TAG, filename + " does not exists");
+                    return;
+                }
+
+                Uri shareUri = FileProvider.getUriForFile(requireContext(), "it.unimib.camminatori.mysherpa", xmlFile);
+
+                //Uri shareUri = Uri.fromFile(xmlFile);
+
+                Intent shareIntent = new Intent(Intent.ACTION_VIEW);
+                shareIntent.setDataAndType(shareUri, "application/gpx");
+                shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                //shareIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                if (shareIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                    startActivity(shareIntent);
+                } else {
+                    Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.no_gpx_intent_fount, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.ok, v -> {})
+                            .show();
+                }
+
+            } catch (Exception e) {
+                Log.w(TAG, e);
+            }
+
+
+        });
+
         favRecordsView.setAdapter(favRecordsRecyclerViewAdapter);
 
-        EditText favSearch = (EditText) view.findViewById(R.id.fav_text_search);
+        EditText favSearch = view.findViewById(R.id.fav_text_search);
 
         favSearch.addTextChangedListener(new TextWatcher() {
             final private String TAG = "favSearch TextWatcher";
@@ -128,18 +171,156 @@ public class SavedRecords_Fragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
-        SharedPreferences favRecordsPreferences = requireContext().getSharedPreferences(FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
+        Log.d(TAG, "onSaveInstanceState");
+        saveFavRecords(requireContext(), recordViewModel);
+    }
+
+
+    public static void saveFavRecords(Context context, RecordViewModel recordViewModel) {
+        String TAG = "saveFavRecords";
+        SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = favRecordsPreferences.edit();
 
         ArrayList<RecordViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
 
-        Log.i(TAG, "saving " + favList);
+        for (int i = 0; i < favList.size(); i++) {
+            RecordViewModel.SaveRecordInfo info = favList.get(i);
 
-        Gson gson = new Gson();
+            File gpxDir = new File(context.getFilesDir(), "gpx");
+            if (!gpxDir.exists()) {
+                if (!gpxDir.mkdir()) {
+                    Log.d(TAG, "Failed to create GPX directory");
+                    return;
+                } else {
+                    Log.d(TAG, "Created GPX directory");
+                }
+            }
+
+            File xmlFile = new File(gpxDir, info.fileUUID + ".gpx");
+            boolean save = false;
+            try {
+                save = xmlFile.createNewFile();
+            } catch (Exception e) {
+                Log.w(TAG, "createNewFile() for gpx failed", e);
+            }
+
+            if (save) {
+                Log.d(TAG, "Saving " + info.fileUUID + ".gpx");
+                try {
+                    String gpxXml = buildGpxXml(info.path, info.locationString);
+                    FileOutputStream xmlStream = new FileOutputStream(xmlFile);
+                    xmlStream.write(gpxXml.getBytes());
+
+                    Log.d(TAG, "Saving " + favList.get(0));
+                    Log.d(TAG, gpxXml);
+                } catch (Exception e) {
+                    Log.w(TAG, e);
+                }
+            }
+        }
+
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = gson.toJson(favList);
 
-        editor.putString(FAVOURITES_RECORDS, json);
+        editor.putString(SavedRecords_Fragment.FAVOURITES_RECORDS, json);
         editor.apply();
+    }
+
+    public static ArrayList<RecordViewModel.SaveRecordInfo> getSavedRecords(Context context) {
+        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords;
+        SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
+
+        Gson gson = new Gson();
+
+        String saveJson = favRecordsPreferences.getString(SavedRecords_Fragment.FAVOURITES_RECORDS, "");
+        if (saveJson.equals("")) {
+            savedRecords = new ArrayList<>();
+        } else {
+            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
+            }.getType());
+        }
+        return savedRecords;
+    }
+
+    private static String buildGpxXml(ArrayList<Location> path, String name) {
+        ByteArrayOutputStream gpxXml = new ByteArrayOutputStream();
+        XmlSerializer gpxSerializer = Xml.newSerializer();
+
+        try {
+            gpxSerializer.setOutput(gpxXml, "UTF-8");
+            gpxSerializer.startDocument("UTF-8", true);
+
+            gpxSerializer.startTag("", "gpx");
+            gpxSerializer.attribute("", "version", "1.1");
+            gpxSerializer.attribute("", "creator", "mySherpa - it.unimib.camminatori.mysherpa");
+            gpxSerializer.attribute("", "xmlns", "http://www.topografix.com/GPX/1/1");
+            gpxSerializer.attribute("", "xmlns:gpxx", "http://www.garmin.com/xmlschemas/GpxExtensions/v3");
+            gpxSerializer.attribute("", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
+            gpxSerializer.attribute("", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            gpxSerializer.attribute("", "xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd");
+
+            gpxSerializer.startTag("", "metadata");
+
+            gpxSerializer.startTag("", "author");
+            gpxSerializer.text("it.unimib.camminatori.mysherpa");
+            gpxSerializer.endTag("", "author");
+
+            gpxSerializer.startTag("", "date");
+            gpxSerializer.text(DateFormat.getDateInstance().toString());
+            gpxSerializer.endTag("", "date");
+
+            gpxSerializer.endTag("", "metadata");
+
+            gpxSerializer.startTag("", "trk");
+
+            gpxSerializer.startTag("", "name");
+            gpxSerializer.text(name);
+            gpxSerializer.endTag("", "name");
+
+            gpxSerializer.startTag("", "trkseg");
+
+            for (int i = 0; i < path.size(); i++) {
+                Location trkPoint = path.get(i);
+
+                gpxSerializer.startTag("", "trkpt");
+                gpxSerializer.attribute("", "lat", String.valueOf(trkPoint.getLatitude()));
+                gpxSerializer.attribute("", "lon", String.valueOf(trkPoint.getLongitude()));
+                gpxSerializer.startTag("", "ele");
+                gpxSerializer.text(String.valueOf(trkPoint.getAltitude()));
+                gpxSerializer.endTag("", "ele");
+                gpxSerializer.endTag("", "trkpt");
+            }
+
+            gpxSerializer.endTag("", "trkseg");
+
+            gpxSerializer.endTag("", "trk");
+
+            gpxSerializer.endTag("", "gpx");
+
+            gpxSerializer.endDocument();
+
+        } catch (Exception e) {
+            Log.w("buildGPX", e);
+            return "";
+        }
+
+        return gpxXml.toString();
+    }
+
+    static private int fileCopy(File src, File dst) {
+        try {
+            InputStream in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(dst);
+
+            byte[] buff = new byte[1024];
+            while (in.read(buff) > 0) {
+                out.write(buff);
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+
+        return 1;
     }
 }
