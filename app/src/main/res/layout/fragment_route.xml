@@ -1,14 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.Route_Fragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_route">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.fragment.app.FragmentContainerView
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Route_Map_Fragment"
+        android:id="@+id/fragment_map_route"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/bottom_nav_route" />
+        android:layout_height="match_parent" />
 
-</FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_getMyLocation"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="255dp"
+        android:layout_marginEnd="15dp"
+        android:backgroundTint="@color/md_theme_light_background"
+        android:contentDescription="@string/mypositionbutton"
+        app:srcCompat="@drawable/ic_baseline_my_location_24" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardInfo"
+        style="@style/Widget.Material3.CardView.Outlined"
+        android:layout_gravity="top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="215dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/kilometers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_baseline_hiking_24" />
+
+                <TextView
+                    android:id="@+id/kilometers_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="3dp"
+                    android:text="lenght" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_outline_access_time_24" />
+
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="3dp"
+                    android:text="time" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        style="@style/Widget.Material3.CardView.Filled"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        android:layout_gravity="top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/startPosition"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_baseline_circle_24_marker_blue"
+                android:layout_gravity="center"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_bar_start"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/startPosition"
+                app:startIconDrawable="@drawable/ic_baseline_search_24"
+                android:hint="@string/partenza"
+                app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                app:endIconMode="clear_text"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                app:boxBackgroundColor="@color/md_theme_light_background"
+                >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_textStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true"
+                       />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/deletePath"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:scaleType="fitCenter"
+                android:layout_toEndOf="@id/search_bar_start"
+                android:background="?android:selectableItemBackground"
+                android:src="@drawable/ic_round_delete_outline_24" />
+
+            <ImageView
+                    android:id="@+id/endPosition"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="32dp"
+                    android:src="@drawable/ic_baseline_circle_24_marker_red"
+                    android:layout_below="@+id/startPosition"
+                    android:layout_gravity="center" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/search_bar_end"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/search_bar_start"
+                    android:layout_toEndOf="@+id/endPosition"
+                    android:layout_marginTop="15dp"
+                    app:startIconDrawable="@drawable/ic_baseline_search_24"
+                    android:hint="@string/arrivo"
+                    app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                    app:endIconMode="clear_text"
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:boxBackgroundColor="@color/md_theme_light_background"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_textEnd"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/swapPath"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:background="?android:selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:layout_toEndOf="@id/search_bar_end"
+                android:layout_below="@id/deletePath"
+                android:src="@drawable/ic_round_swap_vert_24" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_navigate"
+                    style="?attr/materialButtonStyle"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/search_bar_end"
+                    android:text="Naviga"
+                    android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_marginTop="208dp"
+        android:id="@+id/loading_bar"
+        android:indeterminate="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    </FrameLayout>

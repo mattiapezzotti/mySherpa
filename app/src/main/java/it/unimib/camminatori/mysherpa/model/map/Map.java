@@ -1,15 +1,18 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.model.map;
 
 import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_BOTTOM;
 import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_LEFT;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_RIGHT;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_TOP;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import androidx.appcompat.content.res.AppCompatResources;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -21,29 +24,53 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import it.unimib.camminatori.mysherpa.utils.ImageUtils;
+import it.unimib.camminatori.mysherpa.BuildConfig;
+import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.repository.LocationRepository;
+import it.unimib.camminatori.mysherpa.utils.ImageUtils;
 
-public class MapWrapper implements MapEventsReceiver {
-    private final MapView mapView;
-    private final MyLocationNewOverlay myLocationOverlay;
-    private final IMapController mapController;
-    private final RotationGestureOverlay rotationController;
-    private final MapEventsOverlay mapEventsOverlay;
-    private final Marker marker;
+public class Map implements MapEventsReceiver {
 
-    public MapWrapper(MapView map){
+    protected final MapView mapView;
+    protected final MyLocationNewOverlay myLocationOverlay;
+    protected final IMapController mapController;
+    protected final RotationGestureOverlay rotationController;
+    protected final MapEventsOverlay mapEventsOverlay;
+    protected Drawable userIcon;
+
+    public Map(MapView map){
         this.mapView = map;
         this.mapController = this.mapView.getController();
         this.rotationController = new RotationGestureOverlay(this.mapView);
         this.myLocationOverlay = new MyLocationNewOverlay(
                 new GpsMyLocationProvider(requireActivity()), map);
         this.mapEventsOverlay = new MapEventsOverlay(this);
-        this.marker = new Marker(mapView);
-        init();
+
+        this.mapView.setTileSource(TileSourceFactory.MAPNIK);
+        this.mapView.setMultiTouchControls(true);
+        this.mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+
+        this.rotationController.setEnabled(true);
+        this.mapView.getOverlays().add(rotationController);
+
+        this.myLocationOverlay.enableMyLocation();
+        this.myLocationOverlay.setDrawAccuracyEnabled(false);
+        this.mapController.setZoom(17.0);
+        this.mapView.setMinZoomLevel(6.5);
+
+        this.myLocationOverlay.enableFollowLocation();
+
+        userIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_userposition);
+
+        this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
+        this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
+        this.mapView.getOverlays().add(0, mapEventsOverlay);
+        this.mapView.getOverlays().add(myLocationOverlay);
+
+        this.mapView.invalidate();
     }
 
-    private Context requireActivity() {
+    protected Context requireActivity() {
         return getMapView().getContext();
     }
 
@@ -63,35 +90,6 @@ public class MapWrapper implements MapEventsReceiver {
         return rotationController;
     }
 
-
-    private void init(){
-        this.mapView.setTileSource(TileSourceFactory.WIKIMEDIA);
-        this.mapView.setMultiTouchControls(true);
-        this.mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
-
-        this.rotationController.setEnabled(true);
-        this.mapView.getOverlays().add(rotationController);
-
-        this.myLocationOverlay.enableMyLocation();
-        this.myLocationOverlay.setDrawAccuracyEnabled(false);
-        this.mapController.setZoom(17.0);
-        this.mapView.setMinZoomLevel(6.5);
-
-        this.myLocationOverlay.enableFollowLocation();
-        this.marker.setInfoWindow(null);
-
-        //TODO: fix size
-        Drawable userIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_userposition);
-        Drawable markerIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker);
-
-        this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
-        this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
-        this.marker.setIcon(markerIcon);
-
-        this.mapView.getOverlays().add(0, mapEventsOverlay);
-        this.mapView.getOverlays().add(myLocationOverlay);
-    }
-
     public void setCenter(GeoPoint point){
         mapController.setCenter(point);
     }
@@ -108,37 +106,17 @@ public class MapWrapper implements MapEventsReceiver {
         this.mapEventsOverlay.onPause();
     }
 
-    // Un single tap rimuove tutti i marker rossi
+    public void resetCenter(){
+        mapController.setCenter(myLocationOverlay.getMyLocation());
+    }
+
     @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
-        mapView.getOverlays().remove(marker);
-        return true;
+        return false;
     }
 
-    // Un long tap inserisce un marker rosso nel punto premuto, centra la mappa su quello e
-    // aggiorna la location in focus in modo da comunicarlo alle altre classi
     @Override
     public boolean longPressHelper(GeoPoint p) {
-        mapView.getOverlays().remove(marker);
-
-        marker.setPosition(p);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setTitle("Start point");
-
-        mapView.getOverlays().add(marker);
-        mapController.animateTo(marker.getPosition());
-        updateLabelLocation(marker.getPosition());
-        return true;
-    }
-
-    public void resetCenter(){
-        GeoPoint myLocation = myLocationOverlay.getMyLocation();
-        mapController.setCenter(myLocation);
-    }
-
-    public void updateLabelLocation(GeoPoint position){
-        if(position == null)
-            position = myLocationOverlay.getMyLocation();
-        LocationRepository.getInstance().reverseGeocoding(position.getLatitude(), position.getLongitude());
+        return false;
     }
 }

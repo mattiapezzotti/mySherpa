@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
-public class Explore_ViewModel extends ViewModel {
+public class Location_ViewModel extends ViewModel {
 
-    public Explore_ViewModel(){
+    public Location_ViewModel(){
     }
 
     public LiveData<Location> getGeocodedLocation(){

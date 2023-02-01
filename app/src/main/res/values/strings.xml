@@ -22,5 +22,7 @@
     <string name="mypositionbutton">mypositionbutton</string>
     <string name="traveled_distance_prefix">Distanza Percorsa:</string>
     <string name="total_time_prefix">Tempo Totale:</string>
-    <string name="no_gpx_intent_fount">Nessuna applicatione GPX</string>
+    <string name="partenza">Partenza</string>
+    <string name="arrivo">Destinazione</string>
+	<string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
 </resources>

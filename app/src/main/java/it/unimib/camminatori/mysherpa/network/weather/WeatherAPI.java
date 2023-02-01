@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa.network.geocoding;
+package it.unimib.camminatori.mysherpa.network.weather;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -9,12 +9,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Istanza retrofit e i vari adapter di retrofit
  */
-public class GeocodingAPI {
-    private static GeocodingAPI instance = null;
-    private static final String BASE_URL = "https://forward-reverse-geocoding.p.rapidapi.com/";
-    private final Geocoding_API_interface api_interface;
+public class WeatherAPI {
+    private static WeatherAPI instance = null;
+    private static final String BASE_URL = "https://weather-by-api-ninjas.p.rapidapi.com/";
+    private final Weather_API_interface api_interface;
 
-    private GeocodingAPI() {
+    private WeatherAPI() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
@@ -28,16 +28,16 @@ public class GeocodingAPI {
                 .client(httpClient.build())
                 .build();
 
-        this.api_interface = retrofit.create(Geocoding_API_interface.class);
+        this.api_interface = retrofit.create(Weather_API_interface.class);
     }
 
-    public static GeocodingAPI getInstance(){
+    public static WeatherAPI getInstance(){
         if(instance == null)
-            instance = new GeocodingAPI();
+            instance = new WeatherAPI();
         return instance;
     }
 
-    public Geocoding_API_interface getApi_interface() {
+    public Weather_API_interface getApi_interface() {
         return api_interface;
     }
 }
