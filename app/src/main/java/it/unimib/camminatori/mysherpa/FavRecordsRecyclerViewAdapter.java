@@ -23,7 +23,8 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
     private ArrayList<Record_ViewModel.SaveRecordInfo> localFavData;
     private final ArrayList<Record_ViewModel.SaveRecordInfo> localFavDataBkp;
-    private OnItemsChangedListener listener;
+    private OnItemsChangedListener changedListener;
+    private OnShareClickedListener shareClickedListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView locationTextView;
@@ -33,9 +34,12 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         private final TextView noBookmarksTextView;
         private final FrameLayout layoutExpandView;
         private final ImageButton deleteButton;
+        private final ImageButton shareButton;
 
         public ViewHolder(View view) {
             super(view);
+
+
             this.locationTextView = view.findViewById(R.id.fav_location_text_view);
             this.dateTextView = view.findViewById(R.id.fav_date_text_view);
             this.distanceTextView = view.findViewById(R.id.traveled_record_distance_text_view);
@@ -43,6 +47,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             this.noBookmarksTextView = view.findViewById(R.id.no_bookmarks_text_view);
             this.deleteButton = view.findViewById(R.id.fav_delete_button);
             this.layoutExpandView = view.findViewById(R.id.save_record_click_layout);
+            this.shareButton = view.findViewById(R.id.fav_share_button);
         }
 
         public TextView getLocationTextView() {
@@ -71,6 +76,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
         public ImageButton getDeleteButton() {
             return this.deleteButton;
+        }
+
+        public ImageButton getShareButton() {
+            return this.shareButton;
         }
     }
 
@@ -111,20 +120,28 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             localFavDataBkp.clear();
             localFavDataBkp.addAll(localFavData);
 
-            callListener();
+            callChangeListener();
+        });
+
+        viewHolder.getShareButton().setOnClickListener(v -> {
+            if (shareClickedListener != null) {
+                shareClickedListener.onShareClicked(viewHolder.getAdapterPosition());
+            }
         });
 
         expandView.setOnClickListener(v -> {
             if (distanceView.getVisibility() == View.GONE) {
                 distanceView.setVisibility(View.VISIBLE);
                 totalTimeView.setVisibility(View.VISIBLE);
+                viewHolder.getShareButton().setVisibility(View.VISIBLE);
             } else {
                 distanceView.setVisibility(View.GONE);
                 totalTimeView.setVisibility(View.GONE);
+                viewHolder.getShareButton().setVisibility(View.GONE);
             }
         });
 
-        callListener();
+        callChangeListener();
     }
 
     @Override
@@ -159,13 +176,17 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         tmp.clear();
     }
 
-    public void setOnItemsChangedListener(OnItemsChangedListener listener) {
-        this.listener = listener;
+    public void setOnItemsChangedListener(OnItemsChangedListener changedListener) {
+        this.changedListener = changedListener;
     }
 
-    private void callListener() {
-        if (listener != null) {
-            listener.onItemsChanged(getItemCount());
+    public void setOnShareClickedListener(OnShareClickedListener shareClickedListener) {
+        this.shareClickedListener = shareClickedListener;
+    }
+
+    private void callChangeListener() {
+        if (changedListener != null) {
+            changedListener.onItemsChanged(getItemCount());
         }
     }
 
@@ -197,5 +218,9 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
     public interface OnItemsChangedListener {
         void onItemsChanged(int size);
+    }
+
+    public interface OnShareClickedListener {
+        void onShareClicked(int index);
     }
 }

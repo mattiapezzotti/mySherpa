@@ -75,8 +75,6 @@ public class Record_Fragment extends Fragment {
             totMetersEditor.putFloat(TOTAL_METERS_VAL, totMeters);
 
             totMetersEditor.apply();
-
-            Log.i(TAG, "Total meters: " + totMeters);
         };
 
         recordViewModel.getRecordInfo(getContext()).observe(this, recordInfoObserver);
@@ -123,8 +121,6 @@ public class Record_Fragment extends Fragment {
 
         playRecordButton.setOnClickListener(v -> {
             if (!recordViewModel.buttonPlayClicked()) {
-                //Snackbar snackbar =
-
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.gps_not_enabled, Snackbar.LENGTH_LONG)
                         .setAction(R.string.ok, sview -> {})
                         .show();
@@ -142,5 +138,13 @@ public class Record_Fragment extends Fragment {
             recordViewModel.buttonStopClicked();
             playRecordButton.setImageResource(R.drawable.ic_round_play_circle_24);
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        Log.d(TAG, "onSaveInstanceState");
+        SavedRecords_Fragment.saveFavRecords(requireContext(), recordViewModel);
     }
 }
