@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -42,6 +43,7 @@ public class Route_Fragment extends Fragment {
 
     private CardView cardInfo;
     private FloatingActionButton myLocationFAB;
+    private LinearProgressIndicator linearProgressIndicator;
 
     private Route_Map_Fragment rmf;
 
@@ -73,16 +75,19 @@ public class Route_Fragment extends Fragment {
         navigateButton = view.findViewById(R.id.button_navigate);
         invertPath = view.findViewById(R.id.swapPath);
         deletePath = view.findViewById(R.id.deletePath);
+        linearProgressIndicator = view.findViewById(R.id.loading_bar);
 
         cardInfo = view.findViewById(R.id.cardInfo);
         timeText = view.findViewById(R.id.time_text);
         kmText = view.findViewById(R.id.kilometers_text);
+        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 
         cardInfo.setVisibility(View.GONE);
+        linearProgressIndicator.setVisibility(View.GONE);
 
         rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
 
-        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
+
 
         myLocationFAB.clearFocus();
 
@@ -96,9 +101,11 @@ public class Route_Fragment extends Fragment {
 
             if(!a.isEmpty() && !b.isEmpty()) {
                 rmf.findPathTextOnly(a, b);
+                linearProgressIndicator.setVisibility(View.VISIBLE);
                 (new Handler()).postDelayed(()
                         -> updateInfoCard(), 1000
                 );
+                linearProgressIndicator.setVisibility(View.GONE);
             }
             else{
                 Snackbar.make(this.getView().getRootView(),"Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
@@ -107,24 +114,30 @@ public class Route_Fragment extends Fragment {
         });
 
         invertPath.setOnClickListener(v -> {
-            String a = String.valueOf(textPartenza.getText()).trim();
-            String b = String.valueOf(textDestinazione.getText()).trim();
+            String newEndText = String.valueOf(textPartenza.getText()).trim();
+            String newStartText = String.valueOf(textDestinazione.getText()).trim();
 
-            if(!a.isEmpty() && !b.isEmpty()) {
-                textPartenza.setText(b);
-                textDestinazione.setText(a);
-                rmf.invertPath();
+            if(!newEndText.isEmpty() && !newStartText.isEmpty()) {
+                linearProgressIndicator.setVisibility(View.VISIBLE);
+                textPartenza.setText(newStartText);
+                textDestinazione.setText(newEndText);
+                rmf.invertPath(newStartText,newEndText);
             }
-
+            linearProgressIndicator.setVisibility(View.GONE);
         });
 
         deletePath.setOnClickListener(v -> {
+            linearProgressIndicator.setVisibility(View.VISIBLE);
             textPartenza.setText("");
             textDestinazione.setText("");
+            rmf.deletePath();
+            cardInfo.setVisibility(View.GONE);
+            linearProgressIndicator.setVisibility(View.GONE);
         });
 
         if(getArguments() != null) {
-            textPartenza.setText("myLocation");
+            linearProgressIndicator.setVisibility(View.VISIBLE);
+            textPartenza.setText("myPosition");
             textDestinazione.setText(getArguments().getString("destText"));
 
             String destText = getArguments().getString("destText");
@@ -138,6 +151,7 @@ public class Route_Fragment extends Fragment {
             (new Handler()).postDelayed(()
                     -> updateInfoCard(), 1000
             );
+            linearProgressIndicator.setVisibility(View.GONE);
 
         }
     }

@@ -85,131 +85,139 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card"
-            style="@style/Widget.Material3.CardView.Filled"
-            android:clickable="true"
-            android:focusable="true"
-            android:checkable="true"
-            android:layout_gravity="top"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        style="@style/Widget.Material3.CardView.Filled"
+        android:clickable="true"
+        android:focusable="true"
+        android:checkable="true"
+        android:layout_gravity="top"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent">
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:layout_gravity="center">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/startPosition"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_baseline_circle_24_marker_blue"
+                android:layout_gravity="center"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_bar_start"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:layout_gravity="center">
+                android:layout_toEndOf="@id/startPosition"
+                app:startIconDrawable="@drawable/ic_baseline_search_24"
+                android:hint="@string/partenza"
+                app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+                app:endIconMode="clear_text"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                app:boxBackgroundColor="@color/md_theme_light_background"
+                >
 
-                <ImageView
-                    android:id="@+id/startPosition"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_textStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true"
+                       />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/deletePath"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:scaleType="fitCenter"
+                android:layout_toEndOf="@id/search_bar_start"
+                android:background="?android:selectableItemBackground"
+                android:src="@drawable/ic_round_delete_outline_24" />
+
+            <ImageView
+                    android:id="@+id/endPosition"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_marginEnd="5dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_alignParentStart="true"
-                    android:src="@drawable/ic_baseline_circle_24_marker_blue"
-                    android:layout_gravity="center"/>
+                    android:layout_marginTop="32dp"
+                    android:src="@drawable/ic_baseline_circle_24_marker_red"
+                    android:layout_below="@+id/startPosition"
+                    android:layout_gravity="center" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/search_bar_start"
+                    android:id="@+id/search_bar_end"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/startPosition"
+                    android:layout_below="@+id/search_bar_start"
+                    android:layout_toEndOf="@+id/endPosition"
+                    android:layout_marginTop="15dp"
                     app:startIconDrawable="@drawable/ic_baseline_search_24"
-                    android:hint="@string/partenza"
+                    android:hint="@string/arrivo"
                     app:endIconDrawable="@drawable/ic_baseline_cancel_24"
                     app:endIconMode="clear_text"
                     app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
                     app:boxBackgroundColor="@color/md_theme_light_background"
                     >
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/search_bar_textStart"
-                            android:layout_width="match_parent"
-                            android:layout_height="55dp"
-                            android:selectAllOnFocus="false"
-                            android:imeOptions="actionSend"
-                            android:singleLine="true"
-                           />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_bar_textEnd"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:selectAllOnFocus="false"
+                        android:imeOptions="actionSend"
+                        android:singleLine="true" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageButton
-                    android:id="@+id/deletePath"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:scaleType="fitCenter"
-                    android:layout_toEndOf="@id/search_bar_start"
-                    android:background="?android:selectableItemBackground"
-                    android:src="@drawable/ic_round_delete_outline_24" />
+            <ImageButton
+                android:id="@+id/swapPath"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:background="?android:selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:layout_toEndOf="@id/search_bar_end"
+                android:layout_below="@id/deletePath"
+                android:src="@drawable/ic_round_swap_vert_24" />
 
-                <ImageView
-                        android:id="@+id/endPosition"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="32dp"
-                        android:src="@drawable/ic_baseline_circle_24_marker_red"
-                        android:layout_below="@+id/startPosition"
-                        android:layout_gravity="center" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_navigate"
+                    style="?attr/materialButtonStyle"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/search_bar_end"
+                    android:text="Naviga"
+                    android:layout_centerHorizontal="true"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/search_bar_end"
-                        android:layout_width="300dp"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/search_bar_start"
-                        android:layout_toEndOf="@+id/endPosition"
-                        android:layout_marginTop="15dp"
-                        app:startIconDrawable="@drawable/ic_baseline_search_24"
-                        android:hint="@string/arrivo"
-                        app:endIconDrawable="@drawable/ic_baseline_cancel_24"
-                        app:endIconMode="clear_text"
-                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-                        app:boxBackgroundColor="@color/md_theme_light_background"
-                        >
+        </RelativeLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/search_bar_textEnd"
-                            android:layout_width="match_parent"
-                            android:layout_height="55dp"
-                            android:selectAllOnFocus="false"
-                            android:imeOptions="actionSend"
-                            android:singleLine="true" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-                <ImageButton
-                    android:id="@+id/swapPath"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="?android:selectableItemBackground"
-                    android:scaleType="fitCenter"
-                    android:layout_toEndOf="@id/search_bar_end"
-                    android:layout_below="@id/deletePath"
-                    android:src="@drawable/ic_round_swap_vert_24" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_navigate"
-                        style="?attr/materialButtonStyle"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/search_bar_end"
-                        android:text="Naviga"
-                        android:layout_centerHorizontal="true"/>
-
-            </RelativeLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_marginTop="208dp"
+        android:id="@+id/loading_bar"
+        android:indeterminate="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     </FrameLayout>

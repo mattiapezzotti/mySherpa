@@ -54,7 +54,7 @@ public class LocationRepository {
 
             @Override
             public void onFailure(Call<Location> call, Throwable t) {
-                Log.e("ERROR", t.toString());
+                Log.e("ERROR_reverseGeocoding", t.toString());
                 locationResponse.postValue(null);
             }
         });
@@ -78,7 +78,7 @@ public class LocationRepository {
 
             @Override
             public void onFailure(Call<List<Location>> call, Throwable t) {
-                Log.e("ERROR", t.toString());
+                Log.e("ERRORE_searchGeocoding", t.toString());
                 locationResponse.postValue(null);
             }
         });

@@ -1,5 +1,7 @@
 package it.unimib.camminatori.mysherpa.model.map;
 
+import static java.lang.System.exit;
+
 import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.content.res.AppCompatResources;
@@ -53,10 +55,7 @@ public class RouteMap extends Map {
     }
 
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){
-        waypoints.clear();
-        mapView.getOverlays().clear();
-        mapView.getOverlays().add(myLocationOverlay);
-
+        this.deletePath();
 
         startMarker= new Marker(mapView);
 
@@ -78,7 +77,7 @@ public class RouteMap extends Map {
     }
 
     // Definizione punto di arrivo e creazione del tragitto(road) e della polyline sulla mappa
-    public void updateDestinationNavigationPath(GeoPoint endPoint, String endPointText){
+    public void updateDestinationNavigationPath(GeoPoint endPoint, String endPointText) throws Exception{
         endMarker = new Marker(mapView);
 
         endMarker.setPosition(endPoint);
@@ -92,12 +91,16 @@ public class RouteMap extends Map {
         waypoints.add(endPoint);
 
         Road road = roadManager.getRoad(waypoints);
+
+        if(road.mStatus == Road.STATUS_TECHNICAL_ISSUE)
+            throw new Exception("Strada non trovata");
+
         Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
 
         mapView.getOverlays().add(roadOverlay);
         endMarker.setSubDescription(Road.getLengthDurationText(mapView.getContext(), road.mLength, road.mDuration));
 
-        pathTime = (Math.round((road.mDuration)/3600) + "h " + Math.round((road.mDuration)/60%60) + "min");
+        pathTime = ((int) Math.floor((road.mDuration)/3600) + "h " + (int) Math.floor((road.mDuration)%3600/60) + "min");
         pathLenght = (Math.round((road.mLength)*10.0) / 10.0 + "km");
 
         for (int i=0; i<road.mNodes.size(); i++){
@@ -110,6 +113,7 @@ public class RouteMap extends Map {
             roadMarker.setSnippet(node.mInstructions);
             roadMarker.setSubDescription(Road.getLengthDurationText(mapView.getContext(), node.mLength, node.mDuration));
             roadMarker.setImage(upward_arrow);
+            mapView.invalidate();
         }
 
         this.endPoint = endPoint;
@@ -124,19 +128,29 @@ public class RouteMap extends Map {
         return this.pathTime;
     }
 
-    public void invertPath() {
-        if(startMarker != null && endMarker != null)
+    public void invertPath(String newStartText, String newEndText) throws Exception {
+        if(startMarker != null && endMarker != null && startPoint != null && endPoint != null)
             if(!inverted) {
-                startMarker.setPosition(endPoint);
-                endMarker.setPosition(startPoint);
+                GeoPoint newStartPoint = endPoint;
+                GeoPoint newEndPoint = startPoint;
+                updateStartNavigationPath(newStartPoint, newStartText);
+                updateDestinationNavigationPath(newEndPoint, newEndText);
                 inverted = true;
 
             }
             else{
-                startMarker.setPosition(startPoint);
-                endMarker.setPosition(endPoint);
+                GeoPoint newStartPoint = startPoint;
+                GeoPoint newEndPoint = endPoint;
+                updateStartNavigationPath(newStartPoint, newEndText);
+                updateDestinationNavigationPath(newEndPoint, newStartText);
                 inverted = false;
             }
         mapView.invalidate();
+    }
+
+    public void deletePath() {
+        waypoints.clear();
+        mapView.getOverlays().clear();
+        mapView.getOverlays().add(myLocationOverlay);
     }
 }

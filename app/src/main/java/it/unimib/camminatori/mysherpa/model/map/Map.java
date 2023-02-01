@@ -1,6 +1,10 @@
 package it.unimib.camminatori.mysherpa.model.map;
 
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_BOTTOM;
 import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_LEFT;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_RIGHT;
+import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_TOP;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -42,7 +46,7 @@ public class Map implements MapEventsReceiver {
                 new GpsMyLocationProvider(requireActivity()), map);
         this.mapEventsOverlay = new MapEventsOverlay(this);
 
-        this.mapView.setTileSource(TileSourceFactory.WIKIMEDIA);
+        this.mapView.setTileSource(TileSourceFactory.MAPNIK);
         this.mapView.setMultiTouchControls(true);
         this.mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
 
@@ -50,18 +54,20 @@ public class Map implements MapEventsReceiver {
         this.mapView.getOverlays().add(rotationController);
 
         this.myLocationOverlay.enableMyLocation();
-        this.myLocationOverlay.setDrawAccuracyEnabled(true);
+        this.myLocationOverlay.setDrawAccuracyEnabled(false);
         this.mapController.setZoom(17.0);
         this.mapView.setMinZoomLevel(6.5);
 
         this.myLocationOverlay.enableFollowLocation();
-        this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
 
         userIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_userposition);
 
         this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
+        this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
         this.mapView.getOverlays().add(0, mapEventsOverlay);
         this.mapView.getOverlays().add(myLocationOverlay);
+
+        this.mapView.invalidate();
     }
 
     protected Context requireActivity() {
@@ -101,8 +107,7 @@ public class Map implements MapEventsReceiver {
     }
 
     public void resetCenter(){
-        GeoPoint myLocation = myLocationOverlay.getMyLocation();
-        mapController.setCenter(myLocation);
+        mapController.setCenter(myLocationOverlay.getMyLocation());
     }
 
     @Override

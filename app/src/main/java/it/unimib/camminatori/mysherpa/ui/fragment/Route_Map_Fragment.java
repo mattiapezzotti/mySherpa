@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import it.unimib.camminatori.mysherpa.R;
@@ -31,6 +32,7 @@ public class Route_Map_Fragment extends Fragment{
     private Location_ViewModel location_viewModel;
     private boolean start = true;
     private boolean pathStart = false;
+    private final String startOnMyPostionString = "myPosition";
 
     public Route_Map_Fragment() { super(R.layout.fragment_route_map); }
 
@@ -58,7 +60,7 @@ public class Route_Map_Fragment extends Fragment{
         routeMap = new RouteMap(rootView.findViewById(R.id.mappa_naviga));
 
         final Observer<Location> updateLocation = l -> {
-            if(l.getLon() != null && l.getLat() != null) {
+            if(l != null) {
 
                 GeoPoint p = new GeoPoint(
                         Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
@@ -70,13 +72,17 @@ public class Route_Map_Fragment extends Fragment{
                         start = false;
                     }
                     else {
-                        routeMap.updateDestinationNavigationPath(p, l.getDisplayName());
+                        try {
+                            routeMap.updateDestinationNavigationPath(p, l.getDisplayName());
+                        } catch (Exception e) {
+                            this.printError(e.getMessage());
+                        }
                         start = true;
                         pathStart = false;
                     }
             }
             else{
-                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(this.getView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -88,19 +94,52 @@ public class Route_Map_Fragment extends Fragment{
         routeMap.resetCenter();
     }
 
-    public void findPathTextOnly(String startText, String endText){
+    public void findPathTextOnly(String startText, String endText) {
         start = true;
         pathStart = true;
-        location_viewModel.geocodePlace(startText);
-        (new Handler()).postDelayed(()
-                -> location_viewModel.geocodePlace(endText), 500
-        );
+
+        if (!Objects.equals(startText, startOnMyPostionString))
+            location_viewModel.geocodePlace(startText);
+        else {
+            routeMap.updateStartNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+            start = false;
+        }
+
+        if (!Objects.equals(endText, startOnMyPostionString))
+            if (!Objects.equals(startText, startOnMyPostionString))
+                (new Handler()).postDelayed(()
+                        -> location_viewModel.geocodePlace(endText), 500
+                );
+            else
+                location_viewModel.geocodePlace(endText);
+        else
+            if (!Objects.equals(startText, startOnMyPostionString))
+                (new Handler()).postDelayed(()
+                        -> {
+                            try {
+                                routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+                            } catch (Exception e) {
+                                this.printError(e.getMessage());
+                            }
+                        }, 500
+                );
+            else {
+                try {
+                    routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+                } catch (Exception e) {
+                    this.printError(e.getMessage());
+                }
+            }
 
     }
 
     public void findPathWithNode(GeoPoint endNode, String endText){
         routeMap.updateStartNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
-        routeMap.updateDestinationNavigationPath(endNode, endText);
+        try {
+            routeMap.updateDestinationNavigationPath(endNode, endText);
+        } catch (Exception e) {
+            this.printError(e.getMessage());
+        }
     }
 
     @Override
@@ -123,7 +162,19 @@ public class Route_Map_Fragment extends Fragment{
         return routeMap.getPathTime();
     }
 
-    public void invertPath() {
-        this.routeMap.invertPath();
+    public void invertPath(String startText, String endText) {
+        try {
+            this.routeMap.invertPath(startText,endText);
+        } catch (Exception e) {
+            this.printError(e.getMessage());
+        }
+    }
+
+    public void deletePath() {
+        this.routeMap.deletePath();
+    }
+
+    public void printError(String errorMessage){
+        Snackbar.make(this.getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 }

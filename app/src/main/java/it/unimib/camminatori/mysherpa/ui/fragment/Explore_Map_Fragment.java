@@ -28,7 +28,6 @@ public class Explore_Map_Fragment extends Fragment{
     private ExploreMap exploreMap;
     private Location_ViewModel location_viewModel;
     private Weather_ViewModel weather_viewModel;
-    private FloatingActionButton myLocationFAB; // Tasto per centrare sulla posizione attuale
 
     public Explore_Map_Fragment() {
         super(R.layout.fragment_explore_map);
@@ -51,10 +50,9 @@ public class Explore_Map_Fragment extends Fragment{
 
         // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
-            if(l.getLon() != null && l.getLat() != null) {
-                exploreMap.setCenter(
-                        new GeoPoint(
-                                Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
+            if(l != null) {
+                exploreMap.setMarkerPosition(new GeoPoint(
+                        Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
                 );
             }
@@ -65,7 +63,6 @@ public class Explore_Map_Fragment extends Fragment{
         };
 
         location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
-        exploreMap.resetCenter();
     }
 
     @Override
@@ -94,13 +91,5 @@ public class Explore_Map_Fragment extends Fragment{
     public void resetCenter() {
         this.exploreMap.resetCenter();
         this.exploreMap.getMapController().setZoom(17.0);
-        this.location_viewModel.reverseGeocode(
-                this.exploreMap.getMyLocationOverlay().getMyLocation().getLatitude(),
-                this.exploreMap.getMyLocationOverlay().getMyLocation().getLongitude()
-        );
-        this.weather_viewModel.getCoordinatesWeather(
-                this.exploreMap.getMyLocationOverlay().getMyLocation().getLatitude(),
-                this.exploreMap.getMyLocationOverlay().getMyLocation().getLongitude()
-        );
     }
 }
