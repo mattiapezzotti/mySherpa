@@ -1,4 +1,4 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.recyclerview;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
@@ -25,6 +26,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     private final ArrayList<Record_ViewModel.SaveRecordInfo> localFavDataBkp;
     private OnItemsChangedListener changedListener;
     private OnShareClickedListener shareClickedListener;
+    private onExploreClickedListener exploreClickedListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView locationTextView;
@@ -35,6 +37,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         private final FrameLayout layoutExpandView;
         private final ImageButton deleteButton;
         private final ImageButton shareButton;
+        private final ImageButton exploreButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -48,6 +51,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             this.deleteButton = view.findViewById(R.id.fav_delete_button);
             this.layoutExpandView = view.findViewById(R.id.save_record_click_layout);
             this.shareButton = view.findViewById(R.id.fav_share_button);
+            this.exploreButton = view.findViewById(R.id.fav_explore_button);
         }
 
         public TextView getLocationTextView() {
@@ -80,6 +84,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
         public ImageButton getShareButton() {
             return this.shareButton;
+        }
+
+        public ImageButton getExploreButton(){
+            return this.exploreButton;
         }
     }
 
@@ -127,6 +135,11 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             if (shareClickedListener != null) {
                 shareClickedListener.onShareClicked(viewHolder.getAdapterPosition());
             }
+        });
+
+        viewHolder.getExploreButton().setOnClickListener(v ->{
+            if(exploreClickedListener != null)
+                exploreClickedListener.onShareClicked(viewHolder.getAdapterPosition());
         });
 
         expandView.setOnClickListener(v -> {
@@ -184,6 +197,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         this.shareClickedListener = shareClickedListener;
     }
 
+    public void setOnExploreClickedListener(onExploreClickedListener exploreClickedListener){
+        this.exploreClickedListener = exploreClickedListener;
+    }
+
     private void callChangeListener() {
         if (changedListener != null) {
             changedListener.onItemsChanged(getItemCount());
@@ -221,6 +238,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     }
 
     public interface OnShareClickedListener {
+        void onShareClicked(int index);
+    }
+
+    public interface onExploreClickedListener {
         void onShareClicked(int index);
     }
 }

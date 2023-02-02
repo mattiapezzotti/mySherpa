@@ -124,12 +124,13 @@ public class Record_ViewModel extends ViewModel {
         saveRecordInfo.millisecondsTime = localRecordInfo.recordMilliseconds;
         saveRecordInfo.metersDistance = localRecordInfo.recordMeters;
         saveRecordInfo.fileUUID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
+
         if (gpsLocationListener != null)
             saveRecordInfo.path = gpsLocationListener.getPath();
         else
             saveRecordInfo.path = new ArrayList<>();
 
-        Log.d(TAG, "file UUID: " + saveRecordInfo.fileUUID);
+        Log.d(TAG, "Saved: " + saveRecordInfo.fileUUID);
 
         favList.add(saveRecordInfo);
     }
@@ -310,11 +311,10 @@ public class Record_ViewModel extends ViewModel {
 
                 metersCount += Math.sqrt(latMeters * latMeters + longMeters * longMeters) * 1000;
                 metersCount += Math.abs(currElevation - previousLocation.getAltitude());
-
-                path.add(location);
             }
 
             previousLocation = location;
+            path.add(location);
         }
 
         @Override

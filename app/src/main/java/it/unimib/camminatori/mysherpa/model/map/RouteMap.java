@@ -22,13 +22,7 @@ import mil.nga.geopackage.BuildConfig;
 
 public class RouteMap extends Map {
 
-    private Drawable red_Marker;
-    private Drawable blue_Marker;
-    private Drawable black_Marker;
-    private Drawable upward_arrow;
-
     private ArrayList<GeoPoint> waypoints = new ArrayList<>();
-    private RoadManager roadManager;
     private Marker startMarker;
     private Marker endMarker;
 
@@ -41,17 +35,7 @@ public class RouteMap extends Map {
 
     public RouteMap(MapView map){
         super(map);
-
-        red_Marker = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_red);
-        blue_Marker = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_blue);
-        black_Marker = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_black);
-        upward_arrow = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_arrow_upward_24);
-
         inverted = false;
-
-        this.roadManager = new OSRMRoadManager(mapView.getContext(), BuildConfig.APPLICATION_ID);
-        ((OSRMRoadManager)roadManager).setMean(OSRMRoadManager.MEAN_BY_FOOT);
-
     }
 
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){

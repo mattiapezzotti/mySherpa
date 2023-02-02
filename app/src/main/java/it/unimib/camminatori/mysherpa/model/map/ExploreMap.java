@@ -6,9 +6,15 @@ import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.content.res.AppCompatResources;
 
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
+
+import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.repository.WeatherRepository;
@@ -24,13 +30,11 @@ public class ExploreMap extends Map {
     public ExploreMap(MapView map){
         super(map);
 
-        Drawable markerIcon = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_circle_24_marker_red);
-
         location_viewModel = new Location_ViewModel();
         weather_viewModel = new Weather_ViewModel();
 
         this.marker = new Marker(mapView);
-        this.marker.setIcon(markerIcon);
+        this.marker.setIcon(red_Marker);
         this.marker.setInfoWindow(null);
     }
 
@@ -65,5 +69,29 @@ public class ExploreMap extends Map {
             position = myLocationOverlay.getMyLocation();
         location_viewModel.reverseGeocode(position.getLatitude(), position.getLongitude());
         weather_viewModel.getCoordinatesWeather(position.getLatitude(), position.getLongitude());
+    }
+
+    public void drawRoad(ArrayList<GeoPoint> waypoints) throws Exception {
+        Road road = roadManager.getRoad(waypoints);
+
+        if(road.mStatus == Road.STATUS_TECHNICAL_ISSUE)
+            throw new Exception("Strada non trovata");
+
+        Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+
+        mapView.getOverlays().add(roadOverlay);
+
+        for (int i=0; i<road.mNodes.size(); i++){
+            RoadNode node = road.mNodes.get(i);
+            Marker roadMarker= new Marker(mapView);
+            roadMarker.setPosition(node.mLocation);
+            roadMarker.setIcon(black_Marker);
+            roadMarker.setTitle("Step "+ i);
+            mapView.getOverlays().add(roadMarker);
+            roadMarker.setSnippet(node.mInstructions);
+            roadMarker.setSubDescription(Road.getLengthDurationText(mapView.getContext(), node.mLength, node.mDuration));
+            roadMarker.setImage(upward_arrow);
+        }
+        mapView.invalidate();
     }
 }

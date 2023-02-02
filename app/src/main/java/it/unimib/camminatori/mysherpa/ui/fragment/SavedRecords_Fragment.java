@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,11 +26,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.ByteArrayOutputStream;
@@ -38,10 +41,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
-import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
@@ -51,6 +56,8 @@ public class SavedRecords_Fragment extends Fragment {
 
     final private String TAG = "SavedRecordsFragment";
     protected RecyclerView favRecordsView;
+
+    private FloatingActionButton exploreButton;
 
     // View Model
     private Record_ViewModel recordViewModel;
@@ -100,6 +107,24 @@ public class SavedRecords_Fragment extends Fragment {
                 noBookmarksTextView.setVisibility(View.GONE);
         });
 
+        favRecordsRecyclerViewAdapter.setOnExploreClickedListener(index -> {
+            //System.out.println(recordViewModel.getFavList().get(index).path);
+
+            ArrayList<Location> registeredWaypoints = recordViewModel.getFavList().get(index).path;
+            ArrayList<GeoPoint> waypointsToDraw = new ArrayList<>();
+            for (Location l : registeredWaypoints) {
+                waypointsToDraw.add(new GeoPoint(l.getLatitude(), l.getLongitude()));
+            }
+
+            //System.out.println(recordViewModel.getFavList().get(index).path);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("waypoints", waypointsToDraw);
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_explore, bundle);
+
+        });
+
         favRecordsRecyclerViewAdapter.setOnShareClickedListener(index -> {
             try {
                 String filename = recordViewModel.getFavList().get(index).fileUUID + ".gpx";
@@ -131,8 +156,6 @@ public class SavedRecords_Fragment extends Fragment {
             } catch (Exception e) {
                 Log.w(TAG, e);
             }
-
-
         });
 
         favRecordsView.setAdapter(favRecordsRecyclerViewAdapter);
@@ -210,9 +233,11 @@ public class SavedRecords_Fragment extends Fragment {
             }
         }
 
+        //TODO: FIX SALVATAGGIO LOCATIONS
+        Type listOfFav = new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>(){}.getType();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-        String json = gson.toJson(favList);
+        String json = gson.toJson(favList,listOfFav);
 
         editor.putString(SavedRecords_Fragment.FAVOURITES_RECORDS, json);
         editor.apply();

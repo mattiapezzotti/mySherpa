@@ -43,7 +43,6 @@ public class Route_Fragment extends Fragment {
 
     private CardView cardInfo;
     private FloatingActionButton myLocationFAB;
-    private LinearProgressIndicator linearProgressIndicator;
 
     private Route_Map_Fragment rmf;
 
@@ -75,7 +74,6 @@ public class Route_Fragment extends Fragment {
         navigateButton = view.findViewById(R.id.button_navigate);
         invertPath = view.findViewById(R.id.swapPath);
         deletePath = view.findViewById(R.id.deletePath);
-        linearProgressIndicator = view.findViewById(R.id.loading_bar);
 
         cardInfo = view.findViewById(R.id.cardInfo);
         timeText = view.findViewById(R.id.time_text);
@@ -83,11 +81,8 @@ public class Route_Fragment extends Fragment {
         myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 
         cardInfo.setVisibility(View.GONE);
-        linearProgressIndicator.setVisibility(View.GONE);
 
         rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
-
-
 
         myLocationFAB.clearFocus();
 
@@ -101,11 +96,9 @@ public class Route_Fragment extends Fragment {
 
             if(!a.isEmpty() && !b.isEmpty()) {
                 rmf.findPathTextOnly(a, b);
-                linearProgressIndicator.setVisibility(View.VISIBLE);
                 (new Handler()).postDelayed(()
                         -> updateInfoCard(), 1000
                 );
-                linearProgressIndicator.setVisibility(View.GONE);
             }
             else{
                 Snackbar.make(this.getView().getRootView(),"Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
@@ -118,41 +111,36 @@ public class Route_Fragment extends Fragment {
             String newStartText = String.valueOf(textDestinazione.getText()).trim();
 
             if(!newEndText.isEmpty() && !newStartText.isEmpty()) {
-                linearProgressIndicator.setVisibility(View.VISIBLE);
                 textPartenza.setText(newStartText);
                 textDestinazione.setText(newEndText);
                 rmf.invertPath(newStartText,newEndText);
             }
-            linearProgressIndicator.setVisibility(View.GONE);
         });
 
         deletePath.setOnClickListener(v -> {
-            linearProgressIndicator.setVisibility(View.VISIBLE);
             textPartenza.setText("");
             textDestinazione.setText("");
             rmf.deletePath();
             cardInfo.setVisibility(View.GONE);
-            linearProgressIndicator.setVisibility(View.GONE);
         });
 
         if(getArguments() != null) {
-            linearProgressIndicator.setVisibility(View.VISIBLE);
-            textPartenza.setText("myPosition");
-            textDestinazione.setText(getArguments().getString("destText"));
+            if(getArguments().getString("destText") != null) {
+                textPartenza.setText("myPosition");
+                textDestinazione.setText(getArguments().getString("destText"));
 
-            String destText = getArguments().getString("destText");
-            Double lat = getArguments().getDouble("destLat");
-            Double lon = getArguments().getDouble("destLon");
+                String destText = getArguments().getString("destText");
+                Double lat = getArguments().getDouble("destLat");
+                Double lon = getArguments().getDouble("destLon");
 
-            (new Handler()).postDelayed(()
-                    -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
-            );
+                (new Handler()).postDelayed(()
+                        -> rmf.findPathWithNode(new GeoPoint(lat, lon), destText), 1000
+                );
 
-            (new Handler()).postDelayed(()
-                    -> updateInfoCard(), 1000
-            );
-            linearProgressIndicator.setVisibility(View.GONE);
-
+                (new Handler()).postDelayed(()
+                        -> updateInfoCard(), 1000
+                );
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.util.GeoPoint;
+
+import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
@@ -91,5 +94,9 @@ public class Explore_Map_Fragment extends Fragment{
     public void resetCenter() {
         this.exploreMap.resetCenter();
         this.exploreMap.getMapController().setZoom(17.0);
+    }
+
+    public void drawRoad(ArrayList<GeoPoint> waypoints) throws Exception {
+        exploreMap.drawRoad(waypoints);
     }
 }
