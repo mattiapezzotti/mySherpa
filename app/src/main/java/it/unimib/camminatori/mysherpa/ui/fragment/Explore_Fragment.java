@@ -74,6 +74,27 @@ public class Explore_Fragment extends Fragment {
                             }, 500
                     );
             }
+            else {
+                if (getArguments().getString("destText") != null) {
+                    GeoPoint p = new GeoPoint(
+                            getArguments().getDouble("destLat"),
+                            getArguments().getDouble("destLon")
+                    );
+                    (new Handler()).postDelayed(() -> {
+                                try {
+                                    rme.setCenter(p);
+                                    getArguments().clear();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Snackbar.make(
+                                                    requireActivity().findViewById(R.id.container_main_activity),
+                                                    "Qualcosa è andato storto", Snackbar.LENGTH_SHORT)
+                                            .show();
+                                }
+                            }, 500
+                    );
+                }
+            }
         }
     }
 }

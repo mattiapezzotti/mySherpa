@@ -8,8 +8,11 @@ import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_TOP;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 
 import androidx.appcompat.content.res.AppCompatResources;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
@@ -106,19 +109,20 @@ public class Map implements MapEventsReceiver {
     }
 
     public void setCenter(GeoPoint point){
-        mapController.setCenter(point);
+        this.myLocationOverlay.disableFollowLocation();
+        this.mapController.setCenter(point);
     }
 
     public void resume(){
+        this.mapEventsOverlay.onResume();
         this.mapView.onResume();
         this.myLocationOverlay.enableMyLocation();
-        this.mapEventsOverlay.onResume();
     }
 
     public void pause(){
+        this.mapEventsOverlay.onPause();
         this.mapView.onPause();
         this.myLocationOverlay.disableMyLocation();
-        this.mapEventsOverlay.onPause();
     }
 
     public void resetCenter(){
