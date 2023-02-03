@@ -2,10 +2,6 @@ package it.unimib.camminatori.mysherpa.model.map;
 
 
 
-import android.graphics.drawable.Drawable;
-
-import androidx.appcompat.content.res.AppCompatResources;
-
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
@@ -16,14 +12,12 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.repository.WeatherRepository;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
 public class ExploreMap extends Map {
 
-    private final Marker marker;
+    private Marker marker;
     private final Location_ViewModel location_viewModel;
     private final Weather_ViewModel weather_viewModel;
 
@@ -49,8 +43,7 @@ public class ExploreMap extends Map {
     // aggiorna la location in focus in modo da comunicarlo alle altre classi
     @Override
     public boolean longPressHelper(GeoPoint p) {
-        setMarkerPosition(p);
-        updateLabelLocation(p);
+        updateLocation(p);
         return true;
     }
 
@@ -60,11 +53,12 @@ public class ExploreMap extends Map {
         marker.setPosition(p);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
+        myLocationOverlay.disableFollowLocation();
         mapView.getOverlays().add(marker);
         mapController.animateTo(marker.getPosition());
     }
 
-    public void updateLabelLocation(GeoPoint position){
+    public void updateLocation(GeoPoint position){
         if(position == null)
             position = myLocationOverlay.getMyLocation();
         location_viewModel.reverseGeocode(position.getLatitude(), position.getLongitude());

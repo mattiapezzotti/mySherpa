@@ -9,11 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -40,6 +42,8 @@ public class Record_Fragment extends Fragment {
     private TextView recordTimeView;
     private TextView distanceView;
     private TextView elevationView;
+
+    private Button showListButton;
 
     // View Model
     private Record_ViewModel recordViewModel;
@@ -94,6 +98,7 @@ public class Record_Fragment extends Fragment {
         recordTimeView = view.findViewById(R.id.record_time_view);
         distanceView = view.findViewById(R.id.distance_view);
         elevationView = view.findViewById(R.id.elevation_view);
+        showListButton = view.findViewById(R.id.show_list_button);
 
         ImageButton saveRecordButton = view.findViewById(R.id.button_save_record);
         ImageButton playRecordButton = view.findViewById(R.id.button_start_record);
@@ -137,6 +142,10 @@ public class Record_Fragment extends Fragment {
         stopRecordButton.setOnClickListener(v -> {
             recordViewModel.buttonStopClicked();
             playRecordButton.setImageResource(R.drawable.ic_round_play_circle_24);
+        });
+
+        showListButton.setOnClickListener(v -> {
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_recordList);
         });
     }
 
