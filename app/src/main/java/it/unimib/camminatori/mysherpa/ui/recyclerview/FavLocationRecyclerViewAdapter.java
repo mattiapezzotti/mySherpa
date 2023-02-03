@@ -1,5 +1,8 @@
 package it.unimib.camminatori.mysherpa.ui.recyclerview;
 
+import android.annotation.SuppressLint;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +19,31 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedLocation_Fragment;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLocationRecyclerViewAdapter.ViewHolder>{
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
     private ArrayList<Data_Location_ViewModel.SavedLocationInfo> localFavData;
+    private final ArrayList<Data_Location_ViewModel.SavedLocationInfo> localFavDataBkp;
     private SavedLocation_Fragment savedLocationFragment;
 
     public FavLocationRecyclerViewAdapter(SavedLocation_Fragment savedLocationFragment, ArrayList<Data_Location_ViewModel.SavedLocationInfo> data) {
         this.localFavData = data;
+        localFavDataBkp = new ArrayList<>();
+        localFavDataBkp.addAll(localFavData);
         this.savedLocationFragment = savedLocationFragment;
+    }
+
+    public FavLocationRecyclerViewAdapter(ArrayList<Data_Location_ViewModel.SavedLocationInfo> data) {
+        if (data == null)
+            localFavData = new ArrayList<>();
+        else
+            localFavData = data;
+
+        localFavDataBkp = new ArrayList<>();
+        localFavDataBkp.addAll(localFavData);
     }
 
     @NonNull
@@ -65,6 +83,29 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
     @Override
     public int getItemCount() {
         return localFavData.size();
+    }
+
+    @SuppressLint({"LongLogTag", "NotifyDataSetChanged"})
+    public void filter(CharSequence sequence) {
+        Log.i(TAG, "data backup: " + localFavDataBkp.toString());
+
+        ArrayList<Data_Location_ViewModel.SavedLocationInfo> tmp = new ArrayList<>();
+
+        if (!TextUtils.isEmpty(sequence)) {
+            for (Data_Location_ViewModel.SavedLocationInfo location : localFavDataBkp) {
+                if (location.locationString.toLowerCase().contains(sequence)) {
+                    tmp.add(location);
+                }
+            }
+        } else {
+            tmp.addAll(localFavDataBkp);
+        }
+
+        localFavData.clear();
+        localFavData.addAll(tmp);
+        notifyDataSetChanged();
+
+        tmp.clear();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

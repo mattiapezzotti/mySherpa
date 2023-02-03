@@ -3,6 +3,7 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,7 @@ public class SavedLocation_Fragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //favLocationRecyclerViewAdapter.filter(s);
+                favLocationRecyclerViewAdapter.filter(s);
             }
 
             @Override

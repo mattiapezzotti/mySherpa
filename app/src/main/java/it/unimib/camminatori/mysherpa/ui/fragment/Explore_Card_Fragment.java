@@ -94,13 +94,14 @@ public class Explore_Card_Fragment extends Fragment {
         cardButtonNavigate = card.findViewById(R.id.bottomsheet_button_navigate);
         cardButtonSave = card.findViewById(R.id.bottomsheet_button_save);
 
-        // Cliccando il tasto nagigate, inizia la naviazione dalla posizione attuale fino al luogo
-        // nella sezione navigate dell'app
         cardButtonNavigate.setOnClickListener(l -> {
             this.transaction();
         });
 
-        // Cliccando il tasto save, si salva il luogo nei preferiti
+        /**
+         * Cliccando il bottone save le cordinate del posto ricercato
+         * e il nome del posto vengono salvate.
+         */
         cardButtonSave.setOnClickListener(l -> {
             LiveData<Location> location = location_viewModel.getGeocodedLocation();
 
