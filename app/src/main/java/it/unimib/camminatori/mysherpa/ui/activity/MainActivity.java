@@ -98,4 +98,5 @@ public class MainActivity extends AppCompatActivity{
                             new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
+
 }

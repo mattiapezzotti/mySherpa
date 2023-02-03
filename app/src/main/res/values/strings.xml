@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">mySherpa</string>
+    <string name="ok">OK</string>
     <string name="searchbar_placeholder">Cerca qui</string>
     <string name="bottom_nav_bookmark">Saved</string>
     <string name="bottom_nav_route">Route</string>
@@ -7,6 +8,11 @@
     <string name="bottom_nav_record">Record</string>
     <string name="bottom_nav_profile">Profile</string>
     <string name="gps_not_enabled">Impossbile acquisire il GPS</string>
+    <string name="no_bookmarks">Non ci sono percorsi preferiti</string>
+    <string name="save_dialog_title">Salva Percorso</string>
+    <string name="save">Salva</string>
+    <string name="cancel">Cancella</string>
+    <string name="save_hint">Nome percorso</string>
     <string name="default_timer_text">00:00:00</string>
     <string name="default_meters_text">0 m</string>
     <string name="default_elevation_description">Elevazione Attuale</string>
@@ -14,8 +20,9 @@
     <string name="default_distance_description">Distanza Percorsa</string>
     <string name="registrazioni_passate">Registrazioni Passate</string>
     <string name="mypositionbutton">mypositionbutton</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="traveled_distance_prefix">Distanza Percorsa:</string>
+    <string name="total_time_prefix">Tempo Totale:</string>
     <string name="partenza">Partenza</string>
     <string name="arrivo">Destinazione</string>
+	<string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
 </resources>

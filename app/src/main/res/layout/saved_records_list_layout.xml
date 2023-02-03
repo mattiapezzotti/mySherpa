@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="12dp">
 
-
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +17,8 @@
         app:srcCompat="@drawable/ic_baseline_radio_button_checked_24"
         app:tint="@color/md_theme_dark_primaryContainer" />
 
-    <TextView
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fav_location_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,26 +30,96 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Location Name" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fav_date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/md_theme_light_outline"
-        android:textSize="10sp"
+        android:textSize="11sp"
         app:layout_constraintStart_toStartOf="@+id/fav_location_text_view"
         app:layout_constraintTop_toBottomOf="@+id/fav_location_text_view"
         tools:text="12-09-2022" />
 
-    <ImageButton
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/traveled_record_distance_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/md_theme_light_secondary"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/fav_date_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/fav_date_text_view"
+        tools:visibility="visible"
+        tools:text="Distanza Percorsa: 12.4 Km" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/total_record_time_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/md_theme_light_secondary"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/traveled_record_distance_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/traveled_record_distance_text_view"
+        tools:visibility="visible"
+        tools:text="Tempo Totale: 1 h  12 m  31 s" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fav_delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
+        android:layout_marginEnd="60dp"
         android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/fav_date_text_view"
+        app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fav_location_text_view"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_round_delete_outline_24"
-        app:tint="#841717" />
+        style="?attr/floatingActionButtonSmallStyle"
+        app:tint="@color/md_theme_light_error" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fav_explore_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:backgroundTint="#00FFFFFF"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_explore_24"
+        style="?attr/floatingActionButtonSmallStyle"
+        tools:visibility="visible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fav_share_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:backgroundTint="#00FFFFFF"
+        android:visibility="gone"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fav_explore_button"
+        app:srcCompat="@drawable/ic_baseline_open_in_new_24"
+        style="?attr/floatingActionButtonSmallStyle"
+        tools:visibility="visible"/>
+
+    <FrameLayout
+        android:id="@+id/save_record_click_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fav_delete_button"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
