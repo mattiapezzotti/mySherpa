@@ -1,6 +1,5 @@
-package it.unimib.camminatori.mysherpa;
+package it.unimib.camminatori.mysherpa.ui.recyclerview;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedLocation_Fragment;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLocationRecyclerViewAdapter.ViewHolder>{
     final private String TAG = "FavLocationRecyclerViewAdapter";

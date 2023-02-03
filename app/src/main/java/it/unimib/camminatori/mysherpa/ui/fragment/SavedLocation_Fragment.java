@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.FavLocationRecyclerViewAdapter;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
 
