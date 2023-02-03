@@ -10,7 +10,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +36,6 @@ public class Explore_Card_Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    Context context;
     private View card;
 
     private TextView locationName;
@@ -69,7 +67,7 @@ public class Explore_Card_Fragment extends Fragment {
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
         weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
         dataLocation_ViewModel = new ViewModelProvider(requireParentFragment()).get(Data_Location_ViewModel.class);
-
+        dataLocation_ViewModel.init(this.getContext());
     }
 
     @Override
@@ -110,9 +108,13 @@ public class Explore_Card_Fragment extends Fragment {
             LiveData<Location> location = location_viewModel.getGeocodedLocation();
 
             dataLocation_ViewModel.addRecord(
+                    this.getContext(),
                     locationName.getText().toString(),
                     Double.parseDouble(location.getValue().getLat()),
                     Double.parseDouble(location.getValue().getLon()));
+
+            Snackbar.make(this.getView().getRootView(),"La località è stata salvata", Snackbar.LENGTH_SHORT)
+                    .show();
 
         });
 

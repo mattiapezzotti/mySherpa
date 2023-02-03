@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedLocation_Fragment;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLocationRecyclerViewAdapter.ViewHolder>{
     final private String TAG = "FavLocationRecyclerViewAdapter";
@@ -47,7 +46,7 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
         viewHolder.getLocationTextView().setText(localFavData.get(position).locationString);
 
         viewHolder.getDeleteButton().setOnClickListener(v -> {
-            Data_Location_ViewModel.removeRecord(viewHolder.getAdapterPosition());
+            Data_Location_ViewModel.removeRecord(savedLocationFragment.getContext(), viewHolder.getAdapterPosition());
             notifyItemRemoved(viewHolder.getAdapterPosition());
         });
 
