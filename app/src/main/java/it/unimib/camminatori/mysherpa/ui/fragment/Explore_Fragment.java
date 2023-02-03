@@ -3,7 +3,6 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;

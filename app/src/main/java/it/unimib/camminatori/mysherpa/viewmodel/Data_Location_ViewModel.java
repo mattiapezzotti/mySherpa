@@ -3,7 +3,6 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 import android.content.Context;
 import android.location.LocationManager;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -45,7 +44,7 @@ public class Data_Location_ViewModel extends ViewModel {
         Data_Location_ViewModel.SavedLocationInfo saveRecordInfo = new Data_Location_ViewModel.SavedLocationInfo();
         saveRecordInfo.locationString = localityName;
         saveRecordInfo.lat = latitude;
-        saveRecordInfo.longi = longitude;
+        saveRecordInfo.lon = longitude;
         favList.add(saveRecordInfo);
     }
 
@@ -71,14 +70,14 @@ public class Data_Location_ViewModel extends ViewModel {
         }
 
         //Costruttore dell'arraylist popolato
-        public SavedLocationInfo(String locationString, double lat, double longi){
+        public SavedLocationInfo(String locationString, double lat, double lon){
             this.locationString = locationString;
             this.lat = lat;
-            this.longi = longi;
+            this.lon = lon;
         }
 
         public String locationString;
         public double lat;
-        public double longi;
+        public double lon;
     }
 }
