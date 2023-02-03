@@ -38,7 +38,6 @@ public class Data_Location_ViewModel extends ViewModel {
     public Data_Location_ViewModel(){
         // TODO: leggere da JSon o DB
         favList = new ArrayList<>();
-        favList.add(new SavedLocationInfo("milano", 100,120));
 
         //String json = readFromFile(context);
     }

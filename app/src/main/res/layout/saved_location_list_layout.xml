@@ -45,19 +45,6 @@
         app:srcCompat="@drawable/ic_round_delete_outline_24"
         app:tint="@color/md_theme_light_error" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fav_edit_name_botton"
-        style="?attr/floatingActionButtonSmallStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="80dp"
-        android:backgroundTint="#00FFFFFF"
-        app:elevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_edit_note_24"
-        app:tint="@color/cardview_dark_background" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
