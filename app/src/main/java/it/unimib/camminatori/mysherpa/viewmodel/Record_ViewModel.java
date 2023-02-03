@@ -15,11 +15,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.annotations.Expose;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment;
 
 
 public class Record_ViewModel extends ViewModel {
@@ -32,9 +34,10 @@ public class Record_ViewModel extends ViewModel {
     private MyLocationListener gpsLocationListener;
     private LocationManager locationManager;
     private static ArrayList<SaveRecordInfo> favList;
+    private boolean favAdded = false;
 
 
-    public MutableLiveData<RecordInfo> getRecordInfo(Context context, ArrayList<SaveRecordInfo> favList) {
+    public MutableLiveData<RecordInfo> getRecordInfo(Context context) {
         if (recordInfo == null)
             recordInfo = new MutableLiveData<RecordInfo>();
 
@@ -47,7 +50,16 @@ public class Record_ViewModel extends ViewModel {
         if (this.context == null)
             this.context = context;
 
-        Record_ViewModel.favList = favList;
+        if (Record_ViewModel.favList == null)
+            Record_ViewModel.favList = new ArrayList<>();
+
+        ArrayList<Record_ViewModel.SaveRecordInfo> savedRecords = SavedRecords_Fragment.getSavedRecords(context);
+
+        if (!favAdded) {
+            Record_ViewModel.favList.addAll(savedRecords);
+            favAdded = true;
+        }
+        Log.i(TAG, "Saved Records: " + savedRecords);
 
         return recordInfo;
     }
@@ -72,13 +84,16 @@ public class Record_ViewModel extends ViewModel {
         return favList;
     }
 
-    public void buttonPlayClicked() {
+    public boolean buttonPlayClicked() {
         if (!modelInfo.recordStarted) {
+            if (!runLocationListener())
+                return false;
+
+            runRecordTimer();
+
             modelInfo.startRecordTime = SystemClock.elapsedRealtime();
             modelInfo.recordStarted = true;
             modelInfo.recordPaused = false;
-            runRecordTimer();
-            runLocationListener();
         } else {
             modelInfo.recordPaused = !modelInfo.recordPaused;
             if (modelInfo.recordPaused) {
@@ -87,6 +102,8 @@ public class Record_ViewModel extends ViewModel {
                 modelInfo.startRecordTime += SystemClock.elapsedRealtime() - modelInfo.pauseRecordTime;
             }
         }
+
+        return true;
     }
 
     public void buttonStopClicked() {
@@ -106,7 +123,14 @@ public class Record_ViewModel extends ViewModel {
         saveRecordInfo.locationString = localityName;
         saveRecordInfo.millisecondsTime = localRecordInfo.recordMilliseconds;
         saveRecordInfo.metersDistance = localRecordInfo.recordMeters;
+        saveRecordInfo.fileUUID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
 
+        if (gpsLocationListener != null)
+            saveRecordInfo.path = gpsLocationListener.getPath();
+        else
+            saveRecordInfo.path = new ArrayList<>();
+
+        Log.d(TAG, "Saved: " + saveRecordInfo.fileUUID);
 
         favList.add(saveRecordInfo);
     }
@@ -125,23 +149,23 @@ public class Record_ViewModel extends ViewModel {
         timerHandler.post(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "recordTimer running");
-
                 if (modelInfo.recordStarted) {
                     long milliseconds = SystemClock.elapsedRealtime() - modelInfo.startRecordTime;
 
                     if (modelInfo.recordPaused) {
                         milliseconds -= (SystemClock.elapsedRealtime() - modelInfo.pauseRecordTime);
                     } else {
-                        float metersCount = (float) gpsLocationListener.getMetersCount();
+                        float metersCount = (float)gpsLocationListener.getMetersCount();
 
                         localRecordInfo.recordMilliseconds = milliseconds;
                         localRecordInfo.recordMeters = (long)metersCount;
+                        localRecordInfo.currElevation = (long)gpsLocationListener.getCurrentElevation();
 
                         localRecordInfo.updateMeters = metersCount - localRecordInfo.lastUpdateMeters;
 
                         localRecordInfo.timerText = formatTimerString(localRecordInfo.recordMilliseconds);
                         localRecordInfo.metersText = formatMetersString(localRecordInfo.recordMeters);
+                        localRecordInfo.elevationText = formatMetersString(localRecordInfo.currElevation);
 
                         recordInfo.postValue(localRecordInfo);
 
@@ -152,8 +176,9 @@ public class Record_ViewModel extends ViewModel {
                 } else {
                     localRecordInfo.recordMilliseconds = 0;
                     localRecordInfo.recordMeters = 0;
-                    localRecordInfo.timerText = context.getResources().getString(R.string.default_timer_text);
-                    localRecordInfo.metersText = context.getResources().getString(R.string.default_meters_text);
+                    localRecordInfo.timerText = null;
+                    localRecordInfo.metersText = null;
+                    localRecordInfo.elevationText = null;
 
                     recordInfo.postValue(localRecordInfo);
                 }
@@ -162,21 +187,30 @@ public class Record_ViewModel extends ViewModel {
         });
     }
 
-    private void runLocationListener() {
+    private boolean runLocationListener() {
         if (gpsLocationListener != null)
-            return;
+            return true;
 
         if (locationManager == null)
             locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             gpsLocationListener = new MyLocationListener(modelInfo);
+            Log.i(TAG, "Location Listener: " + gpsLocationListener);
+
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+
+                locationManager = null;
+                return false;
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 1, gpsLocationListener);
+        } else {
+            locationManager = null;
+            return false;
         }
+
+        return true;
     }
 
 
@@ -207,10 +241,13 @@ public class Record_ViewModel extends ViewModel {
     public static class RecordInfo {
         public String metersText;
         public String timerText;
+        public String elevationText;
         public long recordMilliseconds;
         public long recordMeters;
+        public long currElevation;
         public float updateMeters;
         private float lastUpdateMeters;
+
     }
 
     private static class ModelInfo {
@@ -221,10 +258,18 @@ public class Record_ViewModel extends ViewModel {
     }
 
     public static class SaveRecordInfo {
+        @Expose
         public String dateString;
+        @Expose
         public String locationString;
+        @Expose
         public long millisecondsTime;
+        @Expose
         public long metersDistance;
+        @Expose
+        public String fileUUID;
+        @Expose
+        public ArrayList<Location> path;
     }
 
     private static class MyLocationListener implements LocationListener {
@@ -232,13 +277,16 @@ public class Record_ViewModel extends ViewModel {
 
         private Location previousLocation;
         private double metersCount;
+        private double currElevation;
         private final ModelInfo modelInfo;
+        public ArrayList<Location> path;
 
         MyLocationListener(ModelInfo modelInfo) {
             super();
 
             this.modelInfo = modelInfo;
             this.resetInfo();
+            this.path = new ArrayList<>();
         }
 
         @Override
@@ -247,6 +295,7 @@ public class Record_ViewModel extends ViewModel {
             double longMeters;
             double longRad;
 
+            //TODO sarebbe meglio gestirlo con requestLocationUpdates e il contrario
             if (!modelInfo.recordStarted || modelInfo.recordPaused)
                 return;
 
@@ -258,28 +307,46 @@ public class Record_ViewModel extends ViewModel {
                 latMeters = 111.32 * Math.abs(location.getLatitude() - previousLocation.getLatitude());
                 longMeters = longRad * Math.abs(location.getLongitude() - previousLocation.getLongitude());
 
-                metersCount += Math.sqrt(latMeters * latMeters + longMeters * longMeters) * 1000;
+                currElevation = location.getAltitude();
 
-                Log.i(TAG, "Meters: " + String.valueOf(metersCount));
+                metersCount += Math.sqrt(latMeters * latMeters + longMeters * longMeters) * 1000;
+                metersCount += Math.abs(currElevation - previousLocation.getAltitude());
             }
 
             previousLocation = location;
+            path.add(location);
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.i(TAG, "onStatusChanged");
+        }
 
         @Override
-        public void onProviderEnabled(String provider) {}
+        public void onProviderEnabled(String provider) {
+            Log.i(TAG, "onProviderEnabled");
+        }
 
         @Override
-        public void onProviderDisabled(String provider) {}
+        public void onProviderDisabled(String provider) {
+            Log.i(TAG, "onProviderDisabled");
+        }
 
         @Override
-        public void onFlushComplete(int requestCode) {}
+        public void onFlushComplete(int requestCode) {
+            Log.i(TAG, "onFlushComplete");
+        }
 
         public double getMetersCount() {
             return metersCount;
+        }
+
+        public double getCurrentElevation() {
+            return currElevation;
+        }
+
+        public ArrayList<Location> getPath() {
+            return path;
         }
 
         private void resetInfo() {

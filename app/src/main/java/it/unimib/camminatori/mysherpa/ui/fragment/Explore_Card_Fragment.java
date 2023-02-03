@@ -20,12 +20,9 @@ import android.widget.TextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.List;
-
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.model.Weather;
-import it.unimib.camminatori.mysherpa.ui.activity.MainActivity;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
@@ -74,7 +71,7 @@ public class Explore_Card_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_explorecard, container, false);
+        return inflater.inflate(R.layout.fragment_explore_card, container, false);
 
     }
 
@@ -112,10 +109,6 @@ public class Explore_Card_Fragment extends Fragment {
                     locationName.getText().toString(),
                     Double.parseDouble(location.getValue().getLat()),
                     Double.parseDouble(location.getValue().getLon()));
-
-            Snackbar.make(this.getView().getRootView(),"La località è stata salvata", Snackbar.LENGTH_SHORT)
-                    .show();
-
         });
 
         // Observer che aggiorna la label del posto nel BottomSheet
@@ -136,7 +129,7 @@ public class Explore_Card_Fragment extends Fragment {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             else{
-                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -148,7 +141,7 @@ public class Explore_Card_Fragment extends Fragment {
                 wind.setText(l.getWindSpeed() + " km/h");
             }
             else{
-                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity),"Impossibile connettersi al server del Meteo. Riprova", Snackbar.LENGTH_SHORT)
                         .show();
             }
 

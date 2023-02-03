@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -77,12 +78,11 @@ public class Route_Fragment extends Fragment {
         cardInfo = view.findViewById(R.id.cardInfo);
         timeText = view.findViewById(R.id.time_text);
         kmText = view.findViewById(R.id.kilometers_text);
+        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 
         cardInfo.setVisibility(View.GONE);
 
         rmf = (Route_Map_Fragment) getChildFragmentManager().findFragmentById(R.id.fragment_map_route);
-
-        myLocationFAB = view.findViewById(R.id.fab_getMyLocation);
 
         myLocationFAB.clearFocus();
 
@@ -107,38 +107,40 @@ public class Route_Fragment extends Fragment {
         });
 
         invertPath.setOnClickListener(v -> {
-            String a = String.valueOf(textPartenza.getText()).trim();
-            String b = String.valueOf(textDestinazione.getText()).trim();
+            String newEndText = String.valueOf(textPartenza.getText()).trim();
+            String newStartText = String.valueOf(textDestinazione.getText()).trim();
 
-            if(!a.isEmpty() && !b.isEmpty()) {
-                textPartenza.setText(b);
-                textDestinazione.setText(a);
-                rmf.invertPath();
+            if(!newEndText.isEmpty() && !newStartText.isEmpty()) {
+                textPartenza.setText(newStartText);
+                textDestinazione.setText(newEndText);
+                rmf.invertPath(newStartText,newEndText);
             }
-
         });
 
         deletePath.setOnClickListener(v -> {
             textPartenza.setText("");
             textDestinazione.setText("");
+            rmf.deletePath();
+            cardInfo.setVisibility(View.GONE);
         });
 
         if(getArguments() != null) {
-            textPartenza.setText("myLocation");
-            textDestinazione.setText(getArguments().getString("destText"));
+            if(getArguments().getString("destText") != null) {
+                textPartenza.setText("myPosition");
+                textDestinazione.setText(getArguments().getString("destText"));
 
-            String destText = getArguments().getString("destText");
-            Double lat = getArguments().getDouble("destLat");
-            Double lon = getArguments().getDouble("destLon");
+                String destText = getArguments().getString("destText");
+                Double lat = getArguments().getDouble("destLat");
+                Double lon = getArguments().getDouble("destLon");
 
-            (new Handler()).postDelayed(()
-                    -> rmf.findPathWithNode(new GeoPoint(lat,lon), destText), 1000
-            );
+                (new Handler()).postDelayed(()
+                        -> rmf.findPathWithNode(new GeoPoint(lat, lon), destText), 1000
+                );
 
-            (new Handler()).postDelayed(()
-                    -> updateInfoCard(), 1000
-            );
-
+                (new Handler()).postDelayed(()
+                        -> updateInfoCard(), 1000
+                );
+            }
         }
     }
 

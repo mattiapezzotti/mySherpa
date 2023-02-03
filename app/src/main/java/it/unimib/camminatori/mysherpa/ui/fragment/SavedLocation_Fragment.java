@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,11 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.FavLocationRecyclerViewAdapter;
-import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
 public class SavedLocation_Fragment extends Fragment {
@@ -91,7 +87,7 @@ public class SavedLocation_Fragment extends Fragment {
 
     private void transaction(Data_Location_ViewModel.SavedLocationInfo savedLocationInfo){
         Bundle bundle = new Bundle();
-        bundle.putDouble("destLon", savedLocationInfo.longi);
+        bundle.putDouble("destLon", savedLocationInfo.lon);
         bundle.putDouble("destLat", savedLocationInfo.lat);
         bundle.putString("destText", savedLocationInfo.locationString);
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
