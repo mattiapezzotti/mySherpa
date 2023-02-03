@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:id="@+id/saved_location_list">
+
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewForest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/fav_umidity"
+        app:layout_constraintBottom_toBottomOf="@+id/fav_delete_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fav_location_text_view"
         app:srcCompat="@drawable/ic_baseline_forest_24"
@@ -21,45 +24,13 @@
         android:id="@+id/fav_location_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="8dp"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/imageViewForest"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Location Name" />
-
-    <TextView
-        android:id="@+id/fav_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/md_theme_light_outline"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/fav_location_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/fav_location_text_view"
-        tools:text="Temperature"/>
-
-    <TextView
-        android:id="@+id/fav_wind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/md_theme_light_outline"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/fav_temperature"
-        app:layout_constraintTop_toBottomOf="@+id/fav_location_text_view"
-        tools:text="Wind" />
-
-    <TextView
-        android:id="@+id/fav_umidity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textColor="@color/md_theme_light_outline"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/fav_wind"
-        app:layout_constraintTop_toBottomOf="@+id/fav_location_text_view"
-        tools:text="Umidity" />
 
     <ImageButton
         android:id="@+id/fav_delete_button"
@@ -67,10 +38,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/fav_umidity"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewForest"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fav_location_text_view"
         app:srcCompat="@drawable/ic_round_delete_outline_24"
         app:tint="#841717" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

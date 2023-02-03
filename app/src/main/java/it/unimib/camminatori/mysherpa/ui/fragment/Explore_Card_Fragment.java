@@ -2,12 +2,15 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +21,13 @@ import android.widget.TextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.List;
+
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.model.Weather;
+import it.unimib.camminatori.mysherpa.ui.activity.MainActivity;
+import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
@@ -30,6 +37,7 @@ public class Explore_Card_Fragment extends Fragment {
         // Required empty public constructor
     }
 
+    Context context;
     private View card;
 
     private TextView locationName;
@@ -46,6 +54,7 @@ public class Explore_Card_Fragment extends Fragment {
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private Location_ViewModel location_viewModel;
     private Weather_ViewModel weather_viewModel;
+    private Data_Location_ViewModel dataLocation_ViewModel;
 
     private double lat;
     private double lon;
@@ -59,12 +68,16 @@ public class Explore_Card_Fragment extends Fragment {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
         weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
+        dataLocation_ViewModel = new ViewModelProvider(requireParentFragment()).get(Data_Location_ViewModel.class);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_explorecard, container, false);
+
     }
 
     @Override
@@ -94,7 +107,13 @@ public class Explore_Card_Fragment extends Fragment {
 
         // Cliccando il tasto save, si salva il luogo nei preferiti
         cardButtonSave.setOnClickListener(l -> {
-            //TODO: cambio fragment
+            LiveData<Location> location = location_viewModel.getGeocodedLocation();
+
+            dataLocation_ViewModel.addRecord(
+                    locationName.getText().toString(),
+                    Double.parseDouble(location.getValue().getLat()),
+                    Double.parseDouble(location.getValue().getLon()));
+
         });
 
         // Observer che aggiorna la label del posto nel BottomSheet

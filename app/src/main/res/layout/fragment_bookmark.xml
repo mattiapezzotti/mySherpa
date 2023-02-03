@@ -3,8 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.Bookmark_Fragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragment.SavedLocation_Fragment">
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/saved_location_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:endIconDrawable="@drawable/ic_baseline_cancel_24"
+        app:endIconMode="clear_text"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.None"
+        app:boxBackgroundColor="@color/md_theme_light_inversePrimary"
+        app:startIconDrawable="@drawable/ic_baseline_search_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/fav_text_search"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:fadingEdge="horizontal"
+            android:selectAllOnFocus="false"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fav_location_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saved_location_search"
+        tools:listitem="@layout/saved_location_list_layout"/>
 
 </FrameLayout>
