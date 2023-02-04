@@ -24,16 +24,32 @@ import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
+
+/**
+ * La classe permette di gestire la logica derivante dalle interazioni dell'utente con l'Explore_Fragment,
+ * invocando i metodi della classe ExploreMap corrispondenti.
+ * {@link Explore_Fragment}
+ * {@link ExploreMap}
+ */
 
 // Per vedere la logica dietro la Mappa, vedere la classe ExploreMap
 public class Explore_Map_Fragment extends Fragment{
     private ExploreMap exploreMap;
     private Location_ViewModel location_viewModel;
+    private Weather_ViewModel weather_viewModel;
 
+    /**
+     * Costruttore della classe Explore_Map_Fragment
+     */
     public Explore_Map_Fragment() {
         super(R.layout.fragment_explore_map);
     }
 
+    /**
+     * Il metodo ritorna una nuova istanza della classe Explore_Map_Fragment
+     * @return Una nuova istanza della classe Explore_Map_Fragment
+     */
     public Explore_Map_Fragment newInstance() {
         return new Explore_Map_Fragment();
     }
@@ -42,6 +58,7 @@ public class Explore_Map_Fragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
+        weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
     }
 
     @Override
@@ -57,7 +74,7 @@ public class Explore_Map_Fragment extends Fragment{
                 );
             }
             else{
-                Snackbar.make(this.getView().getRootView(),"Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -88,16 +105,22 @@ public class Explore_Map_Fragment extends Fragment{
         this.exploreMap.pause();
     }
 
+    /**
+     * Il metodo richiama il metodo resetCenter(), al fine di resettare il centro della mappa nel Geopoint della
+     * posizione attuale dell'utente.
+     */
     public void resetCenter() {
         this.exploreMap.resetCenter();
         this.exploreMap.getMapController().setZoom(17.0);
     }
 
+    /**
+     * Il metodo permette di definire e disegnare sulla mappa il percorso, richiamando il metodo drawRoad() della classe ExploreMap.
+     * @param waypoints ArrayList contenente Geopoints, utilizzato per la creazione del percorso/instradamento.
+     * @throws Exception Eccezione generata se l'instradamento/percorso non viene trovato e dunque non generato.
+     * {@link ExploreMap}
+     */
     public void drawRoad(ArrayList<GeoPoint> waypoints) throws Exception {
-        this.exploreMap.drawRoad(waypoints);
-    }
-
-    public void setCenter(GeoPoint p) {
-        this.exploreMap.setMarkerPosition(p);
+        exploreMap.drawRoad(waypoints);
     }
 }

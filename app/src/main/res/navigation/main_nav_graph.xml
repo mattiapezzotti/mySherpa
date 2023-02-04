@@ -4,43 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/fragment_explore">
-
     <fragment
         android:id="@+id/fragment_explore"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Fragment"
         android:label="fragment_explore"
         tools:layout="@layout/fragment_explore" />
-
     <fragment
         android:id="@+id/fragment_bookmark"
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.SavedLocation_Fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment"
         android:label="fragment_bookmark"
-        tools:layout="@layout/fragment_bookmark" />
-
+        tools:layout="@layout/fragment_saved_records" />
     <fragment
         android:id="@+id/fragment_route"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Route_Fragment"
         android:label="fragment_route"
         tools:layout="@layout/fragment_route" />
-
     <fragment
         android:id="@+id/fragment_record"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Record_Fragment"
         android:label="fragment_record"
-        tools:layout="@layout/fragment_record" >
-        <action
-            android:id="@+id/action_fragment_record_to_fragment_recordList"
-            app:destination="@id/fragment_recordList" />
-    </fragment>
-
+        tools:layout="@layout/fragment_record" />
     <fragment
         android:id="@+id/fragment_profile"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Profile_Fragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/fragment_recordList"
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment"
-        android:label="saved_records_fragment"
-        tools:layout="@layout/fragment_saved_records" />
 </navigation>

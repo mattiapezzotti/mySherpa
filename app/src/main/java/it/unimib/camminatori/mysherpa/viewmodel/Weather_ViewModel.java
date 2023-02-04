@@ -3,10 +3,8 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.model.Weather;
-import it.unimib.camminatori.mysherpa.repository.LocationRepository;
-import it.unimib.camminatori.mysherpa.repository.WeatherRepository;
+import it.unimib.camminatori.mysherpa.network.weather.repository.WeatherRepository;
 
 public class Weather_ViewModel extends ViewModel {
 

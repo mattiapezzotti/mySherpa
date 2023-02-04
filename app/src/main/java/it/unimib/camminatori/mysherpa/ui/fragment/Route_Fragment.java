@@ -28,6 +28,12 @@ import org.osmdroid.util.GeoPoint;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.RouteMap;
 
+/**
+ * La classe permette di gestire le invocazioni dovute alle interazioni dell'utente con i diversi componenti grafici che la compongono,
+ * richiamando i metodi della classe Route_Map_Fragment corrispondenti.
+ * {@link Route_Map_Fragment}
+ */
+
 public class Route_Fragment extends Fragment {
 
     private TextInputEditText textPartenza;
@@ -46,9 +52,16 @@ public class Route_Fragment extends Fragment {
 
     private Route_Map_Fragment rmf;
 
+    /**
+     * Costruttore della classe Route_Fragment
+     */
     public Route_Fragment() {
     }
 
+    /**
+     * Il metodo restituisce una nuova istanza della classe Route_Fragment
+     * @return Una nuova istanza della classe Route_Fragment
+     */
     public static Route_Fragment newInstance() {
         return new Route_Fragment();
     }
@@ -144,6 +157,12 @@ public class Route_Fragment extends Fragment {
         }
     }
 
+    /**
+     * Il metodo successivamente alla definizione del percorso/instradamento, permette di visualizzare le informazioni quali
+     * tempo e distanza attraverso una card, sfruttando i metodi getPathLenght() e getPathTime() della classe Route_Map_Fragment usufuendo del
+     * metodo setText().
+     * {@link Route_Map_Fragment}
+     */
     public void updateInfoCard(){
         kmText.setText(rmf.getPathLength());
         timeText.setText(rmf.getPathTime());
