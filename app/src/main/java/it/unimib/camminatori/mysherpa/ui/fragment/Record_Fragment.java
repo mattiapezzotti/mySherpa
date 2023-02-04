@@ -3,12 +3,14 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -39,13 +41,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.databinding.FragmentRecordBinding;
 import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Record_Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Record_Fragment extends Fragment {
     final private String TAG = "fragment_record";
 
@@ -53,10 +51,7 @@ public class Record_Fragment extends Fragment {
     final static public String TOTAL_METERS_SHAREDPREF = "TOTAL_METERS";
     final static public String TOTAL_METERS_VAL = "TOTAL_METERS_VAL";
 
-    // Text View
-    private TextView recordTimeView;
-    private TextView distanceView;
-    private TextView elevationView;
+    private FragmentRecordBinding binding;
 
     // View Model
     private RecordViewModel recordViewModel;
@@ -72,18 +67,30 @@ public class Record_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentRecordBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
-        Log.i(TAG, "viewmodel: " + recordViewModel);
 
         final Observer<RecordViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
             String timerText = (recordInfo.timerText != null) ? recordInfo.timerText : requireContext().getResources().getString(R.string.default_timer_text);
             String metersText = (recordInfo.metersText != null) ? recordInfo.metersText : requireContext().getResources().getString(R.string.default_meters_text);
             String elevationText = (recordInfo.elevationText != null) ? recordInfo.elevationText : requireContext().getResources().getString(R.string.default_meters_text);
 
-            recordTimeView.setText(timerText);
-            distanceView.setText(metersText);
-            elevationView.setText(elevationText);
+            binding.recordTimeView.setText(timerText);
+            binding.distanceView.setText(metersText);
+            binding.elevationView.setText(elevationText);
 
             SharedPreferences totMetersPreferences = requireContext().getSharedPreferences(TOTAL_METERS_SHAREDPREF, Context.MODE_PRIVATE);
             float totMeters = totMetersPreferences.getFloat (TOTAL_METERS_VAL, 0) + recordInfo.updateMeters;
@@ -93,35 +100,14 @@ public class Record_Fragment extends Fragment {
 
             totMetersEditor.apply();
         };
-
         recordViewModel.getRecordInfo(getContext()).observe(this, recordInfoObserver);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_record, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        recordTimeView = view.findViewById(R.id.record_time_view);
-        distanceView = view.findViewById(R.id.distance_view);
-        elevationView = view.findViewById(R.id.elevation_view);
-
-        ImageButton saveRecordButton = view.findViewById(R.id.button_save_record);
-        ImageButton playRecordButton = view.findViewById(R.id.button_start_record);
-        ImageButton stopRecordButton = view.findViewById(R.id.button_stop_record);
 
         MaterialAlertDialogBuilder dialogBuilder =  new MaterialAlertDialogBuilder(requireActivity());
         dialogBuilder.setTitle(R.string.save_dialog_title);
 
         View inflatedView = LayoutInflater.from(getContext()).inflate(R.layout.save_record_dialog, (ViewGroup) getView(), false);
 
-        saveRecordButton.setOnClickListener(v -> {
+        binding.buttonSaveRecord.setOnClickListener(v -> {
             dialogBuilder.setPositiveButton(R.string.save, (dialog, which) -> {
                         String recordName = ((EditText) inflatedView.findViewById(R.id.save_record_input_text)).getText().toString();
 
@@ -136,7 +122,7 @@ public class Record_Fragment extends Fragment {
                     .show();
         });
 
-        playRecordButton.setOnClickListener(v -> {
+        binding.buttonStartRecord.setOnClickListener(v -> {
             if (!recordViewModel.buttonPlayClicked()) {
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.gps_not_enabled, Snackbar.LENGTH_LONG)
                         .setAction(R.string.ok, sview -> {})
@@ -145,16 +131,16 @@ public class Record_Fragment extends Fragment {
                 return;
             }
 
-            if (recordViewModel.isRecordPaused())
-                playRecordButton.setImageResource(R.drawable.ic_round_play_circle_24);
-            else
-                playRecordButton.setImageResource(R.drawable.ic_baseline_pause_circle_24);
+            updateButtons();
         });
 
-        stopRecordButton.setOnClickListener(v -> {
+        binding.buttonStopRecord.setOnClickListener(v -> {
             recordViewModel.buttonStopClicked();
-            playRecordButton.setImageResource(R.drawable.ic_round_play_circle_24);
+
+            updateButtons();
         });
+
+        updateButtons();
     }
 
     @Override
@@ -163,5 +149,28 @@ public class Record_Fragment extends Fragment {
 
         Log.d(TAG, "onSaveInstanceState");
         SavedRecords_Fragment.saveFavRecords(requireContext(), recordViewModel);
+    }
+
+    private void updateButtons() {
+        int color;
+        boolean enabled;
+
+        if (recordViewModel.isRecordPaused() || !recordViewModel.isRecordStarted()) {
+            binding.buttonStartRecord.setImageResource(R.drawable.ic_round_play_circle_24);
+        }
+        else {
+            binding.buttonStartRecord.setImageResource(R.drawable.ic_baseline_pause_circle_24);
+        }
+
+        if (recordViewModel.isRecordStarted()) {
+            enabled = true;
+            color = R.color.button_stop_enabled;
+        } else {
+            enabled = false;
+            color = R.color.button_stop_disabled;
+        }
+
+        binding.buttonStopRecord.setEnabled(enabled);
+        binding.buttonStopRecord.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
     }
 }

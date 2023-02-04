@@ -33,8 +33,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.j256.ormlite.stmt.query.In;
 
 import org.w3c.dom.Text;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.ByteArrayOutputStream;
@@ -52,13 +55,14 @@ import java.util.Calendar;
 
 import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.utils.SaveLocation;
 import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
     final static public String FAVOURITES_RECORDS_SHAREDPREFS = "FAVOURITES_RECORDS";
     final static public String FAVOURITES_RECORDS = "FAVOURITE_RECORDS_LIST";
 
-    final private String TAG = "SavedRecordsFragment";
+    static final private String TAG = "SavedRecordsFragment";
     protected RecyclerView favRecordsView;
 
     // View Model
@@ -122,12 +126,9 @@ public class SavedRecords_Fragment extends Fragment {
 
                 Uri shareUri = FileProvider.getUriForFile(requireContext(), "it.unimib.camminatori.mysherpa", xmlFile);
 
-                //Uri shareUri = Uri.fromFile(xmlFile);
-
                 Intent shareIntent = new Intent(Intent.ACTION_VIEW);
                 shareIntent.setDataAndType(shareUri, "application/gpx");
                 shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                //shareIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                 if (shareIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
                     startActivity(shareIntent);
@@ -140,8 +141,17 @@ public class SavedRecords_Fragment extends Fragment {
             } catch (Exception e) {
                 Log.w(TAG, e);
             }
+        });
 
+        favRecordsRecyclerViewAdapter.setOnDeleteClickedListener(index -> {
+            String filename = recordViewModel.getFavList().get(index).fileUUID + ".gpx";
 
+            File gpxDir = new File(requireContext().getFilesDir(), "gpx");
+            File xmlFile = new File(gpxDir, filename);
+
+            if (!xmlFile.delete()) {
+                Log.e(TAG, "Failed to delete file " + filename);
+            }
         });
 
         favRecordsView.setAdapter(favRecordsRecyclerViewAdapter);
@@ -223,6 +233,8 @@ public class SavedRecords_Fragment extends Fragment {
 
         String json = gson.toJson(favList);
 
+        Log.d(TAG, "Saving " + json);
+
         editor.putString(SavedRecords_Fragment.FAVOURITES_RECORDS, json);
         editor.apply();
     }
@@ -240,10 +252,14 @@ public class SavedRecords_Fragment extends Fragment {
             savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
             }.getType());
         }
+
+        if (savedRecords.size() > 0)
+            Log.d(TAG, "Saved path: " + savedRecords.get(0).path);
+
         return savedRecords;
     }
 
-    private static String buildGpxXml(ArrayList<Location> path, String name) {
+    static private String buildGpxXml(ArrayList<SaveLocation> path, String name) {
         ByteArrayOutputStream gpxXml = new ByteArrayOutputStream();
         XmlSerializer gpxSerializer = Xml.newSerializer();
 
@@ -281,7 +297,7 @@ public class SavedRecords_Fragment extends Fragment {
             gpxSerializer.startTag("", "trkseg");
 
             for (int i = 0; i < path.size(); i++) {
-                Location trkPoint = path.get(i);
+                SaveLocation trkPoint = path.get(i);
 
                 gpxSerializer.startTag("", "trkpt");
                 gpxSerializer.attribute("", "lat", String.valueOf(trkPoint.getLatitude()));
@@ -307,6 +323,42 @@ public class SavedRecords_Fragment extends Fragment {
 
         return gpxXml.toString();
     }
+
+    static private ArrayList<Location> getGpxPath(File xmlGpx) {
+        int event;
+        String tag;
+        String value;
+        ArrayList<Location> path = new ArrayList<>();
+
+        try {
+            InputStream xmlIn = new FileInputStream(xmlGpx);
+            XmlPullParserFactory parserFactory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = parserFactory.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(xmlIn, "UTF-8");
+
+            event = parser.getEventType();
+            while (event != XmlPullParser.END_DOCUMENT) {
+                tag = parser.getName();
+                switch (event) {
+                    case XmlPullParser.START_TAG:
+                        break;
+
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+
+                event = parser.next();
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to parse gpx");
+            return null;
+        }
+
+        return path;
+    }
+
 
     static private int fileCopy(File src, File dst) {
         try {

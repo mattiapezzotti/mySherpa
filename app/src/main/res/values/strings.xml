@@ -12,6 +12,8 @@
     <string name="save_dialog_title">Salva Percorso</string>
     <string name="save">Salva</string>
     <string name="cancel">Cancella</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
     <string name="save_hint">Nome percorso</string>
     <string name="default_timer_text">00:00:00</string>
     <string name="default_meters_text">0 m</string>
@@ -23,4 +25,5 @@
     <string name="traveled_distance_prefix">Distanza Percorsa:</string>
     <string name="total_time_prefix">Tempo Totale:</string>
     <string name="no_gpx_intent_fount">Nessuna applicatione GPX</string>
+    <string name="delete_record_dialog_prefix">Rimuovere definitivamente</string>
 </resources>

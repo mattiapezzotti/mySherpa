@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Observable;
 
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment;
+import it.unimib.camminatori.mysherpa.utils.SaveLocation;
 
 
 public class RecordViewModel extends ViewModel {
@@ -128,10 +129,20 @@ public class RecordViewModel extends ViewModel {
         saveRecordInfo.millisecondsTime = localRecordInfo.recordMilliseconds;
         saveRecordInfo.metersDistance = localRecordInfo.recordMeters;
         saveRecordInfo.fileUUID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
-        if (gpsLocationListener != null)
-            saveRecordInfo.path = gpsLocationListener.getPath();
-        else
+        if (gpsLocationListener != null) {
+            ArrayList<Location> path = gpsLocationListener.getPath();
             saveRecordInfo.path = new ArrayList<>();
+
+            for (int i = 0; i < path.size(); i++) {
+                SaveLocation point = new SaveLocation(
+                        path.get(i).getLatitude(),
+                        path.get(i).getLongitude(),
+                        path.get(i).getAltitude()
+                );
+
+                saveRecordInfo.path.add(point);
+            }
+        }
 
         Log.d(TAG, "file UUID: " + saveRecordInfo.fileUUID);
 
@@ -272,7 +283,7 @@ public class RecordViewModel extends ViewModel {
         @Expose
         public String fileUUID;
         @Expose
-        public ArrayList<Location> path;
+        public ArrayList<SaveLocation> path;
     }
 
     private static class MyLocationListener implements LocationListener {

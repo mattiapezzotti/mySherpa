@@ -1,6 +1,7 @@
 package it.unimib.camminatori.mysherpa;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.ParcelUuid;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -16,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     private final ArrayList<RecordViewModel.SaveRecordInfo> localFavDataBkp;
     private OnItemsChangedListener changedListener;
     private OnShareClickedListener shareClickedListener;
+    private OnDeleteClickedListener deleteClickedListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView locationTextView;
@@ -40,6 +44,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         private final FrameLayout layoutExpandView;
         private final ImageButton deleteButton;
         private final ImageButton shareButton;
+        private final Context rootContext;
 
         public ViewHolder(View view) {
             super(view);
@@ -53,6 +58,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             this.deleteButton = view.findViewById(R.id.fav_delete_button);
             this.layoutExpandView = view.findViewById(R.id.save_record_click_layout);
             this.shareButton = view.findViewById(R.id.fav_share_button);
+            this.rootContext = view.getContext();
         }
 
         public TextView getLocationTextView() {
@@ -85,6 +91,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
         public ImageButton getShareButton() {
             return this.shareButton;
+        }
+
+        public Context getRootContext() {
+            return rootContext;
         }
     }
 
@@ -120,10 +130,14 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         totalTimeView.setText(String.format("%s %s", viewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), timeStringFormat(localFavData.get(position).millisecondsTime)));
 
         viewHolder.getDeleteButton().setOnClickListener(v -> {
+            if (deleteClickedListener != null)
+                deleteClickedListener.onDeleteClickedListener(viewHolder.getAdapterPosition());
+
             localFavData = RecordViewModel.removeRecord(viewHolder.getAdapterPosition());
             notifyItemRemoved(viewHolder.getAdapterPosition());
             localFavDataBkp.clear();
             localFavDataBkp.addAll(localFavData);
+
 
             callChangeListener();
         });
@@ -189,6 +203,10 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         this.shareClickedListener = shareClickedListener;
     }
 
+    public void setOnDeleteClickedListener(OnDeleteClickedListener deleteClickedListener) {
+        this.deleteClickedListener = deleteClickedListener;
+    }
+
     private void callChangeListener() {
         if (changedListener != null) {
             changedListener.onItemsChanged(getItemCount());
@@ -227,5 +245,9 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
 
     public interface OnShareClickedListener {
         void onShareClicked(int index);
+    }
+
+    public interface OnDeleteClickedListener {
+        void onDeleteClickedListener(int index);
     }
 }
