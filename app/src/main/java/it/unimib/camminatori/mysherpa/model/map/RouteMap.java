@@ -52,7 +52,6 @@ public class RouteMap extends Map {
      * @param startPoint Rappresenta un Geopoint (della località di partenza), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
      * @param startPointText
      */
-
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){
         this.deletePath();
 
@@ -83,7 +82,6 @@ public class RouteMap extends Map {
      * @param endPointText
      * @throws Exception Eccezione generata se l'instradamento/percorso non viene trovato e dunque non generato.
      */
-
     public void updateDestinationNavigationPath(GeoPoint endPoint, String endPointText) throws Exception{
         endMarker = new Marker(mapView);
 

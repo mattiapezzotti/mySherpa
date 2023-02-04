@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import it.unimib.camminatori.mysherpa.model.Location;
-import it.unimib.camminatori.mysherpa.network.weather.repository.LocationRepository;
+import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
 public class Location_ViewModel extends ViewModel {
 

@@ -24,7 +24,6 @@ import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
 /**
  * La classe permette di gestire la logica derivante dalle interazioni dell'utente con l'Explore_Fragment,
@@ -37,7 +36,6 @@ import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 public class Explore_Map_Fragment extends Fragment{
     private ExploreMap exploreMap;
     private Location_ViewModel location_viewModel;
-    private Weather_ViewModel weather_viewModel;
 
     /**
      * Costruttore della classe Explore_Map_Fragment
@@ -58,7 +56,6 @@ public class Explore_Map_Fragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
-        weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
     }
 
     @Override
@@ -74,7 +71,7 @@ public class Explore_Map_Fragment extends Fragment{
                 );
             }
             else{
-                Snackbar.make(this.getView().getRootView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(this.getView().getRootView(),"Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -121,6 +118,16 @@ public class Explore_Map_Fragment extends Fragment{
      * {@link ExploreMap}
      */
     public void drawRoad(ArrayList<GeoPoint> waypoints) throws Exception {
-        exploreMap.drawRoad(waypoints);
+        this.exploreMap.drawRoad(waypoints);
+    }
+
+    /**
+     * Il metodo permette di settare un marker sulla mappa nella posizione attuale, richiamando il metodo
+     * setMarkerPosition() della classe ExploreMap
+     * @param p Rappresenta un Geopoint (località), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
+     * {@link ExploreMap}
+     */
+    public void setCenter(GeoPoint p) {
+        this.exploreMap.setMarkerPosition(p);
     }
 }

@@ -22,7 +22,7 @@ import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
  */
 public class ExploreMap extends Map {
 
-    private final Marker marker;
+    private Marker marker;
     private final Location_ViewModel location_viewModel;
     private final Weather_ViewModel weather_viewModel;
 
@@ -60,8 +60,7 @@ public class ExploreMap extends Map {
      */
     @Override
     public boolean longPressHelper(GeoPoint p) {
-        setMarkerPosition(p);
-        updateLabelLocation(p);
+        updateLocation(p);
         return true;
     }
 
@@ -75,6 +74,7 @@ public class ExploreMap extends Map {
         marker.setPosition(p);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
+        myLocationOverlay.disableFollowLocation();
         mapView.getOverlays().add(marker);
         mapController.animateTo(marker.getPosition());
     }
@@ -86,7 +86,7 @@ public class ExploreMap extends Map {
      * {@link Location_ViewModel}
      * {@link Weather_ViewModel}
      */
-    public void updateLabelLocation(GeoPoint position){
+    public void updateLocation(GeoPoint position){
         if(position == null)
             position = myLocationOverlay.getMyLocation();
         location_viewModel.reverseGeocode(position.getLatitude(), position.getLongitude());

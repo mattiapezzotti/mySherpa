@@ -33,7 +33,6 @@ import it.unimib.camminatori.mysherpa.model.map.RouteMap;
  * richiamando i metodi della classe Route_Map_Fragment corrispondenti.
  * {@link Route_Map_Fragment}
  */
-
 public class Route_Fragment extends Fragment {
 
     private TextInputEditText textPartenza;
