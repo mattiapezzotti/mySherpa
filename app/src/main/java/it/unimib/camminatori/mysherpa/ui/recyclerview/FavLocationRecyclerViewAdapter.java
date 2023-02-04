@@ -19,21 +19,23 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.ui.fragment.SavedLocation_Fragment;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
+
 
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLocationRecyclerViewAdapter.ViewHolder>{
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
     private ArrayList<Data_Location_ViewModel.SavedLocationInfo> localFavData;
     private final ArrayList<Data_Location_ViewModel.SavedLocationInfo> localFavDataBkp;
+    private OnItemsChangedListener changedListener;
     private SavedLocation_Fragment savedLocationFragment;
+
 
     public FavLocationRecyclerViewAdapter(SavedLocation_Fragment savedLocationFragment, ArrayList<Data_Location_ViewModel.SavedLocationInfo> data) {
         this.localFavData = data;
+        this.savedLocationFragment = savedLocationFragment;
+
         localFavDataBkp = new ArrayList<>();
         localFavDataBkp.addAll(localFavData);
-        this.savedLocationFragment = savedLocationFragment;
     }
 
     public FavLocationRecyclerViewAdapter(ArrayList<Data_Location_ViewModel.SavedLocationInfo> data) {
@@ -63,21 +65,36 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
         viewHolder.getLocationTextView().setText(localFavData.get(position).locationString);
 
         viewHolder.getDeleteButton().setOnClickListener(v -> {
-            Data_Location_ViewModel.removeRecord(savedLocationFragment.getContext(), viewHolder.getAdapterPosition());
+            ArrayList<Data_Location_ViewModel.SavedLocationInfo> favList = savedLocationFragment.RemoveLocation(viewHolder.getAdapterPosition());
             notifyItemRemoved(viewHolder.getAdapterPosition());
+
+            localFavDataBkp.clear();
+            localFavDataBkp.addAll(localFavData);
+
+            callChangeListener();
         });
 
         // OnClick Image
         viewHolder.getForestImage().setOnClickListener(v -> {
-            Data_Location_ViewModel.SavedLocationInfo recordData = Data_Location_ViewModel.getRecord(viewHolder.getAdapterPosition());
-            savedLocationFragment.onItemClick(recordData);
+            savedLocationFragment.OpenLocation(viewHolder.getAdapterPosition());
         });
 
         // OnClick location
         viewHolder.getLocationTextView().setOnClickListener(v -> {
-            Data_Location_ViewModel.SavedLocationInfo recordData = Data_Location_ViewModel.getRecord(viewHolder.getAdapterPosition());
-            savedLocationFragment.onItemClick(recordData);
+            savedLocationFragment.OpenLocation(viewHolder.getAdapterPosition());
         });
+
+        callChangeListener();
+    }
+
+    public void setOnItemsChangedListener(OnItemsChangedListener changedListener) {
+        this.changedListener = changedListener;
+    }
+
+    private void callChangeListener() {
+        if (changedListener != null) {
+            changedListener.onItemsChanged(getItemCount());
+        }
     }
 
     @Override
@@ -92,9 +109,9 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
         ArrayList<Data_Location_ViewModel.SavedLocationInfo> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
-            for (Data_Location_ViewModel.SavedLocationInfo location : localFavDataBkp) {
-                if (location.locationString.toLowerCase().contains(sequence)) {
-                    tmp.add(location);
+            for (Data_Location_ViewModel.SavedLocationInfo record : localFavDataBkp) {
+                if (record.locationString.toLowerCase().contains(sequence)) {
+                    tmp.add(record);
                 }
             }
         } else {
@@ -113,7 +130,9 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
         private final ImageView forestImage;
         private final TextView locationView;
         private final ImageButton deleteButton;
+        private final TextView noLocationsTextView;
         ConstraintLayout fragment_saved_location;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -121,6 +140,7 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
             this.forestImage = (ImageView) view.findViewById(R.id.imageViewForest);
             this.locationView = (TextView) view.findViewById(R.id.fav_location_text_view);
             this.deleteButton = (ImageButton) view.findViewById(R.id.fav_delete_button);
+            this.noLocationsTextView = (TextView) view.findViewById(R.id.no_location_text_view);
             this.fragment_saved_location = view.findViewById(R.id.saved_location_list);
         }
 
@@ -137,5 +157,14 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<FavLoca
         }
 
         public ImageButton getDeleteButton() { return this.deleteButton; }
+
+        public TextView getNoLocationTextView() {
+            return this.noLocationsTextView;
+        }
+
+    }
+
+    public interface OnItemsChangedListener {
+        void onItemsChanged(int size);
     }
 }

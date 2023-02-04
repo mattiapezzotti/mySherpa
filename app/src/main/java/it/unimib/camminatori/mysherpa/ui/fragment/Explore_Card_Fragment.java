@@ -1,5 +1,8 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
+import android.app.AlertDialog;
+import android.app.Application;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.content.Context;
@@ -49,7 +52,6 @@ public class Explore_Card_Fragment extends Fragment {
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private Location_ViewModel location_viewModel;
     private Weather_ViewModel weather_viewModel;
-    private Data_Location_ViewModel dataLocation_ViewModel;
 
     private double lat;
     private double lon;
@@ -63,8 +65,6 @@ public class Explore_Card_Fragment extends Fragment {
         super.onCreate(savedInstanceState);
         location_viewModel = new ViewModelProvider(requireParentFragment()).get(Location_ViewModel.class);
         weather_viewModel = new ViewModelProvider(requireParentFragment()).get(Weather_ViewModel.class);
-        dataLocation_ViewModel = new ViewModelProvider(requireParentFragment()).get(Data_Location_ViewModel.class);
-        dataLocation_ViewModel.init(this.getContext());
     }
 
     @Override
@@ -105,11 +105,19 @@ public class Explore_Card_Fragment extends Fragment {
         cardButtonSave.setOnClickListener(l -> {
             LiveData<Location> location = location_viewModel.getGeocodedLocation();
 
-            dataLocation_ViewModel.addRecord(
+            SavedLocation_Fragment.AddLocation(
                     this.getContext(),
                     locationName.getText().toString(),
                     Double.parseDouble(location.getValue().getLat()),
                     Double.parseDouble(location.getValue().getLon()));
+
+            // Send message to user
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext())
+                    .setTitle(R.string.app_name)
+                    .setMessage("La località è stata aggiunta ai preferiti.")
+                    .setPositiveButton("OK", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         // Observer che aggiorna la label del posto nel BottomSheet
