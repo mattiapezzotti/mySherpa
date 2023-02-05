@@ -1,11 +1,13 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.app.AlertDialog;
-import android.app.Application;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -14,19 +16,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.model.Weather;
-import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
@@ -95,7 +90,7 @@ public class Explore_Card_Fragment extends Fragment {
         cardButtonSave = card.findViewById(R.id.bottomsheet_button_save);
 
         cardButtonNavigate.setOnClickListener(l -> {
-            this.transaction();
+            this.transition();
         });
 
         /**
@@ -122,35 +117,32 @@ public class Explore_Card_Fragment extends Fragment {
 
         // Observer che aggiorna la label del posto nel BottomSheet
         final Observer<Location> updateLocationLabels = l -> {
-            if(l != null) {
+            if (l != null) {
                 String[] locationInfoText = l.getDisplayName().split(",", -1);
                 locationName.setText(locationInfoText[0]);
-                if(locationInfoText.length >= 2) {
+                if (locationInfoText.length >= 2) {
                     locationInfo1.setText(locationInfoText[2] + ", ");
                     locationInfo2.setText(locationInfoText[1]);
-                }
-                else{
+                } else {
                     locationInfo1.setText("");
                     locationInfo2.setText("");
                 }
                 lat = Double.parseDouble(l.getLat());
                 lon = Double.parseDouble(l.getLon());
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-            else{
-                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+            } else {
+                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
 
         final Observer<Weather> updateWeatherLabels = l -> {
-            if(l != null) {
+            if (l != null) {
                 humidity.setText(l.getHumidity() + " %");
                 temperature.setText(l.getTemp() + "°");
                 wind.setText(l.getWindSpeed() + " km/h");
-            }
-            else{
-                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity),"Impossibile connettersi al server del Meteo. Riprova", Snackbar.LENGTH_SHORT)
+            } else {
+                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Impossibile connettersi al server del Meteo. Riprova", Snackbar.LENGTH_SHORT)
                         .show();
             }
 
@@ -160,7 +152,7 @@ public class Explore_Card_Fragment extends Fragment {
         weather_viewModel.getWeather().observe(getViewLifecycleOwner(), updateWeatherLabels);
     }
 
-    private void transaction(){
+    private void transition() {
         Bundle bundle = new Bundle();
         bundle.putDouble("destLon", lon);
         bundle.putDouble("destLat", lat);

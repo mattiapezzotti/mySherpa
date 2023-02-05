@@ -1,16 +1,15 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -58,7 +57,7 @@ public class SearchBar_Fragment extends Fragment {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 String input = String.valueOf(searchBarText.getText()).trim();
-                if(input.length() > 0) {
+                if (input.length() > 0) {
                     location_viewModel.geocodePlace(input);
                     weather_viewModel.getCityWeather(input);
                     handled = true;

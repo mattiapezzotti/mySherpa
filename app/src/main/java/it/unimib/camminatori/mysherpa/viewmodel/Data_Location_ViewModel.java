@@ -2,74 +2,53 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.ArrayList;
+
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
 
 public class Data_Location_ViewModel extends ViewModel {
     final private String TAG = "Data_Location_ViewModel";
 
-    private ArrayList<Data_Location_ViewModel.SavedLocationInfo> favList;
+    private ArrayList<SavedLocation> favList;
 
-    public Data_Location_ViewModel(ArrayList<Data_Location_ViewModel.SavedLocationInfo> savedLocationList){
+    public Data_Location_ViewModel(ArrayList<SavedLocation> savedLocationList) {
         if (savedLocationList == null)
-            savedLocationList = new ArrayList<Data_Location_ViewModel.SavedLocationInfo>();
+            savedLocationList = new ArrayList<SavedLocation>();
 
         favList = savedLocationList;
     }
 
-    public ArrayList<Data_Location_ViewModel.SavedLocationInfo> getFavList() {
+    public ArrayList<SavedLocation> getFavList() {
         return favList;
     }
 
     /**
-     Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
+     * Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
      **/
-    public ArrayList<Data_Location_ViewModel.SavedLocationInfo> addRecord(String localityName, double latitude, double longitude) {
-        Data_Location_ViewModel.SavedLocationInfo saveRecordInfo = new Data_Location_ViewModel.SavedLocationInfo();
+    public void addRecord(String localityName, double latitude, double longitude) {
+        SavedLocation saveRecordInfo = new SavedLocation();
         saveRecordInfo.locationString = localityName;
         saveRecordInfo.lat = latitude;
         saveRecordInfo.lon = longitude;
         favList.add(saveRecordInfo);
-
-        return favList;
     }
 
     /**
-     Rimuove il record quando viene premuto il bottone elimina dell'interfaccia
+     * Rimuove il record quando viene premuto il bottone elimina dell'interfaccia
      **/
-    public ArrayList<Data_Location_ViewModel.SavedLocationInfo> removeRecord(int position) {
+    public ArrayList<SavedLocation> removeRecord(int position) {
         if (position >= 0)
             favList.remove(position);
 
         return favList;
     }
 
-    public Data_Location_ViewModel.SavedLocationInfo getRecord(int position) {
+    public SavedLocation getRecord(int position) {
         return favList.get(position);
     }
 
     /**
      * Costruttore di savedLocation
      */
-    public static class SavedLocationInfo {
-        @Expose
-        public String locationString;
-        @Expose
-        public double lat;
-        @Expose
-        public double lon;
 
-        public SavedLocationInfo(){
-
-        }
-
-
-        public SavedLocationInfo(String locationString, double lat, double lon){
-            this.locationString = locationString;
-            this.lat = lat;
-            this.lon = lon;
-        }
-
-    }
 }

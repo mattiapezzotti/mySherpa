@@ -1,7 +1,6 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,12 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,19 +21,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
-import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
 public class SavedLocation_Fragment extends Fragment {
@@ -73,23 +68,10 @@ public class SavedLocation_Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         dataLocationViewModel = GetDataLocationViewModel();
 
-        final
-        FavLocationRecyclerViewAdapter favLocationRecyclerViewAdapter = new FavLocationRecyclerViewAdapter(this, dataLocationViewModel.getFavList());
-
-       /* favLocationRecyclerViewAdapter.setOnItemsChangedListener(size -> {
-
-            TextView noLocationsTextView = view.findViewById(R.id.no_location_text_view);
-
-            if (size == 0)
-                noLocationsTextView.setVisibility(View.VISIBLE);
-            else
-                noLocationsTextView.setVisibility(View.GONE);
-
-        }); */
-
+        final FavLocationRecyclerViewAdapter favLocationRecyclerViewAdapter = new FavLocationRecyclerViewAdapter(this, dataLocationViewModel.getFavList());
         favLocalityView.setAdapter(favLocationRecyclerViewAdapter);
 
-        EditText favSearch = (EditText) view.findViewById(R.id.fav_text_search);
+        EditText favSearch = view.findViewById(R.id.fav_text_search);
         favSearch.addTextChangedListener(new TextWatcher() {
             final private String TAG = "favSearch TextWatcher";
 
@@ -110,8 +92,7 @@ public class SavedLocation_Fragment extends Fragment {
     }
 
     // Aggiungi una località
-    public static ArrayList<Data_Location_ViewModel.SavedLocationInfo> AddLocation(Context context, String localityName, double latitude, double longitude)
-    {
+    public static ArrayList<SavedLocation> AddLocation(Context context, String localityName, double latitude, double longitude) {
         Data_Location_ViewModel viewModel = new Data_Location_ViewModel(LoadFromJson(context));
         viewModel.addRecord(localityName, latitude, longitude);
         SaveToJson(context, viewModel.getFavList());
@@ -120,23 +101,20 @@ public class SavedLocation_Fragment extends Fragment {
     }
 
     // Rimuovi una località
-    public ArrayList<Data_Location_ViewModel.SavedLocationInfo> RemoveLocation(int position)
-    {
-        ArrayList<Data_Location_ViewModel.SavedLocationInfo> favList = GetDataLocationViewModel().removeRecord(position);
+    public ArrayList<SavedLocation> RemoveLocation(int position) {
+        ArrayList<SavedLocation> favList = GetDataLocationViewModel().removeRecord(position);
         SaveToJson(this.getContext(), favList);
 
         return favList;
     }
 
     // Apri una località sulla mappa
-    public void OpenLocation(int position)
-    {
-        Data_Location_ViewModel.SavedLocationInfo favList = GetDataLocationViewModel().getRecord(position);
-        transaction(favList);
+    public void OpenLocation(int position) {
+        SavedLocation favList = GetDataLocationViewModel().getRecord(position);
+        transition(favList);
     }
 
-    private static ArrayList<Data_Location_ViewModel.SavedLocationInfo> LoadFromJson(Context context)
-    {
+    private static ArrayList<SavedLocation> LoadFromJson(Context context) {
         // Leggi il contenuto da disco
         String jsonString = readFromFile(context);
 
@@ -144,23 +122,22 @@ public class SavedLocation_Fragment extends Fragment {
             return new ArrayList<>();
         else
             // Converti il stringa json in array list
-            return new Gson().fromJson(jsonString, new TypeToken<ArrayList<Data_Location_ViewModel.SavedLocationInfo>>() {
+            return new Gson().fromJson(jsonString, new TypeToken<ArrayList<SavedLocation>>() {
             }.getType());
     }
 
-    private static void SaveToJson(Context context, ArrayList<Data_Location_ViewModel.SavedLocationInfo> favList) {
+    private static void SaveToJson(Context context, ArrayList<SavedLocation> favList) {
         String jsonString = new Gson().toJson(favList);
         writeToFile(jsonString, context);
     }
 
-    private static void writeToFile(String data,Context context) {
+    private static void writeToFile(String data, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(FAV_LOCATION_FILENAME, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
             Log.d(TAG, "Saved FavLocation file");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
     }
@@ -184,8 +161,7 @@ public class SavedLocation_Fragment extends Fragment {
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
@@ -194,19 +170,18 @@ public class SavedLocation_Fragment extends Fragment {
         return ret;
     }
 
-    private Data_Location_ViewModel GetDataLocationViewModel()
-    {
-        if(dataLocationViewModel == null)
+    private Data_Location_ViewModel GetDataLocationViewModel() {
+        if (dataLocationViewModel == null)
             dataLocationViewModel = new Data_Location_ViewModel(LoadFromJson(this.getContext()));
 
         return dataLocationViewModel;
     }
 
-    private void transaction(Data_Location_ViewModel.SavedLocationInfo savedLocationInfo){
+    private void transition(SavedLocation savedLocation) {
         Bundle bundle = new Bundle();
-        bundle.putDouble("destLon", savedLocationInfo.lon);
-        bundle.putDouble("destLat", savedLocationInfo.lat);
-        bundle.putString("destText", savedLocationInfo.locationString);
+        bundle.putDouble("destLon", savedLocation.lon);
+        bundle.putDouble("destLat", savedLocation.lat);
+        bundle.putString("destText", savedLocation.locationString);
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_explore, bundle);
     }

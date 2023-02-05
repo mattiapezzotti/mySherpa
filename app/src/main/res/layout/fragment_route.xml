@@ -213,11 +213,4 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:layout_marginTop="208dp"
-        android:id="@+id/loading_bar"
-        android:indeterminate="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     </FrameLayout>

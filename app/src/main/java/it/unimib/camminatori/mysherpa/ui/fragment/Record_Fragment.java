@@ -3,14 +3,6 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +11,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -73,7 +72,7 @@ public class Record_Fragment extends Fragment {
             elevationView.setText(elevationText);
 
             SharedPreferences totMetersPreferences = requireContext().getSharedPreferences(TOTAL_METERS_SHAREDPREF, Context.MODE_PRIVATE);
-            float totMeters = totMetersPreferences.getFloat (TOTAL_METERS_VAL, 0) + recordInfo.updateMeters;
+            float totMeters = totMetersPreferences.getFloat(TOTAL_METERS_VAL, 0) + recordInfo.updateMeters;
 
             SharedPreferences.Editor totMetersEditor = totMetersPreferences.edit();
             totMetersEditor.putFloat(TOTAL_METERS_VAL, totMeters);
@@ -104,7 +103,7 @@ public class Record_Fragment extends Fragment {
         ImageButton playRecordButton = view.findViewById(R.id.button_start_record);
         ImageButton stopRecordButton = view.findViewById(R.id.button_stop_record);
 
-        MaterialAlertDialogBuilder dialogBuilder =  new MaterialAlertDialogBuilder(requireActivity());
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireActivity());
         dialogBuilder.setTitle(R.string.save_dialog_title);
 
         View inflatedView = LayoutInflater.from(getContext()).inflate(R.layout.save_record_dialog, (ViewGroup) getView(), false);
@@ -127,7 +126,8 @@ public class Record_Fragment extends Fragment {
         playRecordButton.setOnClickListener(v -> {
             if (!recordViewModel.buttonPlayClicked()) {
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.gps_not_enabled, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.ok, sview -> {})
+                        .setAction(R.string.ok, sview -> {
+                        })
                         .show();
 
                 return;

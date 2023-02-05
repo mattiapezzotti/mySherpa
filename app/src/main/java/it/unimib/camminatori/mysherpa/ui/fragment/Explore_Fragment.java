@@ -1,15 +1,14 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -58,23 +57,22 @@ public class Explore_Fragment extends Fragment {
             rme.resetCenter();
         });
 
-        if(getArguments() != null){
-            if(getArguments().getParcelableArrayList("waypoints") != null){
-                    (new Handler()).postDelayed(()
-                            -> {
-                                try {
-                                    rme.drawRoad(getArguments().getParcelableArrayList("waypoints"));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    Snackbar.make(
-                                            requireActivity().findViewById(R.id.container_main_activity),
-                                            "Errore nel disegnare la strada", Snackbar.LENGTH_SHORT)
-                                            .show();
-                                }
-                            }, 500
-                    );
-            }
-            else {
+        if (getArguments() != null) {
+            if (getArguments().getParcelableArrayList("waypoints") != null) {
+                (new Handler()).postDelayed(()
+                                -> {
+                            try {
+                                rme.drawRoad(getArguments().getParcelableArrayList("waypoints"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Snackbar.make(
+                                                requireActivity().findViewById(R.id.container_main_activity),
+                                                "Errore nel disegnare la strada", Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }, 500
+                );
+            } else {
                 if (getArguments().getString("destText") != null) {
                     GeoPoint p = new GeoPoint(
                             getArguments().getDouble("destLat"),

@@ -1,15 +1,6 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
-import static androidx.databinding.DataBindingUtil.setContentView;
-
-import android.media.Image;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +9,18 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.osmdroid.util.GeoPoint;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.model.map.RouteMap;
 
 public class Route_Fragment extends Fragment {
 
@@ -94,15 +88,14 @@ public class Route_Fragment extends Fragment {
             String a = String.valueOf(textPartenza.getText()).trim();
             String b = String.valueOf(textDestinazione.getText()).trim();
 
-            if(!a.isEmpty() && !b.isEmpty()) {
+            if (!a.isEmpty() && !b.isEmpty()) {
                 rmf.findPathTextOnly(a, b);
                 (new Handler()).postDelayed(()
                         -> updateInfoCard(), 1000
                 );
-            }
-            else{
-                Snackbar.make(this.getView().getRootView(),"Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
-                                .show();
+            } else {
+                Snackbar.make(this.getView().getRootView(), "Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
+                        .show();
             }
         });
 
@@ -110,10 +103,10 @@ public class Route_Fragment extends Fragment {
             String newEndText = String.valueOf(textPartenza.getText()).trim();
             String newStartText = String.valueOf(textDestinazione.getText()).trim();
 
-            if(!newEndText.isEmpty() && !newStartText.isEmpty()) {
+            if (!newEndText.isEmpty() && !newStartText.isEmpty()) {
                 textPartenza.setText(newStartText);
                 textDestinazione.setText(newEndText);
-                rmf.invertPath(newStartText,newEndText);
+                rmf.invertPath(newStartText, newEndText);
             }
         });
 
@@ -124,8 +117,8 @@ public class Route_Fragment extends Fragment {
             cardInfo.setVisibility(View.GONE);
         });
 
-        if(getArguments() != null) {
-            if(getArguments().getString("destText") != null) {
+        if (getArguments() != null) {
+            if (getArguments().getString("destText") != null) {
                 textPartenza.setText("myPosition");
                 textDestinazione.setText(getArguments().getString("destText"));
 
@@ -144,7 +137,7 @@ public class Route_Fragment extends Fragment {
         }
     }
 
-    public void updateInfoCard(){
+    public void updateInfoCard() {
         kmText.setText(rmf.getPathLength());
         timeText.setText(rmf.getPathTime());
         cardInfo.setVisibility(View.VISIBLE);

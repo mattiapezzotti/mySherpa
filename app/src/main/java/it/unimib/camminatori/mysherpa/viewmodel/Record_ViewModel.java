@@ -155,11 +155,11 @@ public class Record_ViewModel extends ViewModel {
                     if (modelInfo.recordPaused) {
                         milliseconds -= (SystemClock.elapsedRealtime() - modelInfo.pauseRecordTime);
                     } else {
-                        float metersCount = (float)gpsLocationListener.getMetersCount();
+                        float metersCount = (float) gpsLocationListener.getMetersCount();
 
                         localRecordInfo.recordMilliseconds = milliseconds;
-                        localRecordInfo.recordMeters = (long)metersCount;
-                        localRecordInfo.currElevation = (long)gpsLocationListener.getCurrentElevation();
+                        localRecordInfo.recordMeters = (long) metersCount;
+                        localRecordInfo.currElevation = (long) gpsLocationListener.getCurrentElevation();
 
                         localRecordInfo.updateMeters = metersCount - localRecordInfo.lastUpdateMeters;
 
@@ -218,7 +218,7 @@ public class Record_ViewModel extends ViewModel {
         String timerString;
         long seconds = millisecond / 1000;
         long minutes = (seconds % 3600) / 60;
-        long hours =  seconds / 3600;
+        long hours = seconds / 3600;
 
         timerString = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + (seconds % 60);
 
@@ -230,7 +230,7 @@ public class Record_ViewModel extends ViewModel {
         String meterString;
 
         if (meters >= 1000) {
-            meterString = String.format("%s %s", (float)meters / 1000.0, "Km");
+            meterString = String.format("%s %s", (float) meters / 1000.0, "Km");
         } else {
             meterString = String.format("%s %s", meters, "m");
         }
