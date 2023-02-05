@@ -15,12 +15,21 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Weather_ViewModel;
 
+/**
+ * La classe permette di specificare, settare e aggiornare i marker sulla mappa, attraverso una pressione prolungata o, un singolo tap su schermo.
+ * Inoltre crea e definisce le informazioni principali quali tempo e distanza, di un percorso/instradamento generato a partire da due località (Geopoints).
+ * {@link it.unimib.camminatori.mysherpa.ui.fragment.Explore_Map_Fragment}
+ */
 public class ExploreMap extends Map {
 
     private Marker marker;
     private final Location_ViewModel location_viewModel;
     private final Weather_ViewModel weather_viewModel;
 
+    /**
+     * Costruttore della classe ExploreMap
+     * @param map
+     */
     public ExploreMap(MapView map){
         super(map);
 
@@ -32,21 +41,33 @@ public class ExploreMap extends Map {
         this.marker.setInfoWindow(null);
     }
 
-    // Un single tap rimuove tutti i marker rossi
+    /**
+     * Il metodo permette di rimuove i marker (rossi) attraverso un single tap.
+     * @param p Rappresenta un Geopoint (località), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
+     * @return Un valore booleano con valore true.
+     */
     @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
         this.mapView.getOverlays().remove(marker);
         return true;
     }
 
-    // Un long tap inserisce un marker rosso nel punto premuto, centra la mappa su quello e
-    // aggiorna la location in focus in modo da comunicarlo alle altre classi
+    /**
+     * Il metodo permette di inserire nel punto premuto un marker (Geopoint) attraverso un long tap, centrando la mappa su di esso e
+     * aggiornando la location in focus, in modo da cpomunicarlo alle altre classi.
+     * @param p Rappresenta un Geopoint (località), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
+     * @return Un valore booleano con valore true.
+     */
     @Override
     public boolean longPressHelper(GeoPoint p) {
         updateLocation(p);
         return true;
     }
 
+    /**
+     * Il metodo permette di settare un marker sulla mappa nella posizione indicata dal Geopoint (località) passato come parametro formale
+     * @param p Rappresenta un Geopoint (località), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
+     */
     public void setMarkerPosition(GeoPoint p){
         mapView.getOverlays().remove(marker);
 
@@ -58,6 +79,13 @@ public class ExploreMap extends Map {
         mapController.animateTo(marker.getPosition());
     }
 
+    /**
+     * Il metodo permette di ottenere dato un Geopoint (località) passato come parametro formale, i metadati ed il meteo della località, sfruttando
+     * i metodi reverseGeocode della classe Location_ViewModel e getCoordinatesWeather della classe Weather_ViewModel.
+     * @param position Rappresenta un Geopoint (località), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
+     * {@link Location_ViewModel}
+     * {@link Weather_ViewModel}
+     */
     public void updateLocation(GeoPoint position){
         if(position == null)
             position = myLocationOverlay.getMyLocation();
@@ -65,6 +93,13 @@ public class ExploreMap extends Map {
         weather_viewModel.getCoordinatesWeather(position.getLatitude(), position.getLongitude());
     }
 
+    /**
+     * Definisce a partire dalle località (Geopoints) contenute nell'arrayList Waypoints
+     * il percorso/instradamento (Road) disegnando sulla mappa attraverso una Polyline il cammino precedentemente trovato.
+     * In aggiunta precisa in relazione al percoso/instradamento, i punti intermedi aventi ruolo di indicazioni, specificando anche per essi tempo, distanza e nome di quest'ultimi.
+     * @param waypoints ArrayList contenente Geopoints, utilizzato per la creazione del percorso/instradamento.
+     * @throws Exception Eccezione generata se l'instradamento/percorso non viene trovato e dunque non generato.
+     */
     public void drawRoad(ArrayList<GeoPoint> waypoints) throws Exception {
         Road road = roadManager.getRoad(waypoints);
 

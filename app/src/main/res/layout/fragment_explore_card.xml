@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fragment_explorecard"
+    android:id="@+id/fragment_explore_card"
     tools:context=".ui.fragment.Explore_Card_Fragment">
 
     <FrameLayout
