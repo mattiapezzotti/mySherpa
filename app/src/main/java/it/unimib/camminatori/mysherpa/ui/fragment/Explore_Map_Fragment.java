@@ -1,6 +1,9 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,12 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.util.GeoPoint;
@@ -21,8 +18,8 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.model.Location;
+import it.unimib.camminatori.mysherpa.model.map.ExploreMap;
 import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 
 /**
@@ -33,7 +30,7 @@ import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
  */
 
 // Per vedere la logica dietro la Mappa, vedere la classe ExploreMap
-public class Explore_Map_Fragment extends Fragment{
+public class Explore_Map_Fragment extends Fragment {
     private ExploreMap exploreMap;
     private Location_ViewModel location_viewModel;
 
@@ -64,14 +61,13 @@ public class Explore_Map_Fragment extends Fragment{
 
         // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
-            if(l != null) {
+            if (l != null) {
                 exploreMap.setMarkerPosition(new GeoPoint(
-                        Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
+                                Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                         )
                 );
-            }
-            else{
-                Snackbar.make(this.getView().getRootView(),"Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
+            } else {
+                Snackbar.make(this.getView().getRootView(), "Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -128,6 +124,6 @@ public class Explore_Map_Fragment extends Fragment{
      * {@link ExploreMap}
      */
     public void setCenter(GeoPoint p) {
-        this.exploreMap.setMarkerPosition(p);
+        this.exploreMap.updateLocation(p);
     }
 }

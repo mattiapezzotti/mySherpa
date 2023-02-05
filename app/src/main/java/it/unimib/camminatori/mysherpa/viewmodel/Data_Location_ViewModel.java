@@ -1,47 +1,32 @@
 package it.unimib.camminatori.mysherpa.viewmodel;
 
-import android.content.Context;
-import android.location.LocationManager;
-
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
+
 public class Data_Location_ViewModel extends ViewModel {
     final private String TAG = "Data_Location_ViewModel";
 
-    private Context context;
-    private LocationManager locationManager;
-    private static MutableLiveData<Data_Location_ViewModel.SavedLocationInfo> savedInfo;
-    private static ArrayList<Data_Location_ViewModel.SavedLocationInfo> favList;
+    private ArrayList<SavedLocation> favList;
 
-    public Data_Location_ViewModel(){
-        // TODO: leggere da JSon o DB
-        favList = new ArrayList<>();
-        favList.add(new SavedLocationInfo("lodi", 40,36));
-        favList.add(new SavedLocationInfo("milano", 100,120));
+    public Data_Location_ViewModel(ArrayList<SavedLocation> savedLocationList) {
+        if (savedLocationList == null)
+            savedLocationList = new ArrayList<SavedLocation>();
+
+        favList = savedLocationList;
     }
 
-    public MutableLiveData<Data_Location_ViewModel.SavedLocationInfo> getRecordInfo(Context context) {
-        if (savedInfo == null)
-            savedInfo = new MutableLiveData();
-
-        if (this.context == null)
-            this.context = context;
-
-        return savedInfo;
-    }
-
-    public ArrayList<Data_Location_ViewModel.SavedLocationInfo> getFavList() {
+    public ArrayList<SavedLocation> getFavList() {
         return favList;
     }
 
     /**
-     Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
+     * Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
      **/
     public void addRecord(String localityName, double latitude, double longitude) {
-        Data_Location_ViewModel.SavedLocationInfo saveRecordInfo = new Data_Location_ViewModel.SavedLocationInfo();
+        SavedLocation saveRecordInfo = new SavedLocation();
         saveRecordInfo.locationString = localityName;
         saveRecordInfo.lat = latitude;
         saveRecordInfo.lon = longitude;
@@ -49,35 +34,21 @@ public class Data_Location_ViewModel extends ViewModel {
     }
 
     /**
-     Rimuove il record quando viene premuto il bottone elimina dell'interfaccia
+     * Rimuove il record quando viene premuto il bottone elimina dell'interfaccia
      **/
-    public static ArrayList<Data_Location_ViewModel.SavedLocationInfo> removeRecord(int position) {
+    public ArrayList<SavedLocation> removeRecord(int position) {
         if (position >= 0)
             favList.remove(position);
 
         return favList;
     }
 
-    public static Data_Location_ViewModel.SavedLocationInfo getRecord(int position) {
+    public SavedLocation getRecord(int position) {
         return favList.get(position);
     }
 
-    public static class SavedLocationInfo {
+    /**
+     * Costruttore di savedLocation
+     */
 
-        //Costruttore Vuoto
-        public SavedLocationInfo(){
-
-        }
-
-        //Costruttore dell'arraylist popolato
-        public SavedLocationInfo(String locationString, double lat, double lon){
-            this.locationString = locationString;
-            this.lat = lat;
-            this.lon = lon;
-        }
-
-        public String locationString;
-        public double lat;
-        public double lon;
-    }
 }

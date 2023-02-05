@@ -8,18 +8,18 @@ import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 
 public class Location_ViewModel extends ViewModel {
 
-    public Location_ViewModel(){
+    public Location_ViewModel() {
     }
 
-    public LiveData<Location> getGeocodedLocation(){
+    public LiveData<Location> getGeocodedLocation() {
         return LocationRepository.getInstance().getLocationResponse();
     }
 
-    public void geocodePlace(String text){
+    public void geocodePlace(String text) {
         LocationRepository.getInstance().searchGeocoding(text);
     }
 
-    public void reverseGeocode(double lat, double lon){
+    public void reverseGeocode(double lat, double lon) {
         LocationRepository.getInstance().reverseGeocoding(lat, lon);
     }
 

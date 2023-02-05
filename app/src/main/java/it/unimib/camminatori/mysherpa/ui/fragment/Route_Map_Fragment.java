@@ -1,6 +1,10 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,18 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Handler;
-import android.util.Pair;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
@@ -74,18 +71,17 @@ public class Route_Map_Fragment extends Fragment{
         routeMap = new RouteMap(rootView.findViewById(R.id.mappa_naviga));
 
         final Observer<Location> updateLocation = l -> {
-            if(l != null) {
+            if (l != null) {
 
                 GeoPoint p = new GeoPoint(
                         Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
                 );
 
-                if(pathStart)
-                    if(start) {
+                if (pathStart)
+                    if (start) {
                         routeMap.updateStartNavigationPath(p, l.getDisplayName());
                         start = false;
-                    }
-                    else {
+                    } else {
                         try {
                             routeMap.updateDestinationNavigationPath(p, l.getDisplayName());
                         } catch (Exception e) {
@@ -94,9 +90,8 @@ public class Route_Map_Fragment extends Fragment{
                         start = true;
                         pathStart = false;
                     }
-            }
-            else{
-                Snackbar.make(this.getView(),"Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
+            } else {
+                Snackbar.make(this.getView(), "Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
@@ -139,24 +134,23 @@ public class Route_Map_Fragment extends Fragment{
                 );
             else
                 location_viewModel.geocodePlace(endText);
-        else
-            if (!Objects.equals(startText, startOnMyPostionString))
-                (new Handler()).postDelayed(()
-                        -> {
-                            try {
-                                routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
-                            } catch (Exception e) {
-                                this.printError(e.getMessage());
-                            }
-                        }, 500
-                );
-            else {
-                try {
-                    routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
-                } catch (Exception e) {
-                    this.printError(e.getMessage());
-                }
+        else if (!Objects.equals(startText, startOnMyPostionString))
+            (new Handler()).postDelayed(()
+                            -> {
+                        try {
+                            routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+                        } catch (Exception e) {
+                            this.printError(e.getMessage());
+                        }
+                    }, 500
+            );
+        else {
+            try {
+                routeMap.updateDestinationNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+            } catch (Exception e) {
+                this.printError(e.getMessage());
             }
+        }
 
     }
 
@@ -218,7 +212,7 @@ public class Route_Map_Fragment extends Fragment{
      */
     public void invertPath(String startText, String endText) {
         try {
-            this.routeMap.invertPath(startText,endText);
+            this.routeMap.invertPath(startText, endText);
         } catch (Exception e) {
             this.printError(e.getMessage());
         }

@@ -86,7 +86,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             return this.shareButton;
         }
 
-        public ImageButton getExploreButton(){
+        public ImageButton getExploreButton() {
             return this.exploreButton;
         }
     }
@@ -137,8 +137,8 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             }
         });
 
-        viewHolder.getExploreButton().setOnClickListener(v ->{
-            if(exploreClickedListener != null)
+        viewHolder.getExploreButton().setOnClickListener(v -> {
+            if (exploreClickedListener != null)
                 exploreClickedListener.onShareClicked(viewHolder.getAdapterPosition());
         });
 
@@ -197,7 +197,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         this.shareClickedListener = shareClickedListener;
     }
 
-    public void setOnExploreClickedListener(onExploreClickedListener exploreClickedListener){
+    public void setOnExploreClickedListener(onExploreClickedListener exploreClickedListener) {
         this.exploreClickedListener = exploreClickedListener;
     }
 
@@ -211,7 +211,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         String distanceString;
 
         if (meters >= 1000)
-            distanceString = ((float)meters / 1000.0) + " Km";
+            distanceString = ((float) meters / 1000.0) + " Km";
         else
             distanceString = meters + " m";
 
@@ -222,7 +222,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
         String timeString = "";
         long seconds = millisecond / 1000;
         long minutes = (seconds % 3600) / 60;
-        long hours =  seconds / 3600;
+        long hours = seconds / 3600;
 
         if (hours > 0)
             timeString += hours + " h  ";

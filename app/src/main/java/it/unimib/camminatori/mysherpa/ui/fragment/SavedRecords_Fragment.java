@@ -6,16 +6,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -44,10 +43,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
-import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
@@ -149,7 +147,8 @@ public class SavedRecords_Fragment extends Fragment {
                     startActivity(shareIntent);
                 } else {
                     Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.no_gpx_intent_fount, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.ok, v -> {})
+                            .setAction(R.string.ok, v -> {
+                            })
                             .show();
                 }
 
@@ -234,10 +233,11 @@ public class SavedRecords_Fragment extends Fragment {
         }
 
         //TODO: FIX SALVATAGGIO LOCATIONS
-        Type listOfFav = new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>(){}.getType();
+        Type listOfFav = new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
+        }.getType();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-        String json = gson.toJson(favList,listOfFav);
+        String json = gson.toJson(favList, listOfFav);
 
         editor.putString(SavedRecords_Fragment.FAVOURITES_RECORDS, json);
         editor.apply();

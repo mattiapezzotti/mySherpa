@@ -1,18 +1,11 @@
 package it.unimib.camminatori.mysherpa.model.map;
 
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_BOTTOM;
 import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_CENTER;
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_LEFT;
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_RIGHT;
-import static org.osmdroid.views.overlay.IconOverlay.ANCHOR_TOP;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 
 import androidx.appcompat.content.res.AppCompatResources;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
@@ -23,13 +16,11 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MapEventsOverlay;
-import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.repository.LocationRepository;
 import it.unimib.camminatori.mysherpa.utils.ImageUtils;
 import mil.nga.geopackage.BuildConfig;
 
@@ -49,7 +40,7 @@ public class Map implements MapEventsReceiver {
 
     protected RoadManager roadManager;
 
-    public Map(MapView map){
+    public Map(MapView map) {
         this.mapView = map;
         this.mapController = this.mapView.getController();
         this.rotationController = new RotationGestureOverlay(this.mapView);
@@ -78,7 +69,7 @@ public class Map implements MapEventsReceiver {
         upward_arrow = AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_baseline_arrow_upward_24);
 
         this.roadManager = new OSRMRoadManager(mapView.getContext(), BuildConfig.APPLICATION_ID);
-        ((OSRMRoadManager)roadManager).setMean(OSRMRoadManager.MEAN_BY_FOOT);
+        ((OSRMRoadManager) roadManager).setMean(OSRMRoadManager.MEAN_BY_FOOT);
 
         this.myLocationOverlay.setDirectionIcon(ImageUtils.drawableToBitmap(userIcon));
         this.myLocationOverlay.setPersonAnchor(ANCHOR_CENTER, ANCHOR_CENTER);
@@ -108,24 +99,24 @@ public class Map implements MapEventsReceiver {
         return rotationController;
     }
 
-    public void setCenter(GeoPoint point){
+    public void setCenter(GeoPoint point) {
         this.myLocationOverlay.disableFollowLocation();
         this.mapController.setCenter(point);
     }
 
-    public void resume(){
+    public void resume() {
         this.mapEventsOverlay.onResume();
         this.mapView.onResume();
         this.myLocationOverlay.enableMyLocation();
     }
 
-    public void pause(){
+    public void pause() {
         this.mapEventsOverlay.onPause();
         this.mapView.onPause();
         this.myLocationOverlay.disableMyLocation();
     }
 
-    public void resetCenter(){
+    public void resetCenter() {
         mapController.setCenter(myLocationOverlay.getMyLocation());
     }
 

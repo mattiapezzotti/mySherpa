@@ -4,11 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
-
-import it.unimib.camminatori.mysherpa.model.Location;
 import it.unimib.camminatori.mysherpa.model.Weather;
-import it.unimib.camminatori.mysherpa.network.geocoding.GeocodingAPI;
 import it.unimib.camminatori.mysherpa.network.weather.WeatherAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,27 +25,28 @@ public class WeatherRepository {
      */
     private final MutableLiveData<Weather> weatherResponse;
 
-    private WeatherRepository(){
+    private WeatherRepository() {
         weatherResponse = new MutableLiveData<>();
     }
 
-    public static WeatherRepository getInstance(){
-        if(instance == null)
+    public static WeatherRepository getInstance() {
+        if (instance == null)
             instance = new WeatherRepository();
         return instance;
     }
 
     /**
      * Trova il meteo di un luogo data la sua posizione
+     *
      * @param lat latitude del luogo
      * @param lon longitudie del luogo
      */
-    public void getWeatherFromCoordinates(double lat, double lon){
-        Call<Weather> weather = WeatherAPI.getInstance().getApi_interface().doCoordinatesWeather(lat,lon);
+    public void getWeatherFromCoordinates(double lat, double lon) {
+        Call<Weather> weather = WeatherAPI.getInstance().getApi_interface().doCoordinatesWeather(lat, lon);
         weather.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     weatherResponse.postValue(response.body());
                 }
             }
@@ -64,14 +61,15 @@ public class WeatherRepository {
 
     /**
      * Trova il meteo di un luogo dato il nome generico del luogo (non preciso)
+     *
      * @param text nome del luogo
      */
-    public void getWeatherFromText(String text){
+    public void getWeatherFromText(String text) {
         Call<Weather> weather = WeatherAPI.getInstance().getApi_interface().doCityWeather(text);
         weather.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     weatherResponse.postValue(response.body());
                 }
             }
