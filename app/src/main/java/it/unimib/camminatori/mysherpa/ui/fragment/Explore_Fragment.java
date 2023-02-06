@@ -73,6 +73,7 @@ public class Explore_Fragment extends Fragment {
                                 -> {
                             try {
                                 rme.drawRoad(getArguments().getParcelableArrayList("waypoints"));
+                                getArguments().clear();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Snackbar.make(

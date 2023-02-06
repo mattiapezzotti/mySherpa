@@ -123,7 +123,6 @@ public class SavedRecords_Fragment extends Fragment {
             bundle.putParcelableArrayList("waypoints", waypointsToDraw);
             Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
             Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_explore, bundle);
-
         });
 
         favRecordsRecyclerViewAdapter.setOnShareClickedListener(index -> {
