@@ -7,7 +7,7 @@
     <string name="bottom_nav_explore">Explore</string>
     <string name="bottom_nav_record">Record</string>
     <string name="bottom_nav_profile">Profile</string>
-    <string name="gps_not_enabled">Impossbile acquisire il GPS</string>
+    <string name="gps_not_enabled">Impossibile acquisire il GPS</string>
     <string name="no_bookmarks">Non ci sono percorsi preferiti</string>
     <string name="save_dialog_title">Salva Percorso</string>
     <string name="save">Salva</string>
@@ -24,6 +24,8 @@
     <string name="mypositionbutton">mypositionbutton</string>
     <string name="traveled_distance_prefix">Distanza Percorsa:</string>
     <string name="total_time_prefix">Tempo Totale:</string>
-    <string name="no_gpx_intent_fount">Nessuna applicatione GPX</string>
     <string name="delete_record_dialog_prefix">Rimuovere definitivamente</string>
+    <string name="partenza">Partenza</string>
+    <string name="arrivo">Destinazione</string>
+	<string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
 </resources>

@@ -1,48 +1,29 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-
-import android.os.SystemClock;
 import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.xmlpull.v1.XmlSerializer;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Objects;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.databinding.FragmentRecordBinding;
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class Record_Fragment extends Fragment {
     final private String TAG = "fragment_record";
@@ -53,8 +34,10 @@ public class Record_Fragment extends Fragment {
 
     private FragmentRecordBinding binding;
 
+    private Button showListButton;
+
     // View Model
-    private RecordViewModel recordViewModel;
+    private Record_ViewModel recordViewModel;
 
     public Record_Fragment() {
         // Required empty public constructor
@@ -81,9 +64,10 @@ public class Record_Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
+        Log.i(TAG, "viewmodel: " + recordViewModel);
 
-        final Observer<RecordViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
+        final Observer<Record_ViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
             String timerText = (recordInfo.timerText != null) ? recordInfo.timerText : requireContext().getResources().getString(R.string.default_timer_text);
             String metersText = (recordInfo.metersText != null) ? recordInfo.metersText : requireContext().getResources().getString(R.string.default_meters_text);
             String elevationText = (recordInfo.elevationText != null) ? recordInfo.elevationText : requireContext().getResources().getString(R.string.default_meters_text);
@@ -93,16 +77,16 @@ public class Record_Fragment extends Fragment {
             binding.elevationView.setText(elevationText);
 
             SharedPreferences totMetersPreferences = requireContext().getSharedPreferences(TOTAL_METERS_SHAREDPREF, Context.MODE_PRIVATE);
-            float totMeters = totMetersPreferences.getFloat (TOTAL_METERS_VAL, 0) + recordInfo.updateMeters;
+            float totMeters = totMetersPreferences.getFloat(TOTAL_METERS_VAL, 0) + recordInfo.updateMeters;
 
             SharedPreferences.Editor totMetersEditor = totMetersPreferences.edit();
             totMetersEditor.putFloat(TOTAL_METERS_VAL, totMeters);
 
             totMetersEditor.apply();
         };
-        recordViewModel.getRecordInfo(getContext()).observe(this, recordInfoObserver);
+        recordViewModel.getRecordInfo(getContext()).observe(getViewLifecycleOwner(), recordInfoObserver);
 
-        MaterialAlertDialogBuilder dialogBuilder =  new MaterialAlertDialogBuilder(requireActivity());
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireActivity());
         dialogBuilder.setTitle(R.string.save_dialog_title);
 
         View inflatedView = LayoutInflater.from(getContext()).inflate(R.layout.save_record_dialog, (ViewGroup) getView(), false);
@@ -125,7 +109,8 @@ public class Record_Fragment extends Fragment {
         binding.buttonStartRecord.setOnClickListener(v -> {
             if (!recordViewModel.buttonPlayClicked()) {
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.gps_not_enabled, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.ok, sview -> {})
+                        .setAction(R.string.ok, sview -> {
+                        })
                         .show();
 
                 return;
@@ -141,6 +126,9 @@ public class Record_Fragment extends Fragment {
         });
 
         updateButtons();
+        binding.showListButton.setOnClickListener(v -> {
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_recordList);
+        });
     }
 
     @Override
@@ -157,8 +145,7 @@ public class Record_Fragment extends Fragment {
 
         if (recordViewModel.isRecordPaused() || !recordViewModel.isRecordStarted()) {
             binding.buttonStartRecord.setImageResource(R.drawable.ic_round_play_circle_24);
-        }
-        else {
+        } else {
             binding.buttonStartRecord.setImageResource(R.drawable.ic_baseline_pause_circle_24);
         }
 

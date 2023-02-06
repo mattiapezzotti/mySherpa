@@ -3,21 +3,9 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.UriMatcher;
-import android.content.res.AssetManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.FileUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,16 +14,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.j256.ormlite.stmt.query.In;
 
-import org.w3c.dom.Text;
+import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
@@ -44,19 +40,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-import it.unimib.camminatori.mysherpa.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.utils.SaveLocation;
-import it.unimib.camminatori.mysherpa.viewmodel.RecordViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
     final static public String FAVOURITES_RECORDS_SHAREDPREFS = "FAVOURITES_RECORDS";
@@ -65,8 +58,10 @@ public class SavedRecords_Fragment extends Fragment {
     static final private String TAG = "SavedRecordsFragment";
     protected RecyclerView favRecordsView;
 
+    private FloatingActionButton exploreButton;
+
     // View Model
-    private RecordViewModel recordViewModel;
+    private Record_ViewModel recordViewModel;
 
     public SavedRecords_Fragment() {
         // Required empty public constructor
@@ -96,11 +91,11 @@ public class SavedRecords_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        recordViewModel = new ViewModelProvider(requireActivity()).get(RecordViewModel.class);
+        recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
 
         recordViewModel.getRecordInfo(requireContext());
 
-        ArrayList<RecordViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
+        ArrayList<Record_ViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
 
         final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(favRecords);
 
@@ -111,6 +106,24 @@ public class SavedRecords_Fragment extends Fragment {
                 noBookmarksTextView.setVisibility(View.VISIBLE);
             else
                 noBookmarksTextView.setVisibility(View.GONE);
+        });
+
+        favRecordsRecyclerViewAdapter.setOnExploreClickedListener(index -> {
+            //System.out.println(recordViewModel.getFavList().get(index).path);
+
+            ArrayList<SaveLocation> registeredWaypoints = recordViewModel.getFavList().get(index).path;
+            ArrayList<GeoPoint> waypointsToDraw = new ArrayList<>();
+            for (SaveLocation l : registeredWaypoints) {
+                waypointsToDraw.add(new GeoPoint(l.getLatitude(), l.getLongitude()));
+            }
+
+            System.out.println(recordViewModel.getFavList().get(index).path);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("waypoints", waypointsToDraw);
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_explore, bundle);
+
         });
 
         favRecordsRecyclerViewAdapter.setOnShareClickedListener(index -> {
@@ -134,7 +147,8 @@ public class SavedRecords_Fragment extends Fragment {
                     startActivity(shareIntent);
                 } else {
                     Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), R.string.no_gpx_intent_fount, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.ok, v -> {})
+                            .setAction(R.string.ok, v -> {
+                            })
                             .show();
                 }
 
@@ -186,15 +200,15 @@ public class SavedRecords_Fragment extends Fragment {
     }
 
 
-    public static void saveFavRecords(Context context, RecordViewModel recordViewModel) {
+    public static void saveFavRecords(Context context, Record_ViewModel recordViewModel) {
         String TAG = "saveFavRecords";
         SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = favRecordsPreferences.edit();
 
-        ArrayList<RecordViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
+        ArrayList<Record_ViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
 
         for (int i = 0; i < favList.size(); i++) {
-            RecordViewModel.SaveRecordInfo info = favList.get(i);
+            Record_ViewModel.SaveRecordInfo info = favList.get(i);
 
             File gpxDir = new File(context.getFilesDir(), "gpx");
             if (!gpxDir.exists()) {
@@ -229,9 +243,12 @@ public class SavedRecords_Fragment extends Fragment {
             }
         }
 
+        //TODO: FIX SALVATAGGIO LOCATIONS
+        Type listOfFav = new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
+        }.getType();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-        String json = gson.toJson(favList);
+        String json = gson.toJson(favList, listOfFav);
 
         Log.d(TAG, "Saving " + json);
 
@@ -239,8 +256,8 @@ public class SavedRecords_Fragment extends Fragment {
         editor.apply();
     }
 
-    public static ArrayList<RecordViewModel.SaveRecordInfo> getSavedRecords(Context context) {
-        ArrayList<RecordViewModel.SaveRecordInfo> savedRecords;
+    public static ArrayList<Record_ViewModel.SaveRecordInfo> getSavedRecords(Context context) {
+        ArrayList<Record_ViewModel.SaveRecordInfo> savedRecords;
         SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
 
         Gson gson = new Gson();
@@ -249,7 +266,7 @@ public class SavedRecords_Fragment extends Fragment {
         if (saveJson.equals("")) {
             savedRecords = new ArrayList<>();
         } else {
-            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<RecordViewModel.SaveRecordInfo>>() {
+            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
             }.getType());
         }
 

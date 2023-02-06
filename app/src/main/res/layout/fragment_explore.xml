@@ -2,11 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_explore">
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Map_Fragment"
-        android:id="@+id/fragment_map_fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Map_Fragment"
+        android:id="@+id/fragment_map_explore"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -17,9 +18,21 @@
         android:layout_height="match_parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Card_fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Explore_Card_Fragment"
         android:id="@+id/fragment_explorecard"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_getMyLocation"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="15dp"
+        android:backgroundTint="@color/md_theme_light_background"
+        android:contentDescription="@string/mypositionbutton"
+        app:srcCompat="@drawable/ic_baseline_my_location_24" />
 
 </FrameLayout>
