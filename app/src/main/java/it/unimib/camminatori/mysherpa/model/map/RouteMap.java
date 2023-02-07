@@ -41,6 +41,7 @@ public class RouteMap extends Map {
      * @param startPointText
      */
     public void updateStartNavigationPath(GeoPoint startPoint, String startPointText){
+        this.getMyLocationOverlay().disableFollowLocation();
         this.deletePath();
 
         startMarker = new Marker(mapView);
