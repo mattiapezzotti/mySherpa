@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
@@ -28,7 +29,7 @@ import it.unimib.camminatori.mysherpa.ui.activity.StartActivity;
 
 public class Profile_Fragment extends Fragment {
 
-    private MaterialButton modificaProfilo, logout;
+    private MaterialButton modificaProfilo, logout, login_register, settings;
 
     private FirebaseUser user;
     private DatabaseReference reference;
@@ -62,27 +63,30 @@ public class Profile_Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         logout = (MaterialButton) view.findViewById(R.id.button_exit);
-
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getActivity(), StartActivity.class);
-                startActivity(intent);
             }
         });
 
         modificaProfilo = (MaterialButton) view.findViewById(R.id.button_profile);
+        modificaProfilo.setOnClickListener(v ->{
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.editProfile_fragment);
+                });
 
-        modificaProfilo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        login_register = (MaterialButton) view.findViewById(R.id.button_LogReg);
+        login_register.setOnClickListener(v -> {
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.start_Fragment);
+            });
 
-                //TODO: action verso edit profile
-            }
+        settings = (MaterialButton) view.findViewById(R.id.iconButtonSettings);
+        settings.setOnClickListener(v ->{
+            Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.settings_Fragment);
         });
 
         final MaterialTextView username = (MaterialTextView) view.findViewById(R.id.nameHolder);
+        username.setText("No current user logged in");
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
             reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -1,6 +1,5 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +27,8 @@ public class EditProfile_fragment extends Fragment {
     private ImageButton backArrow;
     private Button modImage, modProfile;
     private TextInputEditText name, mail, password;
+
+    private View viewNav;
 
     public EditProfile_fragment(){
         //required public empty constructor
@@ -50,11 +53,13 @@ public class EditProfile_fragment extends Fragment {
         mail = (TextInputEditText) view.findViewById(R.id.mailNew);
         password = (TextInputEditText) view.findViewById(R.id.pwNew);
 
+        viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
+
         backArrow = (ImageButton) view.findViewById(R.id.backButton);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO action verso Profile_Fragment
+                Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
             }
         });
 
@@ -67,16 +72,16 @@ public class EditProfile_fragment extends Fragment {
         });
 
         modProfile = (Button) view.findViewById(R.id.buttonModUser);
-        modProfile.setOnClickListener(new View.OnClickListener() {
+        /*modProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetUser();
             }
-        });
+        });*/
 
     }
 
-    private void resetUser(){
+    /*private void resetUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String mailTrim = mail.getText().toString().trim();
         String passwordTrim = password.getText().toString().trim();
@@ -102,6 +107,6 @@ public class EditProfile_fragment extends Fragment {
                     }
                 });
 
-    }
+    }*/
 
 }

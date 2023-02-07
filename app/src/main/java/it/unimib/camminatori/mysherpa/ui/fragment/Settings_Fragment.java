@@ -38,7 +38,7 @@ public class Settings_Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         loadLocale();
 
-        switcherDark = view.findViewById(R.id.switchDark);
+        /*switcherDark = view.findViewById(R.id.switchDark);
         switcherEnglish = view.findViewById(R.id.switchEnglish);
 
         sharedPreferences = requireActivity().getSharedPreferences("MODE", Context.MODE_PRIVATE);
@@ -94,7 +94,7 @@ public class Settings_Fragment extends Fragment {
 
                 }
             }
-        });
+        });*/
 
     }
 
