@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,9 +43,11 @@ public class Profile_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
+        }
 
     }
 
@@ -81,21 +84,24 @@ public class Profile_Fragment extends Fragment {
 
         final MaterialTextView username = (MaterialTextView) view.findViewById(R.id.nameHolder);
 
-        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User userProfile = snapshot.getValue(User.class);
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User userProfile = snapshot.getValue(User.class);
 
-                if(userProfile != null){
-                    String fullName = userProfile.name;
-                    username.setText(fullName);
+                    if (userProfile != null) {
+                        String fullName = userProfile.name;
+                        username.setText(fullName);
+                    }
                 }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "Error!", Toast.LENGTH_LONG).show();
-            }
-        });
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(getActivity(), "Error!", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
     }
 }
