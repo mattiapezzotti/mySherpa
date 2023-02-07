@@ -7,7 +7,7 @@
     <string name="bottom_nav_explore">Explore</string>
     <string name="bottom_nav_record">Record</string>
     <string name="bottom_nav_profile">Profile</string>
-    <string name="gps_not_enabled">Impossbile acquisire il GPS</string>
+    <string name="gps_not_enabled">Impossibile acquisire il GPS</string>
     <string name="no_bookmarks">Non ci sono percorsi preferiti</string>
     <string name="save_dialog_title">Salva Percorso</string>
     <string name="save">Salva</string>
@@ -25,4 +25,7 @@
     <string name="partenza">Partenza</string>
     <string name="arrivo">Destinazione</string>
 	<string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
+    <string name="tema_scuro">Tema Scuro</string>
+    <string name="lingua_inglese">Lingua inglese</string>
+    <string name="password_dimenticata">password dimenticata?</string>
 </resources>
