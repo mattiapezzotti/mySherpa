@@ -62,17 +62,6 @@
         app:layout_constraintTop_toBottomOf="@+id/button_register" />
 
     <Button
-        android:id="@+id/button_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="Modifica Profilo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:enabled="false"
-        app:layout_constraintTop_toBottomOf="@id/register_google" />
-
-    <Button
         android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,7 +70,7 @@
         android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_profile" />
+        app:layout_constraintTop_toBottomOf="@+id/register_google" />
 
     <Button
         android:id="@+id/iconButtonSettings"

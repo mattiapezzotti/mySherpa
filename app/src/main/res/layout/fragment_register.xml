@@ -49,6 +49,17 @@
         android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@+id/log_email" />
 
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/log_passwordRepeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="15dp"
+        android:hint="Ripeti Password"
+        android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@+id/log_password" />
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="wrap_content"
@@ -57,7 +68,7 @@
         android:text="Registrati"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/log_password"/>
+        app:layout_constraintTop_toBottomOf="@+id/log_passwordRepeat"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -37,34 +37,28 @@ import it.unimib.camminatori.mysherpa.model.User;
 
 public class Profile_Fragment extends Fragment {
 
-    private Button modificaProfilo, logout, register, login, settings, googleLogin;
+    private Button logout, register, login, settings, googleLogin;
     private MaterialTextView username;
     private View viewNav;
 
+    private SignInClient signInClient;
+    private String userID;
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private DatabaseReference reference;
-
-    private String userID;
-
-    private SignInClient signInClient;
-
-
+    
     public Profile_Fragment() {
         // Required empty public constructor
     }
-
-    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
-            result -> handleSignInResult(result.getData())
-    );
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            user = FirebaseAuth.getInstance().getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            user = mAuth.getCurrentUser();
             reference = FirebaseDatabase.getInstance().getReference("Users");
             userID = user.getUid();
         }
@@ -78,20 +72,16 @@ public class Profile_Fragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        signInClient = Identity.getSignInClient(requireContext());
-
-        mAuth = FirebaseAuth.getInstance();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
         viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
+
+        signInClient = Identity.getSignInClient(requireContext());
 
         register = view.findViewById(R.id.button_register);
         login = view.findViewById(R.id.button_login);
-        modificaProfilo = view.findViewById(R.id.button_profile);
         settings = view.findViewById(R.id.iconButtonSettings);
         googleLogin = view.findViewById(R.id.register_google);
         username = view.findViewById(R.id.nameHolder);
@@ -104,11 +94,6 @@ public class Profile_Fragment extends Fragment {
                     task -> updateUI(null));
 
             updateUI(null);
-        });
-
-        modificaProfilo.setOnClickListener(v -> {
-            Navigation.findNavController(viewNav).popBackStack();
-            Navigation.findNavController(viewNav).navigate(R.id.editProfile_fragment);
         });
 
         register.setOnClickListener(v -> {
@@ -129,41 +114,17 @@ public class Profile_Fragment extends Fragment {
         googleLogin.setOnClickListener(v -> {
             signIn();
         });
-
-        /*
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User userProfile = snapshot.getValue(User.class);
-
-                    if (userProfile != null) {
-                        String fullName = userProfile.email;
-                        username.setText(fullName);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(getActivity(), "Error!", Toast.LENGTH_LONG).show();
-                }
-            });
-
-        }
-         */
     }
 
-    private void updateUI(FirebaseUser user) {
-        if (user != null) {
+    private void updateUI(FirebaseUser currentUser) {
+        if (currentUser != null) {
             logout.setEnabled(true);
-            modificaProfilo.setEnabled(true);
             googleLogin.setEnabled(false);
             register.setEnabled(false);
             login.setEnabled(false);
-            username.setText(user.getEmail());
+            username.setText(currentUser.getEmail());
         } else {
             logout.setEnabled(false);
-            modificaProfilo.setEnabled(false);
             googleLogin.setEnabled(true);
             register.setEnabled(true);
             login.setEnabled(true);
@@ -171,57 +132,34 @@ public class Profile_Fragment extends Fragment {
         }
     }
 
+    public void onStart() {
+        super.onStart();
+        user = mAuth.getCurrentUser();
+        updateUI(user);
+    }
+
+    private void showError(String m) {
+        Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nel login", Snackbar.LENGTH_LONG)
+                .setAction(R.string.ok, sview -> {
+                })
+                .show();
+        System.err.println(m);
+    }
+
     private void handleSignInResult(Intent data) {
         try {
             SignInCredential credential = signInClient.getSignInCredentialFromIntent(data);
             String idToken = credential.getGoogleIdToken();
-            System.out.println(credential.getPassword() + " " + credential.getDisplayName());
             firebaseAuthWithGoogle(idToken);
         } catch (ApiException e) {
             showError(e.getMessage());
-            updateUI(null);
         }
     }
 
-    private void signUpWithGoogle(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        User user = new User(email, email);
-
-                        FirebaseDatabase.getInstance().getReference("Users")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .setValue(user).addOnCompleteListener(task1 -> {
-
-                                    if (task1.isSuccessful()) {
-                                        new MaterialAlertDialogBuilder(getActivity())
-                                                .setIcon(R.mipmap.ic_launcher)
-                                                .setTitle(R.string.app_name)
-                                                .setMessage("Utente creato correttamente.")
-                                                .setPositiveButton("OK", null)
-                                                .show();
-
-                                        Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
-
-                                    } else {
-                                        new MaterialAlertDialogBuilder(getActivity())
-                                                .setIcon(R.mipmap.ic_launcher)
-                                                .setTitle(R.string.app_name)
-                                                .setMessage("Errore nella creazione dell'account.")
-                                                .setPositiveButton("OK", null)
-                                                .show();
-                                    }
-                                });
-                    } else {
-                        new MaterialAlertDialogBuilder(getActivity())
-                                .setIcon(R.mipmap.ic_launcher)
-                                .setTitle(R.string.app_name)
-                                .setMessage("Errore nella creazione dell'account.")
-                                .setPositiveButton("OK", null)
-                                .show();
-                    }
-                });
-    }
+    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> handleSignInResult(result.getData())
+    );
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
@@ -236,27 +174,7 @@ public class Profile_Fragment extends Fragment {
                 });
     }
 
-    private void oneTapSignIn() {
-        // Configure One Tap UI
-        BeginSignInRequest oneTapRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(
-                        BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                                .setSupported(true)
-                                .setServerClientId(getString(R.string.default_web_client_id))
-                                .setFilterByAuthorizedAccounts(true)
-                                .build()
-                )
-                .build();
-
-        // Display the One Tap UI
-        signInClient.beginSignIn(oneTapRequest)
-                .addOnSuccessListener(beginSignInResult -> launchSignIn(beginSignInResult.getPendingIntent()))
-                .addOnFailureListener(e -> {
-                    showError(e.getMessage());
-                });
-    }
-
-    private void signIn() {
+    private void signIn(){
         GetSignInIntentRequest signInRequest = GetSignInIntentRequest.builder()
                 .setServerClientId(getString(R.string.default_web_client_id))
                 .build();
@@ -264,16 +182,7 @@ public class Profile_Fragment extends Fragment {
         signInClient.getSignInIntent(signInRequest)
                 .addOnSuccessListener(this::launchSignIn)
                 .addOnFailureListener(e -> {
-                    showError(e.getMessage());
                 });
-    }
-
-    private void showError(String m) {
-        Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nel login", Snackbar.LENGTH_LONG)
-                .setAction(R.string.ok, sview -> {
-                })
-                .show();
-        System.err.println(m);
     }
 
     private void launchSignIn(PendingIntent pendingIntent) {
@@ -283,12 +192,6 @@ public class Profile_Fragment extends Fragment {
             signInLauncher.launch(intentSenderRequest);
         } catch (Exception e) {
         }
-    }
-
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
     }
 
 }

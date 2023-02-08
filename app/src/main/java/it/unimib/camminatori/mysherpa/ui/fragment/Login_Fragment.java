@@ -98,30 +98,37 @@ public class Login_Fragment extends Fragment {
                 return;
             }
 
-            if (passwordTrim.length() < 8) {
-                password.setError("Inserire almeno 8 caratteri");
-                password.requestFocus();
-                return;
-            }
-
             loading.setVisibility(View.VISIBLE);
 
             mAuth.signInWithEmailAndPassword(emailTrim, passwordTrim).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Navigation.findNavController(viewNav).popBackStack();
-                    Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
-                    loading.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(getContext(), "Errore nel login! Verificare le credenziali", Toast.LENGTH_LONG).show();
-                    loading.setVisibility(View.GONE);
-
-                }
+                loading.setVisibility(View.GONE);
+                showDialog(task.isSuccessful());
             });
         });
 
         /*forgotPW = (MaterialTextView) view.findViewById(R.id.PWdimenticata);
         forgotPW.setOnClickListener(this);*/
 
+    }
+
+    private void showDialog(boolean status){
+        MaterialAlertDialogBuilder m =
+                new MaterialAlertDialogBuilder(getActivity())
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setPositiveButton("OK", null);
+
+        if(status) {
+            m.setMessage("Login Effettuato Correttamente");
+            m.setOnDismissListener(d -> {
+                Navigation.findNavController(viewNav).popBackStack();
+                Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
+            });
+        }
+        else {
+            m.setMessage("Credenziali errate");
+        }
+        m.show();
     }
 
 }

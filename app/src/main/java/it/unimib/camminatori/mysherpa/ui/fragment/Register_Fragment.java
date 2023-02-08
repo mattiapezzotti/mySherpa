@@ -8,29 +8,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.model.User;
 
 public class Register_Fragment extends Fragment {
 
     private Button register;
     private ImageButton backButton;
-    private TextInputEditText name, email, password;
+    private TextInputEditText name, email, password, passwordRepeat;
     private ProgressBar loading;
 
     private FirebaseAuth mAuth;
@@ -59,6 +53,7 @@ public class Register_Fragment extends Fragment {
         email = (TextInputEditText) view.findViewById(R.id.log_email);
         password = (TextInputEditText) view.findViewById(R.id.log_password);
         name = (TextInputEditText) view.findViewById(R.id.log_name);
+        passwordRepeat = (TextInputEditText) view.findViewById(R.id.log_passwordRepeat);
 
         loading = (ProgressBar) view.findViewById(R.id.progressBar);
 
@@ -79,16 +74,23 @@ public class Register_Fragment extends Fragment {
             String emailTrim = email.getText().toString().trim();
             String passwordTrim = password.getText().toString().trim();
             String nameTrim = name.getText().toString().trim();
+            String passwordRepeatTrim = passwordRepeat.getText().toString().trim();
 
             if (emailTrim.isEmpty()) {
-                email.setError("Campo obbligatorio!");
+                email.setError("Campo obbligatorio");
                 email.requestFocus();
                 return;
             }
 
             if (passwordTrim.isEmpty()) {
-                password.setError("Campo obbligatorio!");
+                password.setError("Campo obbligatorio");
                 password.requestFocus();
+                return;
+            }
+
+            if (passwordRepeatTrim.isEmpty()) {
+                passwordRepeat.setError("Campo obbligatorio");
+                passwordRepeat.requestFocus();
                 return;
             }
 
@@ -104,8 +106,14 @@ public class Register_Fragment extends Fragment {
                 return;
             }
 
+            if (!passwordTrim.equals(passwordRepeatTrim)) {
+                passwordRepeat.setError("Le password devono coincidere");
+                passwordRepeat.requestFocus();
+                return;
+            }
+
             if (nameTrim.isEmpty()) {
-                name.setError("Campo obbligatorio!");
+                name.setError("Campo obbligatorio");
                 name.requestFocus();
                 return;
             }
@@ -120,50 +128,30 @@ public class Register_Fragment extends Fragment {
 
             mAuth.createUserWithEmailAndPassword(emailTrim, passwordTrim)
                     .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            User user = new User(emailTrim, nameTrim);
-
-                            FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(task1 -> {
-
-                                        if (task1.isSuccessful()) {
-                                            new MaterialAlertDialogBuilder(getActivity())
-                                                    .setIcon(R.mipmap.ic_launcher)
-                                                    .setTitle(R.string.app_name)
-                                                    .setMessage("Utente creato correttamente.")
-                                                    .setPositiveButton("OK", null)
-                                                    .show();
-                                            loading.setVisibility(View.GONE);
-
-                                            Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
-
-                                        } else {
-                                            new MaterialAlertDialogBuilder(getActivity())
-                                                    .setIcon(R.mipmap.ic_launcher)
-                                                    .setTitle(R.string.app_name)
-                                                    .setMessage("Errore nella creazione dell'account.")
-                                                    .setPositiveButton("OK", null)
-                                                    .show();
-                                            loading.setVisibility(View.GONE);
-
-                                        }
-                                    });
-                        } else {
-                            new MaterialAlertDialogBuilder(getActivity())
-                                    .setIcon(R.mipmap.ic_launcher)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage("Errore nella creazione dell'account.")
-                                    .setPositiveButton("OK", null)
-                                    .show();
-                            loading.setVisibility(View.GONE);
-                        }
+                        loading.setVisibility(View.GONE);
+                        showDialog(task.isSuccessful());
                     });
         });
-
-        /*forgotPW = (MaterialTextView) view.findViewById(R.id.PWdimenticata);
-        forgotPW.setOnClickListener(this);*/
-
     }
+
+        private void showDialog(boolean status){
+            MaterialAlertDialogBuilder m =
+                    new MaterialAlertDialogBuilder(getActivity())
+                            .setIcon(R.mipmap.ic_launcher)
+                            .setTitle(R.string.app_name)
+                            .setPositiveButton("OK", null);
+
+            if(status) {
+                m.setMessage("Registrazione effettuata correttamente");
+                m.setOnDismissListener(d -> {
+                    Navigation.findNavController(viewNav).popBackStack();
+                    Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
+                });
+            }
+            else {
+                m.setMessage("Errore nella creazione dell'account");
+            }
+            m.show();
+        }
 
 }
