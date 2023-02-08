@@ -85,5 +85,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.8'
+
 
 }

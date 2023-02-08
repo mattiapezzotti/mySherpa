@@ -105,17 +105,13 @@ public class Login_Fragment extends Fragment {
                 showDialog(task.isSuccessful());
             });
         });
-
-        /*forgotPW = (MaterialTextView) view.findViewById(R.id.PWdimenticata);
-        forgotPW.setOnClickListener(this);*/
-
     }
 
     private void showDialog(boolean status){
         MaterialAlertDialogBuilder m =
                 new MaterialAlertDialogBuilder(getActivity())
                 .setIcon(R.mipmap.ic_launcher)
-                .setTitle(R.string.app_name)
+                .setTitle("Login")
                 .setPositiveButton("OK", null);
 
         if(status) {

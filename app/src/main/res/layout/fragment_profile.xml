@@ -8,7 +8,7 @@
     tools:context=".ui.fragment.Profile_Fragment">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/profilePicture"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_marginTop="50dp"
@@ -27,7 +27,7 @@
         android:text="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
 
     <Button
         android:id="@+id/button_login"

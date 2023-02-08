@@ -138,7 +138,7 @@ public class Register_Fragment extends Fragment {
             MaterialAlertDialogBuilder m =
                     new MaterialAlertDialogBuilder(getActivity())
                             .setIcon(R.mipmap.ic_launcher)
-                            .setTitle(R.string.app_name)
+                            .setTitle("Registrazione")
                             .setPositiveButton("OK", null);
 
             if(status) {

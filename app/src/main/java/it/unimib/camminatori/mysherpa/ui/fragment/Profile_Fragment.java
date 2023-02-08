@@ -4,9 +4,12 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
@@ -14,9 +17,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
@@ -31,9 +36,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.model.User;
 
 public class Profile_Fragment extends Fragment {
 
@@ -46,7 +51,10 @@ public class Profile_Fragment extends Fragment {
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private DatabaseReference reference;
-    
+    private ImageView propic;
+
+    private NavController navController;
+
     public Profile_Fragment() {
         // Required empty public constructor
     }
@@ -54,8 +62,8 @@ public class Profile_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mAuth = FirebaseAuth.getInstance();
+
 
         if (mAuth.getCurrentUser() != null) {
             user = mAuth.getCurrentUser();
@@ -86,14 +94,16 @@ public class Profile_Fragment extends Fragment {
         googleLogin = view.findViewById(R.id.register_google);
         username = view.findViewById(R.id.nameHolder);
         logout = view.findViewById(R.id.button_logout);
+        propic = view.findViewById(R.id.profilePicture);
 
         logout.setOnClickListener(view1 -> {
-            mAuth.signOut();
-
-            signInClient.signOut().addOnCompleteListener(requireActivity(),
-                    task -> updateUI(null));
-
-            updateUI(null);
+            new MaterialAlertDialogBuilder(getActivity())
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setTitle("Logout")
+                    .setPositiveButton("Si", (dialog, which) -> signOut())
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .setMessage("Sicuro di voler effettuare il logut?")
+                    .show();
         });
 
         register.setOnClickListener(v -> {
@@ -123,12 +133,14 @@ public class Profile_Fragment extends Fragment {
             register.setEnabled(false);
             login.setEnabled(false);
             username.setText(currentUser.getEmail());
+            Picasso.get().load(currentUser.getPhotoUrl()).into(propic);
         } else {
             logout.setEnabled(false);
             googleLogin.setEnabled(true);
             register.setEnabled(true);
             login.setEnabled(true);
             username.setText("No current user logged in");
+            propic.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_account_circle_24));
         }
     }
 
@@ -136,6 +148,13 @@ public class Profile_Fragment extends Fragment {
         super.onStart();
         user = mAuth.getCurrentUser();
         updateUI(user);
+    }
+
+    private void signOut() {
+        mAuth.signOut();
+
+        signInClient.signOut().addOnCompleteListener(requireActivity(),
+                task -> updateUI(null));
     }
 
     private void showError(String m) {
