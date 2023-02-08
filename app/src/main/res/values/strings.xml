@@ -24,8 +24,10 @@
     <string name="total_time_prefix">Tempo Totale:</string>
     <string name="partenza">Partenza</string>
     <string name="arrivo">Destinazione</string>
-	<string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
+    <string name="no_gpx_intent_fount">Nessuna applicazione GPX</string>
     <string name="tema_scuro">Tema Scuro</string>
     <string name="lingua_inglese">Lingua inglese</string>
-    <string name="password_dimenticata">password dimenticata?</string>
+    <string name="password_dimenticata">Password dimenticata?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -38,19 +38,28 @@
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Profile_Fragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/fragment_recordList"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment"
         android:label="saved_records_fragment"
         tools:layout="@layout/fragment_saved_records" />
+
     <fragment
-        android:id="@+id/start_Fragment"
-        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Start_Fragment"
-        android:label="Start_Fragment" />
+        android:id="@+id/register_fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Register_Fragment"
+        android:label="Register_Fragment" />
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="it.unimib.camminatori.mysherpa.ui.fragment.Login_Fragment"
+        android:label="Login_Fragment" />
+
     <fragment
         android:id="@+id/settings_Fragment"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.Settings_Fragment"
         android:label="Settings_Fragment" />
+
     <fragment
         android:id="@+id/editProfile_fragment"
         android:name="it.unimib.camminatori.mysherpa.ui.fragment.EditProfile_fragment"
