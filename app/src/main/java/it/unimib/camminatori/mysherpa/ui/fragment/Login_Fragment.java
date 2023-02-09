@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.User;
+import it.unimib.camminatori.mysherpa.viewmodel.Firebase_ViewModel;
 
 public class Login_Fragment extends Fragment {
 
@@ -36,6 +37,7 @@ public class Login_Fragment extends Fragment {
     private ProgressBar loading;
 
     private FirebaseAuth mAuth;
+    private Firebase_ViewModel firebase_viewModel;
 
     private View viewNav;
 
@@ -58,22 +60,24 @@ public class Login_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        email = (TextInputEditText) view.findViewById(R.id.log_email);
-        password = (TextInputEditText) view.findViewById(R.id.log_password);
+        email = view.findViewById(R.id.log_email);
+        password = view.findViewById(R.id.log_password);
 
-        loading = (ProgressBar) view.findViewById(R.id.progressBar);
+        loading = view.findViewById(R.id.progressBar);
 
-        mAuth = FirebaseAuth.getInstance();
+        firebase_viewModel = new Firebase_ViewModel();
+
+        mAuth = firebase_viewModel.getmAuth();
 
         viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
 
-        backButton = (ImageButton) view.findViewById(R.id.backButton);
+        backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(viewNav).popBackStack();
             Navigation.findNavController(viewNav).navigate(R.id.fragment_profile);
         });
 
-        login = (Button) view.findViewById(R.id.buttonLogin);
+        login = view.findViewById(R.id.buttonLogin);
 
         login.setOnClickListener(view1 -> {
 

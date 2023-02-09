@@ -4,8 +4,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,12 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
-import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
@@ -34,24 +29,33 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.User;
+import it.unimib.camminatori.mysherpa.viewmodel.Firebase_ViewModel;
 
 public class Profile_Fragment extends Fragment {
 
     private Button logout, register, login, settings, googleLogin;
-    private MaterialTextView username;
+    private MaterialTextView username, kmText;
     private View viewNav;
 
-    private SignInClient signInClient;
     private String userID;
+    private ImageView propic;
+
+    private Firebase_ViewModel firebase_viewModel;
+
+    private SignInClient signInClient;
     private FirebaseUser user;
     private FirebaseAuth mAuth;
-    private DatabaseReference reference;
-    private ImageView propic;
+    private DatabaseReference mReference;
+    private FirebaseDatabase mDatabase;
 
     private NavController navController;
 
@@ -62,15 +66,6 @@ public class Profile_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-
-
-        if (mAuth.getCurrentUser() != null) {
-            user = mAuth.getCurrentUser();
-            reference = FirebaseDatabase.getInstance().getReference("Users");
-            userID = user.getUid();
-        }
-
     }
 
     @Override
@@ -84,15 +79,26 @@ public class Profile_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
+        firebase_viewModel = new Firebase_ViewModel();
 
-        signInClient = Identity.getSignInClient(requireContext());
+        mAuth = firebase_viewModel.getmAuth();
+        mDatabase = firebase_viewModel.getmDatabase();
+        mReference = firebase_viewModel.getmReference();
+        signInClient = firebase_viewModel.getSignInClient(getContext());
+
+        if (mAuth.getCurrentUser() != null) {
+            user = mAuth.getCurrentUser();
+            userID = user.getUid();
+        }
+
+        viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
 
         register = view.findViewById(R.id.button_register);
         login = view.findViewById(R.id.button_login);
         settings = view.findViewById(R.id.iconButtonSettings);
         googleLogin = view.findViewById(R.id.register_google);
         username = view.findViewById(R.id.nameHolder);
+        kmText = view.findViewById(R.id.kmText);
         logout = view.findViewById(R.id.button_logout);
         propic = view.findViewById(R.id.profilePicture);
 
@@ -124,6 +130,28 @@ public class Profile_Fragment extends Fragment {
         googleLogin.setOnClickListener(v -> {
             signIn();
         });
+
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.child(mAuth.getCurrentUser().getUid()).getValue(User.class);
+                username.setText(user.getName());
+                kmText.setText(user.getKmTot() + "km");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+
+        mReference.addValueEventListener(userListener);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI(mAuth.getCurrentUser());
     }
 
     private void updateUI(FirebaseUser currentUser) {
@@ -132,8 +160,9 @@ public class Profile_Fragment extends Fragment {
             googleLogin.setEnabled(false);
             register.setEnabled(false);
             login.setEnabled(false);
-            username.setText(currentUser.getEmail());
+            currentUser.getDisplayName();
             Picasso.get().load(currentUser.getPhotoUrl()).into(propic);
+            kmText.setVisibility(View.VISIBLE);
         } else {
             logout.setEnabled(false);
             googleLogin.setEnabled(true);
@@ -141,13 +170,8 @@ public class Profile_Fragment extends Fragment {
             login.setEnabled(true);
             username.setText("No current user logged in");
             propic.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_account_circle_24));
+            kmText.setVisibility(View.INVISIBLE);
         }
-    }
-
-    public void onStart() {
-        super.onStart();
-        user = mAuth.getCurrentUser();
-        updateUI(user);
     }
 
     private void signOut() {
@@ -157,12 +181,36 @@ public class Profile_Fragment extends Fragment {
                 task -> updateUI(null));
     }
 
-    private void showError(String m) {
-        Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nel login", Snackbar.LENGTH_LONG)
-                .setAction(R.string.ok, sview -> {
-                })
-                .show();
-        System.err.println(m);
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        firebase_viewModel.writeNewUser(
+                                user.getUid(), user.getEmail(), user.getEmail().split("@")[0]
+                        );
+                        updateUI(user);
+                    }
+                });
+    }
+
+    private void signIn() {
+        GetSignInIntentRequest signInRequest = firebase_viewModel.getSignInIntentRequest(getString(R.string.default_web_client_id));
+
+        signInClient.getSignInIntent(signInRequest)
+                .addOnSuccessListener(this::launchSignIn);
+    }
+
+    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> handleSignInResult(result.getData())
+    );
+
+    private void launchSignIn(PendingIntent pendingIntent) {
+        IntentSenderRequest intentSenderRequest =
+                new IntentSenderRequest.Builder(pendingIntent).build();
+        signInLauncher.launch(intentSenderRequest);
     }
 
     private void handleSignInResult(Intent data) {
@@ -175,42 +223,12 @@ public class Profile_Fragment extends Fragment {
         }
     }
 
-    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
-            result -> handleSignInResult(result.getData())
-    );
-
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
-                    } else {
-                        showError("Account Inesistente");
-                    }
-                });
-    }
-
-    private void signIn(){
-        GetSignInIntentRequest signInRequest = GetSignInIntentRequest.builder()
-                .setServerClientId(getString(R.string.default_web_client_id))
-                .build();
-
-        signInClient.getSignInIntent(signInRequest)
-                .addOnSuccessListener(this::launchSignIn)
-                .addOnFailureListener(e -> {
-                });
-    }
-
-    private void launchSignIn(PendingIntent pendingIntent) {
-        try {
-            IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(pendingIntent)
-                    .build();
-            signInLauncher.launch(intentSenderRequest);
-        } catch (Exception e) {
-        }
+    private void showError(String m) {
+        Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nel login", Snackbar.LENGTH_LONG)
+                .setAction(R.string.ok, sview -> {
+                })
+                .show();
+        System.err.println(m);
     }
 
 }
