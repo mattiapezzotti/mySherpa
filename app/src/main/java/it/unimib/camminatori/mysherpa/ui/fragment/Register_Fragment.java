@@ -19,6 +19,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.User;
+import it.unimib.camminatori.mysherpa.viewmodel.Firebase_ViewModel;
 
 public class Register_Fragment extends Fragment {
 
@@ -28,6 +30,7 @@ public class Register_Fragment extends Fragment {
     private ProgressBar loading;
 
     private FirebaseAuth mAuth;
+    private Firebase_ViewModel firebase_viewModel;
 
     private View viewNav;
 
@@ -50,24 +53,26 @@ public class Register_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        email = (TextInputEditText) view.findViewById(R.id.log_email);
-        password = (TextInputEditText) view.findViewById(R.id.log_password);
-        name = (TextInputEditText) view.findViewById(R.id.log_name);
-        passwordRepeat = (TextInputEditText) view.findViewById(R.id.log_passwordRepeat);
+        email = view.findViewById(R.id.log_email);
+        password = view.findViewById(R.id.log_password);
+        name = view.findViewById(R.id.log_name);
+        passwordRepeat = view.findViewById(R.id.log_passwordRepeat);
 
-        loading = (ProgressBar) view.findViewById(R.id.progressBar);
+        loading = view.findViewById(R.id.progressBar);
 
-        mAuth = FirebaseAuth.getInstance();
+        firebase_viewModel = new Firebase_ViewModel();
+
+        mAuth = firebase_viewModel.getmAuth();
 
         viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
 
-        backButton = (ImageButton) view.findViewById(R.id.backButton);
+        backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
             Navigation.findNavController(viewNav).popBackStack();
             Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_profile);
         });
 
-        register = (Button) view.findViewById(R.id.buttonLogin);
+        register = view.findViewById(R.id.buttonLogin);
 
         register.setOnClickListener(v -> {
 
@@ -129,6 +134,9 @@ public class Register_Fragment extends Fragment {
             mAuth.createUserWithEmailAndPassword(emailTrim, passwordTrim)
                     .addOnCompleteListener(task -> {
                         loading.setVisibility(View.GONE);
+                        firebase_viewModel.writeNewUser(
+                                mAuth.getCurrentUser().getUid(), emailTrim, nameTrim
+                        );
                         showDialog(task.isSuccessful());
                     });
         });
