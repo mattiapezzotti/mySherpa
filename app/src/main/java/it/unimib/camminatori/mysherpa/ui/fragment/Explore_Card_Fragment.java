@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import it.unimib.camminatori.mysherpa.R;
@@ -107,12 +108,12 @@ public class Explore_Card_Fragment extends Fragment {
                     Double.parseDouble(location.getValue().getLon()));
 
             // Send message to user
-            AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext())
+            new MaterialAlertDialogBuilder(this.getContext())
+                    .setIcon(R.mipmap.ic_launcher)
                     .setTitle(R.string.app_name)
                     .setMessage("La località è stata aggiunta ai preferiti.")
-                    .setPositiveButton("OK", null);
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                    .setPositiveButton("OK", null)
+                    .show();
         });
 
         // Observer che aggiorna la label del posto nel BottomSheet
