@@ -22,6 +22,8 @@ import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
@@ -130,22 +132,6 @@ public class Profile_Fragment extends Fragment {
         googleLogin.setOnClickListener(v -> {
             signIn();
         });
-
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.child(mAuth.getCurrentUser().getUid()).getValue(User.class);
-                username.setText(user.getName());
-                kmText.setText(user.getKmTot() + "km");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-
-        mReference.addValueEventListener(userListener);
-
     }
 
     @Override
@@ -156,11 +142,19 @@ public class Profile_Fragment extends Fragment {
 
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
+
+            mReference.child(currentUser.getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().getValue(User.class);
+                    kmText.setText(user.getKmTot() + " km");
+                    username.setText(user.getName());
+                }
+            });
+
             logout.setEnabled(true);
             googleLogin.setEnabled(false);
             register.setEnabled(false);
             login.setEnabled(false);
-            currentUser.getDisplayName();
             Picasso.get().load(currentUser.getPhotoUrl()).into(propic);
             kmText.setVisibility(View.VISIBLE);
         } else {
