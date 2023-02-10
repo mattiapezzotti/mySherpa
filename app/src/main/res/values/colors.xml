@@ -63,4 +63,6 @@
     <color name="md_theme_dark_scrim">#000000</color>
     <color name="save">#A7C7E7</color>
     <color name="CustomColor2">#F439B8</color>
+    <color name="button_stop_enabled">#ED897D</color>
+    <color name="button_stop_disabled">#CC9E99</color>
 </resources>
