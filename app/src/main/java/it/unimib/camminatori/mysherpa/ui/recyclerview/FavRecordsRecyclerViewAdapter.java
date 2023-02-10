@@ -1,5 +1,6 @@
 package it.unimib.camminatori.mysherpa.ui.recyclerview;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<RecordVi
         return new RecordViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(RecordViewHolder recordViewHolder, final int position) {
         TextView distanceView = recordViewHolder.getDistanceTextView();
@@ -56,8 +58,14 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<RecordVi
 
         recordViewHolder.getDateTextView().setText(localFavData.get(position).dateString);
         recordViewHolder.getLocationTextView().setText(localFavData.get(position).locationString);
-        distanceView.setText(String.format("%s %s", recordViewHolder.itemView.getContext().getResources().getString(R.string.default_distance_description), distanceStringFormat(localFavData.get(position).metersDistance)));
-        totalTimeView.setText(String.format("%s %s", recordViewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), timeStringFormat(localFavData.get(position).millisecondsTime)));
+        distanceView.setText(
+                recordViewHolder.itemView.getContext().getResources().getString(
+                        R.string.default_distance_description)
+                        + " " + distanceStringFormat(localFavData.get(position).metersDistance));
+        totalTimeView.setText(
+                recordViewHolder.itemView.getContext().getResources().getString(
+                        R.string.traveled_distance_prefix)
+                        + " " + timeStringFormat(localFavData.get(position).millisecondsTime));
 
         recordViewHolder.getDeleteButton().setOnClickListener(v -> {
             if (deleteClickedListener != null)
@@ -169,7 +177,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<RecordVi
             timeString += hours + " h  ";
         if (minutes > 0)
             timeString += minutes + " m  ";
-        timeString += seconds / 60 + " s";
+        timeString += seconds % 60 + " s";
 
         return timeString;
     }

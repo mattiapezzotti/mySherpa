@@ -15,15 +15,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
@@ -31,11 +28,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import it.unimib.camminatori.mysherpa.R;
@@ -48,18 +41,13 @@ public class Profile_Fragment extends Fragment {
     private MaterialTextView username, kmText;
     private View viewNav;
 
-    private String userID;
     private ImageView propic;
 
     private Firebase_ViewModel firebase_viewModel;
 
     private SignInClient signInClient;
-    private FirebaseUser user;
     private FirebaseAuth mAuth;
     private DatabaseReference mReference;
-    private FirebaseDatabase mDatabase;
-
-    private NavController navController;
 
     public Profile_Fragment() {
         // Required empty public constructor
@@ -84,14 +72,8 @@ public class Profile_Fragment extends Fragment {
         firebase_viewModel = new Firebase_ViewModel();
 
         mAuth = firebase_viewModel.getmAuth();
-        mDatabase = firebase_viewModel.getmDatabase();
         mReference = firebase_viewModel.getmReference();
         signInClient = firebase_viewModel.getSignInClient(getContext());
-
-        if (mAuth.getCurrentUser() != null) {
-            user = mAuth.getCurrentUser();
-            userID = user.getUid();
-        }
 
         viewNav = this.getActivity().findViewById(R.id.nav_host_fragment);
 
