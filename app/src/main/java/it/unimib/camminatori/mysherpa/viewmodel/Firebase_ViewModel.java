@@ -2,6 +2,8 @@ package it.unimib.camminatori.mysherpa.viewmodel;
 
 import android.content.Context;
 
+import androidx.lifecycle.ViewModel;
+
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -11,7 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import it.unimib.camminatori.mysherpa.repository.FirebaseRepository;
 
-public class Firebase_ViewModel {
+public class Firebase_ViewModel extends ViewModel {
 
     public Firebase_ViewModel() {
     }
@@ -42,5 +44,10 @@ public class Firebase_ViewModel {
 
     public void writeNewUser(String uid, String name, String email){
         FirebaseRepository.getInstance().writeNewUser(uid, name, email);
+    }
+
+    public void updateKmCounter(double km){
+        FirebaseRepository.getInstance().updateKmTot(km);
+
     }
 }

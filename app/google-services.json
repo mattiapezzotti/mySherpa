@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "589166307036",
+    "firebase_url": "https://pdm---pahada-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "pdm---pahada",
     "storage_bucket": "pdm---pahada.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "589166307036-2vtet0h181c8ca0ehrvk2dknnmuqetce.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.camminatori.mysherpa",
+            "certificate_hash": "ed861bed56ffecaffe5303aa6f0ea5d090fa0695"
+          }
+        },
+        {
+          "client_id": "589166307036-i587g99ifh4qudns7sk8oheoqseck0l1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.camminatori.mysherpa",
+            "certificate_hash": "18aa58402d459b6445cb1a63cc23484749f617e0"
+          }
+        },
         {
           "client_id": "589166307036-ig9c0hm0sfttdc5r8dkcbug9lcuanq0v.apps.googleusercontent.com",
           "client_type": 3

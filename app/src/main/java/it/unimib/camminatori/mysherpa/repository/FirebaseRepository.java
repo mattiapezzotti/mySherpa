@@ -57,7 +57,7 @@ public class FirebaseRepository {
     }
 
     public FirebaseUser getUser() {
-        return user;
+        return mAuth.getCurrentUser();
     }
 
     public FirebaseAuth getmAuth() {
@@ -83,7 +83,14 @@ public class FirebaseRepository {
         mReference.child(uid).setValue(user);
     }
 
-    private void updateKmTot(Double km) {
-        mReference.child("users").child(mAuth.getCurrentUser().getUid()).child("km").setValue(km);
+    public void updateKmTot(Double km) {
+        mReference.child(getUser().getUid()).child("kmTot").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Double newKM = task.getResult().getValue(Double.class) + km;
+                System.out.println(newKM);
+                mReference.child(getUser().getUid()).child("kmTot").setValue(newKM);
+            }
+        });
+
     }
 }

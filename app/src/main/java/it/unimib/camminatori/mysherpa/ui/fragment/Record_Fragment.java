@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.databinding.FragmentRecordBinding;
+import it.unimib.camminatori.mysherpa.viewmodel.Firebase_ViewModel;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class Record_Fragment extends Fragment {
@@ -34,10 +36,9 @@ public class Record_Fragment extends Fragment {
 
     private FragmentRecordBinding binding;
 
-    private Button showListButton;
-
     // View Model
     private Record_ViewModel recordViewModel;
+    private Firebase_ViewModel firebase_viewModel;
 
     public Record_Fragment() {
         // Required empty public constructor
@@ -66,7 +67,7 @@ public class Record_Fragment extends Fragment {
 
         recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
         recordViewModel.initDB(getContext());
-        Log.i(TAG, "viewmodel: " + recordViewModel);
+        firebase_viewModel = new ViewModelProvider(requireActivity()).get(Firebase_ViewModel.class);
 
         final Observer<Record_ViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
             String timerText = (recordInfo.timerText != null) ? recordInfo.timerText : requireContext().getResources().getString(R.string.default_timer_text);
@@ -94,12 +95,19 @@ public class Record_Fragment extends Fragment {
         View inflatedView = LayoutInflater.from(getContext()).inflate(R.layout.save_record_dialog, (ViewGroup) getView(), false);
 
         binding.buttonSaveRecord.setOnClickListener(v -> {
+            TextView editText = view.findViewById(R.id.distance_view);
             dialogBuilder.setPositiveButton(R.string.save, (dialog, which) -> {
                         String recordName = ((EditText) inflatedView.findViewById(R.id.save_record_input_text)).getText().toString();
 
                         recordViewModel.buttonSaveClicked(recordName);
 
                         dialog.dismiss();
+                        if(firebase_viewModel.getmAuth().getCurrentUser() != null) {
+                            double km = Double.parseDouble(editText.getText().toString().split(" ")[0]);
+                            if (!editText.getText().toString().contains("Km"))
+                                km = (km / 1000);
+                            firebase_viewModel.updateKmCounter(km);
+                        }
                     })
                     .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                     .setView(inflatedView);
