@@ -28,4 +28,7 @@
     <string name="tema_scuro">Dark Theme</string>
     <string name="lingua_inglese">English Language</string>
     <string name="password_dimenticata">password dimenticata?</string>
+    <string name="yes">Yes</string>
+    <string name="delete_record_dialog_prefix">Remove?</string>
+    <string name="no">No</string>
 </resources>

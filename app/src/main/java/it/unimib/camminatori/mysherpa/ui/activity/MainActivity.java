@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,20 +23,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import it.unimib.camminatori.mysherpa.R;
-import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
 import mil.nga.geopackage.BuildConfig;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
-    public MainActivity(){
+    public MainActivity() {
         super(R.layout.activity_main);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
                     findFragmentById(R.id.nav_host_fragment);
             NavController navController = navHostFragment.getNavController();

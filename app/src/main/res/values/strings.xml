@@ -2,11 +2,11 @@
     <string name="app_name">mySherpa</string>
     <string name="ok">OK</string>
     <string name="searchbar_placeholder">Cerca qui</string>
-    <string name="bottom_nav_bookmark">Saved</string>
-    <string name="bottom_nav_route">Route</string>
-    <string name="bottom_nav_explore">Explore</string>
-    <string name="bottom_nav_record">Record</string>
-    <string name="bottom_nav_profile">Profile</string>
+    <string name="bottom_nav_bookmark">Salvati</string>
+    <string name="bottom_nav_route">Naviga</string>
+    <string name="bottom_nav_explore">Explora</string>
+    <string name="bottom_nav_record">Registra</string>
+    <string name="bottom_nav_profile">Profilo</string>
     <string name="gps_not_enabled">Impossibile acquisire il GPS</string>
     <string name="no_bookmarks">Non ci sono percorsi preferiti</string>
     <string name="save_dialog_title">Salva Percorso</string>
@@ -31,6 +31,4 @@
     <string name="tema_scuro">Tema Scuro</string>
     <string name="lingua_inglese">Lingua inglese</string>
     <string name="password_dimenticata">Password dimenticata?</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
