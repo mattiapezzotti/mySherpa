@@ -4,19 +4,54 @@ import com.google.gson.annotations.Expose;
 
 public class SavedLocation {
     @Expose
-    public String locationString;
+    private String displayName;
     @Expose
-    public double lat;
+    private double latitude;
     @Expose
-    public double lon;
+    private double longitude;
+    @Expose
+    private double altitude;
 
     public SavedLocation() {
     }
 
-    public SavedLocation(String locationString, double lat, double lon) {
-        this.locationString = locationString;
-        this.lat = lat;
-        this.lon = lon;
+    public SavedLocation(String displayName, double latitude, double longitude) {
+        this.displayName = displayName;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
+    public SavedLocation(double latitude, double longitude, double altitude) {
+        this.altitude = altitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getAltitude() {
+        return this.altitude;
+    }
 }

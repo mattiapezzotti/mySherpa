@@ -1,6 +1,5 @@
 package it.unimib.camminatori.mysherpa.ui.fragment;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,11 +100,12 @@ public class Explore_Card_Fragment extends Fragment {
         cardButtonSave.setOnClickListener(l -> {
             LiveData<Location> location = location_viewModel.getGeocodedLocation();
 
-            SavedLocation_Fragment.AddLocation(
+            SavedLocation_Fragment.addLocation(
                     this.getContext(),
                     locationName.getText().toString(),
                     Double.parseDouble(location.getValue().getLat()),
-                    Double.parseDouble(location.getValue().getLon()));
+                    Double.parseDouble(location.getValue().getLon())
+            );
 
             // Send message to user
             new MaterialAlertDialogBuilder(this.getContext())
