@@ -2,7 +2,6 @@ package it.unimib.camminatori.mysherpa.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,9 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlPullParser;
@@ -42,13 +38,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.SavedRecord;
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
+import it.unimib.camminatori.mysherpa.model.SavedRecordDAO;
+import it.unimib.camminatori.mysherpa.repository.AppDatabase;
 import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
-import it.unimib.camminatori.mysherpa.utils.SaveLocation;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 public class SavedRecords_Fragment extends Fragment {
@@ -56,9 +54,8 @@ public class SavedRecords_Fragment extends Fragment {
     final static public String FAVOURITES_RECORDS = "FAVOURITE_RECORDS_LIST";
 
     static final private String TAG = "SavedRecordsFragment";
-    protected RecyclerView favRecordsView;
 
-    private FloatingActionButton exploreButton;
+    protected RecyclerView favRecordsView;
 
     // View Model
     private Record_ViewModel recordViewModel;
@@ -92,12 +89,10 @@ public class SavedRecords_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
-
         recordViewModel.getRecordInfo(requireContext());
+        recordViewModel.initDB(getContext());
 
-        ArrayList<Record_ViewModel.SaveRecordInfo> favRecords = recordViewModel.getFavList();
-
-        final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(favRecords);
+        final FavRecordsRecyclerViewAdapter favRecordsRecyclerViewAdapter = new FavRecordsRecyclerViewAdapter(recordViewModel);
 
         favRecordsRecyclerViewAdapter.setOnItemsChangedListener(size -> {
             TextView noBookmarksTextView = view.findViewById(R.id.no_bookmarks_text_view);
@@ -109,15 +104,11 @@ public class SavedRecords_Fragment extends Fragment {
         });
 
         favRecordsRecyclerViewAdapter.setOnExploreClickedListener(index -> {
-            //System.out.println(recordViewModel.getFavList().get(index).path);
-
-            ArrayList<SaveLocation> registeredWaypoints = recordViewModel.getFavList().get(index).path;
+            ArrayList<SavedLocation> registeredWaypoints = recordViewModel.getSavedRecord().get(index).path;
             ArrayList<GeoPoint> waypointsToDraw = new ArrayList<>();
-            for (SaveLocation l : registeredWaypoints) {
+            for (SavedLocation l : registeredWaypoints) {
                 waypointsToDraw.add(new GeoPoint(l.getLatitude(), l.getLongitude()));
             }
-
-            System.out.println(recordViewModel.getFavList().get(index).path);
 
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("waypoints", waypointsToDraw);
@@ -127,7 +118,7 @@ public class SavedRecords_Fragment extends Fragment {
 
         favRecordsRecyclerViewAdapter.setOnShareClickedListener(index -> {
             try {
-                String filename = recordViewModel.getFavList().get(index).fileUUID + ".gpx";
+                String filename = recordViewModel.getSavedRecord().get(index).recordID + ".gpx";
 
                 File gpxDir = new File(requireContext().getFilesDir(), "gpx");
                 File xmlFile = new File(gpxDir, filename);
@@ -157,7 +148,7 @@ public class SavedRecords_Fragment extends Fragment {
         });
 
         favRecordsRecyclerViewAdapter.setOnDeleteClickedListener(index -> {
-            String filename = recordViewModel.getFavList().get(index).fileUUID + ".gpx";
+            String filename = recordViewModel.getSavedRecord().get(index).recordID + ".gpx";
 
             File gpxDir = new File(requireContext().getFilesDir(), "gpx");
             File xmlFile = new File(gpxDir, filename);
@@ -201,13 +192,11 @@ public class SavedRecords_Fragment extends Fragment {
 
     public static void saveFavRecords(Context context, Record_ViewModel recordViewModel) {
         String TAG = "saveFavRecords";
-        SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = favRecordsPreferences.edit();
 
-        ArrayList<Record_ViewModel.SaveRecordInfo> favList = recordViewModel.getFavList();
+        ArrayList<SavedRecord> favList = recordViewModel.getSavedRecord();
 
         for (int i = 0; i < favList.size(); i++) {
-            Record_ViewModel.SaveRecordInfo info = favList.get(i);
+            SavedRecord info = favList.get(i);
 
             File gpxDir = new File(context.getFilesDir(), "gpx");
             if (!gpxDir.exists()) {
@@ -219,7 +208,7 @@ public class SavedRecords_Fragment extends Fragment {
                 }
             }
 
-            File xmlFile = new File(gpxDir, info.fileUUID + ".gpx");
+            File xmlFile = new File(gpxDir, info.recordID + ".gpx");
             boolean save = false;
             try {
                 save = xmlFile.createNewFile();
@@ -228,7 +217,7 @@ public class SavedRecords_Fragment extends Fragment {
             }
 
             if (save) {
-                Log.d(TAG, "Saving " + info.fileUUID + ".gpx");
+                Log.d(TAG, "Saving " + info.recordID + ".gpx");
                 try {
                     String gpxXml = buildGpxXml(info.path, info.locationString);
                     FileOutputStream xmlStream = new FileOutputStream(xmlFile);
@@ -241,41 +230,9 @@ public class SavedRecords_Fragment extends Fragment {
                 }
             }
         }
-
-        //TODO: FIX SALVATAGGIO LOCATIONS
-        Type listOfFav = new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
-        }.getType();
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-        String json = gson.toJson(favList, listOfFav);
-
-        Log.d(TAG, "Saving " + json);
-
-        editor.putString(SavedRecords_Fragment.FAVOURITES_RECORDS, json);
-        editor.apply();
     }
 
-    public static ArrayList<Record_ViewModel.SaveRecordInfo> getSavedRecords(Context context) {
-        ArrayList<Record_ViewModel.SaveRecordInfo> savedRecords;
-        SharedPreferences favRecordsPreferences = context.getSharedPreferences(SavedRecords_Fragment.FAVOURITES_RECORDS_SHAREDPREFS, Context.MODE_PRIVATE);
-
-        Gson gson = new Gson();
-
-        String saveJson = favRecordsPreferences.getString(SavedRecords_Fragment.FAVOURITES_RECORDS, "");
-        if (saveJson.equals("")) {
-            savedRecords = new ArrayList<>();
-        } else {
-            savedRecords = gson.fromJson(saveJson, new TypeToken<ArrayList<Record_ViewModel.SaveRecordInfo>>() {
-            }.getType());
-        }
-
-        if (savedRecords.size() > 0)
-            Log.d(TAG, "Saved path: " + savedRecords.get(0).path);
-
-        return savedRecords;
-    }
-
-    static private String buildGpxXml(ArrayList<SaveLocation> path, String name) {
+    private static String buildGpxXml(ArrayList<SavedLocation> path, String name) {
         ByteArrayOutputStream gpxXml = new ByteArrayOutputStream();
         XmlSerializer gpxSerializer = Xml.newSerializer();
 
@@ -313,7 +270,7 @@ public class SavedRecords_Fragment extends Fragment {
             gpxSerializer.startTag("", "trkseg");
 
             for (int i = 0; i < path.size(); i++) {
-                SaveLocation trkPoint = path.get(i);
+                SavedLocation trkPoint = path.get(i);
 
                 gpxSerializer.startTag("", "trkpt");
                 gpxSerializer.attribute("", "lat", String.valueOf(trkPoint.getLatitude()));

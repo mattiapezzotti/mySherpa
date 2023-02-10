@@ -13,7 +13,7 @@ public class Data_Location_ViewModel extends ViewModel {
 
     public Data_Location_ViewModel(ArrayList<SavedLocation> savedLocationList) {
         if (savedLocationList == null)
-            savedLocationList = new ArrayList<SavedLocation>();
+            savedLocationList = new ArrayList<>();
 
         favList = savedLocationList;
     }
@@ -26,10 +26,7 @@ public class Data_Location_ViewModel extends ViewModel {
      * Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
      **/
     public void addRecord(String localityName, double latitude, double longitude) {
-        SavedLocation saveRecordInfo = new SavedLocation();
-        saveRecordInfo.locationString = localityName;
-        saveRecordInfo.lat = latitude;
-        saveRecordInfo.lon = longitude;
+        SavedLocation saveRecordInfo = new SavedLocation(localityName, latitude, longitude);
         favList.add(saveRecordInfo);
     }
 

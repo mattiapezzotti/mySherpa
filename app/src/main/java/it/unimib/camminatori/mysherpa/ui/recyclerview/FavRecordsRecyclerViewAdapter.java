@@ -1,14 +1,10 @@
 package it.unimib.camminatori.mysherpa.ui.recyclerview;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,151 +13,85 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import it.unimib.camminatori.mysherpa.R;
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
+import it.unimib.camminatori.mysherpa.model.SavedRecord;
+import it.unimib.camminatori.mysherpa.model.SavedRecordDAO;
+import it.unimib.camminatori.mysherpa.ui.viewholder.RecordViewHolder;
 import it.unimib.camminatori.mysherpa.viewmodel.Record_ViewModel;
 
 
-public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecordsRecyclerViewAdapter.ViewHolder> {
+public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<RecordViewHolder> {
     final private String TAG = "FavRecordsRecyclerViewAdapter";
 
-    private ArrayList<Record_ViewModel.SaveRecordInfo> localFavData;
-    private final ArrayList<Record_ViewModel.SaveRecordInfo> localFavDataBkp;
     private OnItemsChangedListener changedListener;
     private OnShareClickedListener shareClickedListener;
     private OnDeleteClickedListener deleteClickedListener;
     private onExploreClickedListener exploreClickedListener;
+    private Record_ViewModel recordViewModel;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView locationTextView;
-        private final TextView dateTextView;
-        private final TextView distanceTextView;
-        private final TextView totalTimeTextView;
-        private final TextView noBookmarksTextView;
-        private final FrameLayout layoutExpandView;
-        private final ImageButton deleteButton;
-        private final ImageButton shareButton;
-        private final Context rootContext;
-        private final ImageButton exploreButton;
+    private ArrayList<SavedRecord> localFavDataBkp;
+    private ArrayList<SavedRecord> localFavData;
 
-        public ViewHolder(View view) {
-            super(view);
-
-
-            this.locationTextView = view.findViewById(R.id.fav_location_text_view);
-            this.dateTextView = view.findViewById(R.id.fav_date_text_view);
-            this.distanceTextView = view.findViewById(R.id.traveled_record_distance_text_view);
-            this.totalTimeTextView = view.findViewById(R.id.total_record_time_text_view);
-            this.noBookmarksTextView = view.findViewById(R.id.no_bookmarks_text_view);
-            this.deleteButton = view.findViewById(R.id.fav_delete_button);
-            this.layoutExpandView = view.findViewById(R.id.save_record_click_layout);
-            this.shareButton = view.findViewById(R.id.fav_share_button);
-            this.rootContext = view.getContext();
-            this.exploreButton = view.findViewById(R.id.fav_explore_button);
-        }
-
-        public TextView getLocationTextView() {
-            return this.locationTextView;
-        }
-
-        public TextView getDateTextView() {
-            return this.dateTextView;
-        }
-
-        public TextView getDistanceTextView() {
-            return this.distanceTextView;
-        }
-
-        public TextView getTotalTimeTextView() {
-            return this.totalTimeTextView;
-        }
-
-        public TextView getNoBookmarksTextView() {
-            return this.noBookmarksTextView;
-        }
-
-        public FrameLayout getLayoutExpandView() {
-            return this.layoutExpandView;
-        }
-
-        public ImageButton getDeleteButton() {
-            return this.deleteButton;
-        }
-
-        public ImageButton getShareButton() {
-            return this.shareButton;
-        }
-
-        public Context getRootContext() {
-            return rootContext;
-        }
-
-        public ImageButton getExploreButton() {
-            return this.exploreButton;
-        }
-    }
-
-    public FavRecordsRecyclerViewAdapter(ArrayList<Record_ViewModel.SaveRecordInfo> data) {
-        if (data == null)
-            localFavData = new ArrayList<>();
-        else
-            localFavData = data;
-
+    public FavRecordsRecyclerViewAdapter(Record_ViewModel recordViewModel) {
+        localFavData = recordViewModel.getSavedRecord();
+        this.recordViewModel = recordViewModel;
         localFavDataBkp = new ArrayList<>();
         localFavDataBkp.addAll(localFavData);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecordViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.saved_records_list_layout, viewGroup, false);
 
-        return new ViewHolder(view);
+        return new RecordViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        TextView distanceView = viewHolder.getDistanceTextView();
-        TextView totalTimeView = viewHolder.getTotalTimeTextView();
-        FrameLayout expandView = viewHolder.getLayoutExpandView();
+    public void onBindViewHolder(RecordViewHolder recordViewHolder, final int position) {
+        TextView distanceView = recordViewHolder.getDistanceTextView();
+        TextView totalTimeView = recordViewHolder.getTotalTimeTextView();
+        FrameLayout expandView = recordViewHolder.getLayoutExpandView();
 
+        recordViewHolder.getDateTextView().setText(localFavData.get(position).dateString);
+        recordViewHolder.getLocationTextView().setText(localFavData.get(position).locationString);
+        distanceView.setText(String.format("%s %s", recordViewHolder.itemView.getContext().getResources().getString(R.string.default_distance_description), distanceStringFormat(localFavData.get(position).metersDistance)));
+        totalTimeView.setText(String.format("%s %s", recordViewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), timeStringFormat(localFavData.get(position).millisecondsTime)));
 
-        viewHolder.getDateTextView().setText(localFavData.get(position).dateString);
-        viewHolder.getLocationTextView().setText(localFavData.get(position).locationString);
-        distanceView.setText(String.format("%s %s", viewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), distanceStringFormat(localFavData.get(position).metersDistance)));
-        totalTimeView.setText(String.format("%s %s", viewHolder.itemView.getContext().getResources().getString(R.string.traveled_distance_prefix), timeStringFormat(localFavData.get(position).millisecondsTime)));
-
-        viewHolder.getDeleteButton().setOnClickListener(v -> {
+        recordViewHolder.getDeleteButton().setOnClickListener(v -> {
             if (deleteClickedListener != null)
-                deleteClickedListener.onDeleteClickedListener(viewHolder.getAdapterPosition());
+                deleteClickedListener.onDeleteClickedListener(recordViewHolder.getAdapterPosition());
 
-            localFavData = Record_ViewModel.removeRecord(viewHolder.getAdapterPosition());
-            notifyItemRemoved(viewHolder.getAdapterPosition());
+            localFavData = recordViewModel.removeRecord(recordViewHolder.getAdapterPosition());
+            notifyItemRemoved(recordViewHolder.getAdapterPosition());
+
             localFavDataBkp.clear();
             localFavDataBkp.addAll(localFavData);
 
             callChangeListener();
         });
 
-        viewHolder.getShareButton().setOnClickListener(v -> {
+        recordViewHolder.getShareButton().setOnClickListener(v -> {
             if (shareClickedListener != null) {
-                shareClickedListener.onShareClicked(viewHolder.getAdapterPosition());
+                shareClickedListener.onShareClicked(recordViewHolder.getAdapterPosition());
             }
         });
 
-        viewHolder.getExploreButton().setOnClickListener(v -> {
+        recordViewHolder.getExploreButton().setOnClickListener(v -> {
             if (exploreClickedListener != null)
-                exploreClickedListener.onExploreClicked(viewHolder.getAdapterPosition());
+                exploreClickedListener.onExploreClicked(recordViewHolder.getAdapterPosition());
         });
 
         expandView.setOnClickListener(v -> {
             if (distanceView.getVisibility() == View.GONE) {
                 distanceView.setVisibility(View.VISIBLE);
                 totalTimeView.setVisibility(View.VISIBLE);
-                viewHolder.getShareButton().setVisibility(View.VISIBLE);
+                recordViewHolder.getShareButton().setVisibility(View.VISIBLE);
             } else {
                 distanceView.setVisibility(View.GONE);
                 totalTimeView.setVisibility(View.GONE);
-                viewHolder.getShareButton().setVisibility(View.GONE);
+                recordViewHolder.getShareButton().setVisibility(View.GONE);
             }
         });
 
@@ -172,19 +102,14 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
     public int getItemCount() {
         if (localFavData == null)
             return 0;
-
-
         return localFavData.size();
     }
 
-    @SuppressLint({"LongLogTag", "NotifyDataSetChanged"})
     public void filter(CharSequence sequence) {
-        Log.i(TAG, "data backup: " + localFavDataBkp.toString());
-
-        ArrayList<Record_ViewModel.SaveRecordInfo> tmp = new ArrayList<>();
+        ArrayList<SavedRecord> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
-            for (Record_ViewModel.SaveRecordInfo record : localFavDataBkp) {
+            for (SavedRecord record : localFavDataBkp) {
                 if (record.locationString.toLowerCase().contains(sequence)) {
                     tmp.add(record);
                 }
@@ -244,7 +169,7 @@ public class FavRecordsRecyclerViewAdapter extends RecyclerView.Adapter<FavRecor
             timeString += hours + " h  ";
         if (minutes > 0)
             timeString += minutes + " m  ";
-        timeString += seconds + " s";
+        timeString += seconds / 60 + " s";
 
         return timeString;
     }

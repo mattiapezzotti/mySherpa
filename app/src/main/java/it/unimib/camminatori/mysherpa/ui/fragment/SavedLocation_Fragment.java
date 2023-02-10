@@ -57,7 +57,7 @@ public class SavedLocation_Fragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
-        favLocalityView = (RecyclerView) v.findViewById(R.id.fav_location_recycler_view);
+        favLocalityView = v.findViewById(R.id.fav_location_recycler_view);
         LinearLayoutManager favLinearLayout = new LinearLayoutManager(getContext());
         favLocalityView.setLayoutManager(favLinearLayout);
 
@@ -66,7 +66,7 @@ public class SavedLocation_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        dataLocationViewModel = GetDataLocationViewModel();
+        dataLocationViewModel = getDataLocationViewModel();
 
         final FavLocationRecyclerViewAdapter favLocationRecyclerViewAdapter = new FavLocationRecyclerViewAdapter(this, dataLocationViewModel.getFavList());
         favLocalityView.setAdapter(favLocationRecyclerViewAdapter);
@@ -92,29 +92,29 @@ public class SavedLocation_Fragment extends Fragment {
     }
 
     // Aggiungi una località
-    public static ArrayList<SavedLocation> AddLocation(Context context, String localityName, double latitude, double longitude) {
-        Data_Location_ViewModel viewModel = new Data_Location_ViewModel(LoadFromJson(context));
+    public static ArrayList<SavedLocation> addLocation(Context context, String localityName, double latitude, double longitude) {
+        Data_Location_ViewModel viewModel = new Data_Location_ViewModel(loadFromJson(context));
         viewModel.addRecord(localityName, latitude, longitude);
-        SaveToJson(context, viewModel.getFavList());
+        saveToJson(context, viewModel.getFavList());
 
         return viewModel.getFavList();
     }
 
     // Rimuovi una località
-    public ArrayList<SavedLocation> RemoveLocation(int position) {
-        ArrayList<SavedLocation> favList = GetDataLocationViewModel().removeRecord(position);
-        SaveToJson(this.getContext(), favList);
+    public ArrayList<SavedLocation> removeLocation(int position) {
+        ArrayList<SavedLocation> favList = getDataLocationViewModel().removeRecord(position);
+        saveToJson(this.getContext(), favList);
 
         return favList;
     }
 
     // Apri una località sulla mappa
-    public void OpenLocation(int position) {
-        SavedLocation favList = GetDataLocationViewModel().getRecord(position);
+    public void openLocation(int position) {
+        SavedLocation favList = getDataLocationViewModel().getRecord(position);
         transition(favList);
     }
 
-    private static ArrayList<SavedLocation> LoadFromJson(Context context) {
+    private static ArrayList<SavedLocation> loadFromJson(Context context) {
         // Leggi il contenuto da disco
         String jsonString = readFromFile(context);
 
@@ -126,7 +126,7 @@ public class SavedLocation_Fragment extends Fragment {
             }.getType());
     }
 
-    private static void SaveToJson(Context context, ArrayList<SavedLocation> favList) {
+    private static void saveToJson(Context context, ArrayList<SavedLocation> favList) {
         String jsonString = new Gson().toJson(favList);
         writeToFile(jsonString, context);
     }
@@ -170,18 +170,18 @@ public class SavedLocation_Fragment extends Fragment {
         return ret;
     }
 
-    private Data_Location_ViewModel GetDataLocationViewModel() {
+    private Data_Location_ViewModel getDataLocationViewModel() {
         if (dataLocationViewModel == null)
-            dataLocationViewModel = new Data_Location_ViewModel(LoadFromJson(this.getContext()));
+            dataLocationViewModel = new Data_Location_ViewModel(loadFromJson(this.getContext()));
 
         return dataLocationViewModel;
     }
 
     private void transition(SavedLocation savedLocation) {
         Bundle bundle = new Bundle();
-        bundle.putDouble("destLon", savedLocation.lon);
-        bundle.putDouble("destLat", savedLocation.lat);
-        bundle.putString("destText", savedLocation.locationString);
+        bundle.putDouble("destLon", savedLocation.getLongitude());
+        bundle.putDouble("destLat", savedLocation.getLatitude());
+        bundle.putString("destText", savedLocation.getDisplayName());
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_explore, bundle);
     }

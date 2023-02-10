@@ -14,15 +14,16 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.google.gson.annotations.Expose;
+import androidx.room.Room;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import it.unimib.camminatori.mysherpa.ui.fragment.SavedRecords_Fragment;
-import it.unimib.camminatori.mysherpa.utils.SaveLocation;
+import it.unimib.camminatori.mysherpa.model.SavedRecord;
+import it.unimib.camminatori.mysherpa.model.SavedLocation;
+import it.unimib.camminatori.mysherpa.model.SavedRecordDAO;
+import it.unimib.camminatori.mysherpa.repository.AppDatabase;
 
 
 public class Record_ViewModel extends ViewModel {
@@ -34,13 +35,34 @@ public class Record_ViewModel extends ViewModel {
     private Context context;
     private MyLocationListener gpsLocationListener;
     private LocationManager locationManager;
-    private static ArrayList<SaveRecordInfo> favList;
+    private ArrayList<SavedRecord> savedRecordList;
     private boolean favAdded = false;
 
+    private AppDatabase db;
+    private SavedRecordDAO savedRecordDAO;
+
+    public SavedRecordDAO getSavedRecordDAO(){
+        savedRecordDAO = db.savedRecordDAO();
+        return savedRecordDAO;
+    }
+
+    public ArrayList<SavedRecord> getSavedRecord(){
+        savedRecordDAO = db.savedRecordDAO();
+        savedRecordList = (ArrayList<SavedRecord>) savedRecordDAO.getAll();
+        return savedRecordList;
+    }
+
+    public AppDatabase getDB() {
+        return this.db;
+    }
+
+    public void initDB(Context context){
+        db = Room.databaseBuilder(context, AppDatabase.class, "records").allowMainThreadQueries().build();
+    }
 
     public MutableLiveData<RecordInfo> getRecordInfo(Context context) {
         if (recordInfo == null)
-            recordInfo = new MutableLiveData<RecordInfo>();
+            recordInfo = new MutableLiveData<>();
 
         if (modelInfo == null)
             modelInfo = new ModelInfo();
@@ -51,16 +73,7 @@ public class Record_ViewModel extends ViewModel {
         if (this.context == null)
             this.context = context;
 
-        if (Record_ViewModel.favList == null)
-            Record_ViewModel.favList = new ArrayList<>();
-
-        ArrayList<Record_ViewModel.SaveRecordInfo> savedRecords = SavedRecords_Fragment.getSavedRecords(context);
-
-        if (!favAdded) {
-            Record_ViewModel.favList.addAll(savedRecords);
-            favAdded = true;
-        }
-        Log.i(TAG, "Saved Records: " + savedRecords);
+        savedRecordList = this.getSavedRecord();
 
         return recordInfo;
     }
@@ -81,9 +94,6 @@ public class Record_ViewModel extends ViewModel {
         return modelInfo.recordStarted;
     }
 
-    public ArrayList<SaveRecordInfo> getFavList() {
-        return favList;
-    }
 
     public boolean buttonPlayClicked() {
         if (!modelInfo.recordStarted) {
@@ -119,38 +129,36 @@ public class Record_ViewModel extends ViewModel {
     }
 
     public void buttonSaveClicked(String localityName) {
-        SaveRecordInfo saveRecordInfo = new SaveRecordInfo();
-        saveRecordInfo.dateString = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-        saveRecordInfo.locationString = localityName;
-        saveRecordInfo.millisecondsTime = localRecordInfo.recordMilliseconds;
-        saveRecordInfo.metersDistance = localRecordInfo.recordMeters;
-        saveRecordInfo.fileUUID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
+        SavedRecord savedRecord = new SavedRecord();
+        savedRecord.dateString = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+        savedRecord.locationString = localityName;
+        savedRecord.millisecondsTime = localRecordInfo.recordMilliseconds;
+        savedRecord.metersDistance = localRecordInfo.recordMeters;
+        savedRecord.recordID = String.valueOf(Math.abs(Calendar.getInstance().getTime().hashCode())) + localityName.hashCode();
 
         if (gpsLocationListener != null) {
             ArrayList<Location> path = gpsLocationListener.getPath();
-            saveRecordInfo.path = new ArrayList<>();
+            savedRecord.path = new ArrayList<>();
 
             for (int i = 0; i < path.size(); i++) {
-                SaveLocation point = new SaveLocation(
+                SavedLocation point = new SavedLocation(
                         path.get(i).getLatitude(),
                         path.get(i).getLongitude(),
                         path.get(i).getAltitude()
                 );
 
-                saveRecordInfo.path.add(point);
+                savedRecord.path.add(point);
             }
         }
 
-        Log.d(TAG, "file UUID: " + saveRecordInfo.fileUUID);
-
-        favList.add(saveRecordInfo);
+        savedRecordDAO.insertAll(savedRecord);
     }
 
-    public static ArrayList<SaveRecordInfo> removeRecord(int position) {
-        if (position >= 0)
-            favList.remove(position);
-
-        return favList;
+    public ArrayList<SavedRecord> removeRecord(int position) {
+        if (position >= 0) {
+            savedRecordDAO.delete(savedRecordList.get(position));
+        }
+        return this.getSavedRecord();
     }
 
 
@@ -183,7 +191,7 @@ public class Record_ViewModel extends ViewModel {
                         localRecordInfo.lastUpdateMeters = metersCount;
                     }
 
-                    timerHandler.postDelayed(this, 500);
+                    timerHandler.postDelayed(this, 200);
                 } else {
                     localRecordInfo.recordMilliseconds = 0;
                     localRecordInfo.recordMeters = 0;
@@ -215,7 +223,7 @@ public class Record_ViewModel extends ViewModel {
                 locationManager = null;
                 return false;
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 1, gpsLocationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, 1, gpsLocationListener);
         } else {
             locationManager = null;
             return false;
@@ -227,7 +235,7 @@ public class Record_ViewModel extends ViewModel {
 
     private String formatTimerString(long millisecond) {
         String timerString;
-        long seconds = millisecond / 1000;
+        long seconds = (millisecond / 1000);
         long minutes = (seconds % 3600) / 60;
         long hours = seconds / 3600;
 
@@ -249,6 +257,14 @@ public class Record_ViewModel extends ViewModel {
         return meterString;
     }
 
+    public void deleteAll() {
+        savedRecordDAO.nukeTable();
+    }
+
+    public ArrayList<SavedRecord> findByName(String name){
+        return (ArrayList<SavedRecord>) savedRecordDAO.findMultipleByName("%" + name + "%");
+    }
+
     public static class RecordInfo {
         public String metersText;
         public String timerText;
@@ -266,21 +282,6 @@ public class Record_ViewModel extends ViewModel {
         public boolean recordPaused;
         public long startRecordTime;
         public long pauseRecordTime;
-    }
-
-    public static class SaveRecordInfo {
-        @Expose
-        public String dateString;
-        @Expose
-        public String locationString;
-        @Expose
-        public long millisecondsTime;
-        @Expose
-        public long metersDistance;
-        @Expose
-        public String fileUUID;
-        @Expose
-        public ArrayList<SaveLocation> path;
     }
 
     private static class MyLocationListener implements LocationListener {

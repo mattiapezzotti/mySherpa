@@ -65,6 +65,7 @@ public class Record_Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recordViewModel = new ViewModelProvider(requireActivity()).get(Record_ViewModel.class);
+        recordViewModel.initDB(getContext());
         Log.i(TAG, "viewmodel: " + recordViewModel);
 
         final Observer<Record_ViewModel.RecordInfo> recordInfoObserver = recordInfo -> {
@@ -84,6 +85,7 @@ public class Record_Fragment extends Fragment {
 
             totMetersEditor.apply();
         };
+
         recordViewModel.getRecordInfo(getContext()).observe(getViewLifecycleOwner(), recordInfoObserver);
 
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireActivity());
