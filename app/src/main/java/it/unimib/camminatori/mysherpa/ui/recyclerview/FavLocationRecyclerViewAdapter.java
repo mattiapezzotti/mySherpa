@@ -20,8 +20,8 @@ import it.unimib.camminatori.mysherpa.ui.viewholder.LocationViewHolder;
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationViewHolder> {
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
-    private final ArrayList<SavedLocation> localFavData;
-    private final ArrayList<SavedLocation> localFavDataBkp;
+    private ArrayList<SavedLocation> localFavData;
+    private ArrayList<SavedLocation> localFavDataBku;
     private OnItemsChangedListener changedListener;
     private SavedLocation_Fragment savedLocationFragment;
 
@@ -30,8 +30,8 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         this.localFavData = data;
         this.savedLocationFragment = savedLocationFragment;
 
-        localFavDataBkp = new ArrayList<>();
-        localFavDataBkp.addAll(localFavData);
+        localFavDataBku = new ArrayList<>();
+        localFavDataBku.addAll(localFavData);
     }
 
     @NonNull
@@ -56,12 +56,14 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         locationViewHolder.getLocationLatLon().setText(locationLatLon);
 
         locationViewHolder.getDeleteButton().setOnClickListener(v -> {
-            ArrayList<SavedLocation> favList = savedLocationFragment.removeLocation(locationViewHolder.getAdapterPosition());
+            // Identifica elemento da rimuovere nella lista locale filtrata
+            SavedLocation locationToRemove = savedLocationFragment.getLocation(locationViewHolder.getAdapterPosition());
+            localFavData.remove(locationToRemove);
+
+            // Rimuovi elemento da lista completa
+            localFavDataBku = savedLocationFragment.removeLocationFromList(localFavDataBku, locationToRemove);
+
             notifyItemRemoved(locationViewHolder.getAdapterPosition());
-
-            localFavDataBkp.clear();
-            localFavDataBkp.addAll(localFavData);
-
             callChangeListener();
         });
 
@@ -85,21 +87,22 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
 
     @Override
     public int getItemCount() {
+        if (localFavData == null)
+            return 0;
         return localFavData.size();
     }
-
 
     public void filter(CharSequence sequence) {
         ArrayList<SavedLocation> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
-            for (SavedLocation record : localFavDataBkp) {
+            for (SavedLocation record : localFavDataBku) {
                 if (record.getDisplayName().toLowerCase().contains(sequence)) {
                     tmp.add(record);
                 }
             }
         } else {
-            tmp.addAll(localFavDataBkp);
+            tmp.addAll(localFavDataBku);
         }
 
         localFavData.clear();
