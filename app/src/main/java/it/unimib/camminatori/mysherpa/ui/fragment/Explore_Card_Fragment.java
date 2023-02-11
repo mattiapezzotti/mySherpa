@@ -119,18 +119,21 @@ public class Explore_Card_Fragment extends Fragment {
         // Observer che aggiorna la label del posto nel BottomSheet
         final Observer<Location> updateLocationLabels = l -> {
             if (l != null) {
-                String[] locationInfoText = l.getDisplayName().split(",", -1);
-                locationName.setText(locationInfoText[0]);
-                if (locationInfoText.length >= 2) {
-                    locationInfo1.setText(locationInfoText[2] + ", ");
-                    locationInfo2.setText(locationInfoText[1]);
-                } else {
-                    locationInfo1.setText("");
-                    locationInfo2.setText("");
+                if(l.getDisplayName() != null) {
+                    String[] locationInfoText = l.getDisplayName().split(",", -1);
+                    locationName.setText(locationInfoText[0]);
+                    if (locationInfoText.length > 2) {
+                        locationInfo1.setText(locationInfoText[2] + ", ");
+                        locationInfo2.setText(locationInfoText[1]);
+                    } else {
+                        if (locationInfoText.length == 2)
+                            locationInfo1.setText(locationInfoText[1]);
+                        locationInfo2.setText("");
+                    }
+                    lat = Double.parseDouble(l.getLat());
+                    lon = Double.parseDouble(l.getLon());
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
-                lat = Double.parseDouble(l.getLat());
-                lon = Double.parseDouble(l.getLon());
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             } else {
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();

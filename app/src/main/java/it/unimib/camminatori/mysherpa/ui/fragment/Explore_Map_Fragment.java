@@ -62,12 +62,17 @@ public class Explore_Map_Fragment extends Fragment {
         // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
             if (l != null) {
-                exploreMap.setMarkerPosition(new GeoPoint(
-                                Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
-                        )
-                );
+                if(l.getLat() != null && l.getLon() != null)
+                    exploreMap.setMarkerPosition(new GeoPoint(
+                                    Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
+                            )
+                    );
+                else {
+                    Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nell'acquisizione della posizione", Snackbar.LENGTH_SHORT)
+                            .show();
+                }
             } else {
-                Snackbar.make(this.getView().getRootView(), "Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Impossibile contattare il server di Geocoding. Riprova.", Snackbar.LENGTH_SHORT)
                         .show();
             }
         };
