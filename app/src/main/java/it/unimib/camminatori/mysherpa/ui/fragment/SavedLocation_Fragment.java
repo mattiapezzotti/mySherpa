@@ -40,6 +40,7 @@ public class SavedLocation_Fragment extends Fragment {
     final private static String TAG = "SavedLocationFragment";
     final private static String FAV_LOCATION_FILENAME = "FavLocation.json";
     protected RecyclerView favLocalityView;
+    private TextView noLocationTextView;
 
     Data_Location_ViewModel dataLocationViewModel;
 
@@ -60,6 +61,7 @@ public class SavedLocation_Fragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
         favLocalityView = v.findViewById(R.id.fav_location_recycler_view);
+        noLocationTextView = v.findViewById(R.id.no_location_text_view);
         LinearLayoutManager favLinearLayout = new LinearLayoutManager(getContext());
         favLocalityView.setLayoutManager(favLinearLayout);
 
@@ -68,22 +70,18 @@ public class SavedLocation_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         dataLocationViewModel = getDataLocationViewModel();
 
         final FavLocationRecyclerViewAdapter favLocationRecyclerViewAdapter = new FavLocationRecyclerViewAdapter(this, dataLocationViewModel.getFavList());
         favLocalityView.setAdapter(favLocationRecyclerViewAdapter);
 
-        /*
-        // TODO: In errore perchè non trova noLocationTextView (noLocationTextView = null)
         favLocationRecyclerViewAdapter.setOnItemsChangedListener(size -> {
-            TextView noLocationTextView = view.findViewById(R.id.no_location_text_view);
-
             if (size == 0)
                 noLocationTextView.setVisibility(View.VISIBLE);
             else
                 noLocationTextView.setVisibility(View.GONE);
         });
-        */
 
         EditText favSearch = view.findViewById(R.id.fav_text_search);
         favSearch.addTextChangedListener(new TextWatcher() {
