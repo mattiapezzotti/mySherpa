@@ -22,6 +22,11 @@ public class Data_Location_ViewModel extends ViewModel {
         return favList;
     }
 
+    public void setFavList(ArrayList<SavedLocation> savedLocationList)
+    {
+        favList = savedLocationList;
+    }
+
     /**
      * Aggiunge gli elementi all'arraylist quando viene premuto il bottone save nella drag handle
      **/
@@ -31,7 +36,17 @@ public class Data_Location_ViewModel extends ViewModel {
     }
 
     /**
-     * Rimuove il record quando viene premuto il bottone elimina dell'interfaccia
+     * Rimuove il record quando viene premuto il bottone elimina dell'interfaccia (Oggetto)
+     **/
+    public ArrayList<SavedLocation> removeRecord(SavedLocation location) {
+        if (location != null)
+            favList.remove(location);
+
+        return favList;
+    }
+
+    /**
+     * Rimuove il record quando viene premuto il bottone elimina dell'interfaccia (Posizione)
      **/
     public ArrayList<SavedLocation> removeRecord(int position) {
         if (position >= 0)
@@ -43,9 +58,5 @@ public class Data_Location_ViewModel extends ViewModel {
     public SavedLocation getRecord(int position) {
         return favList.get(position);
     }
-
-    /**
-     * Costruttore di savedLocation
-     */
 
 }

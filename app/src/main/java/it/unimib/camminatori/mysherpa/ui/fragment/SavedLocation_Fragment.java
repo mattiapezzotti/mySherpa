@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.SavedLocation;
 import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
+import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
 import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
 
 
@@ -38,6 +40,7 @@ public class SavedLocation_Fragment extends Fragment {
     final private static String TAG = "SavedLocationFragment";
     final private static String FAV_LOCATION_FILENAME = "FavLocation.json";
     protected RecyclerView favLocalityView;
+    private TextView noLocationTextView;
 
     Data_Location_ViewModel dataLocationViewModel;
 
@@ -58,6 +61,7 @@ public class SavedLocation_Fragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
         favLocalityView = v.findViewById(R.id.fav_location_recycler_view);
+        noLocationTextView = v.findViewById(R.id.no_location_text_view);
         LinearLayoutManager favLinearLayout = new LinearLayoutManager(getContext());
         favLocalityView.setLayoutManager(favLinearLayout);
 
@@ -66,10 +70,18 @@ public class SavedLocation_Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         dataLocationViewModel = getDataLocationViewModel();
 
         final FavLocationRecyclerViewAdapter favLocationRecyclerViewAdapter = new FavLocationRecyclerViewAdapter(this, dataLocationViewModel.getFavList());
         favLocalityView.setAdapter(favLocationRecyclerViewAdapter);
+
+        favLocationRecyclerViewAdapter.setOnItemsChangedListener(size -> {
+            if (size == 0)
+                noLocationTextView.setVisibility(View.VISIBLE);
+            else
+                noLocationTextView.setVisibility(View.GONE);
+        });
 
         EditText favSearch = view.findViewById(R.id.fav_text_search);
         favSearch.addTextChangedListener(new TextWatcher() {
@@ -91,6 +103,12 @@ public class SavedLocation_Fragment extends Fragment {
         });
     }
 
+    // Sovrascrivi la lista delle località
+    public void setFavData(ArrayList<SavedLocation> savedLocationList)
+    {
+        getDataLocationViewModel().setFavList(savedLocationList);
+    }
+
     // Aggiungi una località
     public static ArrayList<SavedLocation> addLocation(Context context, String localityName, double latitude, double longitude) {
         Data_Location_ViewModel viewModel = new Data_Location_ViewModel(loadFromJson(context));
@@ -100,12 +118,27 @@ public class SavedLocation_Fragment extends Fragment {
         return viewModel.getFavList();
     }
 
-    // Rimuovi una località
+    // Rimuovi una località tramite posizione
     public ArrayList<SavedLocation> removeLocation(int position) {
         ArrayList<SavedLocation> favList = getDataLocationViewModel().removeRecord(position);
         saveToJson(this.getContext(), favList);
 
         return favList;
+    }
+
+    // Rimuovi una località tramite oggetto
+    public ArrayList<SavedLocation> removeLocationFromList(ArrayList<SavedLocation> favList, SavedLocation location) {
+        if (location != null)
+            favList.remove(location);
+
+        saveToJson(this.getContext(), favList);
+
+        return favList;
+    }
+
+    // Leggi una località
+    public SavedLocation getLocation(int position) {
+        return getDataLocationViewModel().getRecord(position);
     }
 
     // Apri una località sulla mappa
