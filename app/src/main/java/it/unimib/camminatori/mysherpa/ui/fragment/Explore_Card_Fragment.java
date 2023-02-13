@@ -120,19 +120,22 @@ public class Explore_Card_Fragment extends Fragment {
         final Observer<Location> updateLocationLabels = l -> {
             if (l != null) {
                 if(l.getDisplayName() != null) {
-                    String[] locationInfoText = l.getDisplayName().split(",", -1);
-                    locationName.setText(locationInfoText[0]);
-                    if (locationInfoText.length > 2) {
-                        locationInfo1.setText(locationInfoText[2] + ", ");
-                        locationInfo2.setText(locationInfoText[1]);
-                    } else {
-                        if (locationInfoText.length == 2)
-                            locationInfo1.setText(locationInfoText[1]);
-                        locationInfo2.setText("");
+                        String[] locationInfoText = l.getDisplayName().split(",", -1);
+                        locationName.setText(locationInfoText[0]);
+                        if (locationInfoText.length > 2) {
+                            locationInfo1.setText(locationInfoText[2] + ", ");
+                            locationInfo2.setText(locationInfoText[1]);
+                        } else {
+                            if (locationInfoText.length == 2)
+                                locationInfo1.setText(locationInfoText[1]);
+                            locationInfo2.setText("");
+                        }
+                        lat = Double.parseDouble(l.getLat());
+                        lon = Double.parseDouble(l.getLon());
+                    if(l.getDisplayName() == "Reset Location"){
+                        this.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     }
-                    lat = Double.parseDouble(l.getLat());
-                    lon = Double.parseDouble(l.getLon());
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    else bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             } else {
                 Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
@@ -164,5 +167,10 @@ public class Explore_Card_Fragment extends Fragment {
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).popBackStack();
         Navigation.findNavController(this.getActivity().findViewById(R.id.nav_host_fragment)).navigate(R.id.fragment_route, bundle);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }

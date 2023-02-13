@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.Location;
@@ -62,11 +63,14 @@ public class Explore_Map_Fragment extends Fragment {
         // Observer che centra la mappa sulla posizione cercata o inserita tramite long press
         final Observer<Location> updateLocation = l -> {
             if (l != null) {
-                if(l.getLat() != null && l.getLon() != null)
-                    exploreMap.setMarkerPosition(new GeoPoint(
-                                    Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
-                            )
-                    );
+                if(l.getLat() != null && l.getLon() != null) {
+                    if (!Objects.equals(l.getDisplayName(), "Reset Location")) {
+                        exploreMap.setMarkerPosition(new GeoPoint(
+                                        Double.parseDouble(l.getLat()), Double.parseDouble(l.getLon())
+                                )
+                        );
+                    }
+                }
                 else {
                     Snackbar.make(requireActivity().findViewById(R.id.container_main_activity), "Errore nell'acquisizione della posizione", Snackbar.LENGTH_SHORT)
                             .show();

@@ -48,6 +48,7 @@ public class ExploreMap extends Map {
      */
     @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
+        this.location_viewModel.resetLocation(p);
         this.mapView.getOverlays().remove(marker);
         return true;
     }
@@ -104,6 +105,9 @@ public class ExploreMap extends Map {
         Road road = roadManager.getRoad(waypoints);
 
         if(road.mStatus == Road.STATUS_TECHNICAL_ISSUE)
+            throw new Exception("Impossibile connettersi al server remoto");
+
+        if(road.mStatus == Road.STATUS_INVALID)
             throw new Exception("Strada non trovata");
 
         Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
@@ -122,5 +126,9 @@ public class ExploreMap extends Map {
             roadMarker.setImage(upward_arrow);
         }
         mapView.invalidate();
+    }
+
+    public void resume(){
+        super.resume();
     }
 }

@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.util.List;
 
 import it.unimib.camminatori.mysherpa.model.Location;
@@ -106,5 +108,13 @@ public class LocationRepository {
                 locationResponse.postValue(null);
             }
         });
+    }
+
+    public void resetLocation(GeoPoint p){
+        Location reset = new Location();
+        reset.setDisplayName("Reset Location");
+        reset.setLat(p.getLatitude() + "");
+        reset.setLon(p.getLongitude() + "");
+        locationResponse.postValue(reset);
     }
 }

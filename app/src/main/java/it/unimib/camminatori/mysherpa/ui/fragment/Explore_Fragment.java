@@ -73,12 +73,11 @@ public class Explore_Fragment extends Fragment {
                                 -> {
                             try {
                                 rme.drawRoad(getArguments().getParcelableArrayList("waypoints"));
-                                getArguments().clear();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Snackbar.make(
                                                 requireActivity().findViewById(R.id.container_main_activity),
-                                                "Errore nel disegnare la strada", Snackbar.LENGTH_SHORT)
+                                                e.getMessage(), Snackbar.LENGTH_SHORT)
                                         .show();
                             }
                         }, 500
@@ -92,7 +91,6 @@ public class Explore_Fragment extends Fragment {
                     (new Handler()).postDelayed(() -> {
                                 try {
                                     rme.setCenter(p);
-                                    getArguments().clear();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Snackbar.make(
@@ -104,6 +102,7 @@ public class Explore_Fragment extends Fragment {
                     );
                 }
             }
+            getArguments().clear();
         }
     }
 }

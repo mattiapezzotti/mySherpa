@@ -11,6 +11,9 @@ App per Android scritta per il corso di Programmazione di Dispositivi Mobili
 ## Link Utili
 Link utili per la creazione del progetto
 
+### Cartella Drive
+- [Drive](https://drive.google.com/drive/folders/1-ZWDIT4hNdTpt9YtHTniLb1MORLQFNVy?usp=share_link)
+
 ### Design
 - [Figma Wireframe](https://www.figma.com/file/SvOoeBqL6z7aUnQBpsyauV/MySherpa-Wireframe?node-id=52698%3A23854)
 - [Material Design 3](https://m3.material.io/)
