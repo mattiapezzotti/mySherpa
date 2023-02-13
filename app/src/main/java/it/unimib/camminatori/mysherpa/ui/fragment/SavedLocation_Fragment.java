@@ -101,15 +101,14 @@ public class SavedLocation_Fragment extends Fragment {
 
     /**
      *
+     * Il metodo {@link #addLocation(Context, String, double, double)} richiama il metodo {@link FavLocation_ViewModel#addFavLocationToList(String, double, double)},
+     * successivamente richiama anche il metodo {@link #saveToJson(Context, ArrayList)} che salva l'ArrayList delle località
+     * preferite nel fie JSON.
+     *
      * @param context
-     * @param localityName Nome della località.
-     * @param latitude  Valore double della latitudine della località.
-     * @param longitude Valore double della longitudine della località.
+     * @param localityName
      *
-     * @return
-     *
-     * Viene aggiunta la località alla lista della località preferite, che vengono salvate nel file
-     * JSON tramite il metodo saveToJson.
+     * @return Mi restituisce l'ArrayList aggiornato.
      *
      */
     public static ArrayList<SavedLocation> addLocation(Context context, String localityName, double latitude, double longitude) {
@@ -122,16 +121,18 @@ public class SavedLocation_Fragment extends Fragment {
 
     /**
      *
-     * @param favList
-     * @param location
-     * @return
+     * Il metodo {@link #removeLocationFromList(ArrayList, SavedLocation)} rimuove la località scelta dalla lista delle località preferite, poi tramite il
+     * metodo {@link #saveToJson(Context, ArrayList)} salva la nuova lista nel file JSON.
      *
-     * Rimuove una località dall'ArrayList e poi salva il nuovo array modificato nel JSON.
+     * @param favList
+     * @param locationToRemove
+     *
+     * @return Mi ritorna la l'ArrayList senza la località selezionata.
      *
      */
-    public ArrayList<SavedLocation> removeLocationFromList(ArrayList<SavedLocation> favList, SavedLocation location) {
-        if (location != null)
-            favList.remove(location);
+    public ArrayList<SavedLocation> removeLocationFromList(ArrayList<SavedLocation> favList, SavedLocation locationToRemove) {
+        if (locationToRemove != null)
+            favList.remove(locationToRemove);
 
         saveToJson(this.getContext(), favList);
 
@@ -140,7 +141,11 @@ public class SavedLocation_Fragment extends Fragment {
 
     /**
      *
+     * Il metodo {@link #getLocation(int)} richiama il metodo
+     * {@link FavLocation_ViewModel#getFavLocationFromList(int)}
+     *
      * @param position
+     * @return Ritorna la località contenuta nell'ArrayList alla posizione data da position.
      *
      */
     public SavedLocation getLocation(int position) {
@@ -157,11 +162,14 @@ public class SavedLocation_Fragment extends Fragment {
 
     /**
      *
+     * Il metodo  {@link #loadFromJson(Context)} richiama il metodo  {@link #readFromFile(Context)} per leggere il contenuto del File JSON,
+     * successivamente viene creato un nuovo oggetto ArrayList se il contenuto del File JSON è NULL,
+     * oppure viene creato un'oggetto ArrayList popolato dai dati gia contenuti nel File JSON.
+     *
      * @param context
      *
-     * @return
-     * Mi permette di prendere il contenuto del mio JSON e di convertirlo in un oggetto di tipo
-     * ArrayList
+     * @return Se il file JSON è null mi crea un nuovo ArrayList,altrimenti , se
+     * il file JSON è popolato me lo converte in un oggetto di tipo ArrayList.
      *
      */
     private static ArrayList<SavedLocation> loadFromJson(Context context) {
@@ -172,16 +180,32 @@ public class SavedLocation_Fragment extends Fragment {
         if (jsonString == null)
             return new ArrayList<>();
         else
-            // Converte la stringa formato JSON in ArrayList
+            // Converte la stringa formato JSON in ArrayList con il metodo fromJson() contenuto
+            //  nella libreria Gson.
             return new Gson().fromJson(jsonString, new TypeToken<ArrayList<SavedLocation>>() {
             }.getType());
     }
 
+    /**
+     *
+     * Il metodo {@link #saveToJson(Context, ArrayList)} converte tramite il metodo {@link Gson#toJson(Object)}
+     * il nostro ArrayList in una stringa che sia familiare al JSON, poi richiama il metodo {@link #writeToFile(String, Context)}
+     * che inserisce la stringa nel file JSON.
+     *
+     * @param context
+     * @param favList
+     */
     private static void saveToJson(Context context, ArrayList<SavedLocation> favList) {
         String jsonString = new Gson().toJson(favList);
         writeToFile(jsonString, context);
     }
 
+
+    /**
+     *Il metodo {@link #writeToFile(String, Context)} tramite i metodi {@link OutputStreamWriter#o}
+     * @param data
+     * @param context
+     */
     private static void writeToFile(String data, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(FAV_LOCATION_FILENAME, Context.MODE_PRIVATE));

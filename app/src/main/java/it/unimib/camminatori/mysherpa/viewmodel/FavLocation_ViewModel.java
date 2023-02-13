@@ -19,16 +19,17 @@ public class FavLocation_ViewModel extends ViewModel {
     }
 
     /**
-     * Il metodo restituisce l'ArrayList che contiene al suo interno le località aggiunte ai
-     * preferiti.
+     * Il metodo {@link #getFavList()} restituisce l'ArrayList che contiene al suo interno le
+     * località aggiunte ai preferiti.
      */
     public ArrayList<SavedLocation> getFavList() {
         return favList;
     }
 
     /**
-     * Il metodo aggiunge all'ArrayList favList i seguenti elementi quando viene premuto il bottone
-     * SAVE nella DRAG HANDLERT, presente nell'Explore_Card_Fragment.
+     * Il metodo {@link #addFavLocationToList(String, double, double)} aggiunge all'ArrayList
+     * i seguenti elementi quando viene premuto il bottone SAVE nella DRAG HANDLERT,
+     * presente nell'Explore_Card_Fragment.
      *
      * @param localityName
      * @param latitude
@@ -40,8 +41,8 @@ public class FavLocation_ViewModel extends ViewModel {
     }
 
     /**
-     * Il metodo restituisce l'elemento dell'ArrayList (favList) che si trova nella posizione
-     * indicata dal parametro  (int) position.
+     * Il metodo {@link #getFavLocationFromList(int)} restituisce l'elemento dell'ArrayList
+     * che si trova nella posizione indicata dal parametro position.
      *
      * @param position
      **/
