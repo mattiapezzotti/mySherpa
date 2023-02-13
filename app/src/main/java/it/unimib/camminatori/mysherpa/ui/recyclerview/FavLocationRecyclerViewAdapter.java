@@ -21,11 +21,14 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
     /**
-     * La localFavData sarà la lista con all'interno le nostre informazioni salvate, mentre
-     * la localFavDataBku sarà la lista che noi usaremo per filtrare le località salavate utilizzando
-     * la search bar.
+     * L'attributo localFavData sarà l'ArrayList con all'interno le località salvate.
      */
     private ArrayList<SavedLocation> localFavData;
+
+    /**
+     * L'attributo localFavDataBku sarà l'ArrayList che noi usaremo per filtrare le località salavate utilizzando
+     * la search bar.
+     */
     private ArrayList<SavedLocation> localFavDataBku;
     private OnItemsChangedListener changedListener;
     private SavedLocation_Fragment savedLocationFragment;
@@ -61,15 +64,13 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
 
         locationViewHolder.getDeleteButton().setOnClickListener(v -> {
 
-            /**
-             * Identifica l'elemento da rimuovere nella lista locale filtrata
-             */
+
+            //Identifica l'elemento da rimuovere nella lista locale filtrata
             SavedLocation locationToRemove = savedLocationFragment.getLocation(locationViewHolder.getAdapterPosition());
             localFavData.remove(locationToRemove);
 
-            /**
-             * Rimuove l'elemento dalla lista completa
-             */
+
+            //Rimuove l'elemento dalla lista completa
             localFavDataBku = savedLocationFragment.removeLocationFromList(localFavDataBku, locationToRemove);
 
             notifyItemRemoved(locationViewHolder.getAdapterPosition());
