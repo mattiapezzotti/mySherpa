@@ -202,7 +202,12 @@ public class SavedLocation_Fragment extends Fragment {
 
 
     /**
-     *Il metodo {@link #writeToFile(String, Context)} tramite i metodi {@link OutputStreamWriter#o}
+     *Il metodo {@link #writeToFile(String, Context)} crea un'istanza della classe
+     * {@link OutputStreamWriter}, che apre uno stream di scrittura verso il File specificato da
+     * FAV_LOCATION_FILENAME, tramite il metodo {@link OutputStreamWriter#write(String)} scrive la
+     * stringa all'interno del File, infine con il metodo {@link OutputStreamWriter#close()} chiudo
+     * lo stream.
+     *
      * @param data
      * @param context
      */
@@ -217,6 +222,13 @@ public class SavedLocation_Fragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * TODO: Scrivere documentazione metodo readFromFile
+     *
+     * @param context
+     * @return
+     */
     private static String readFromFile(Context context) {
 
         String ret = null;
