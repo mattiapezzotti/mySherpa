@@ -31,7 +31,7 @@ import it.unimib.camminatori.mysherpa.viewmodel.Location_ViewModel;
  * Per vedere la logica relativa alla Mappa, visitare {@link it.unimib.camminatori.mysherpa.model.map.Map}
  */
 
-public class Route_Map_Fragment extends Fragment{
+public class Route_Map_Fragment extends Fragment {
     private RouteMap routeMap;
     private Location_ViewModel location_viewModel;
     private boolean start = true;
@@ -41,10 +41,13 @@ public class Route_Map_Fragment extends Fragment{
     /**
      * Costruttore della classe Route_Map_Fragment
      */
-    public Route_Map_Fragment() { super(R.layout.fragment_route_map); }
+    public Route_Map_Fragment() {
+        super(R.layout.fragment_route_map);
+    }
 
     /**
      * Il metodo restituisce una nuova istanza della classe Route_Map_Fragment
+     *
      * @return Una nuova istanza Route_Map_Fragment
      */
     public Route_Map_Fragment newInstance() {
@@ -104,7 +107,7 @@ public class Route_Map_Fragment extends Fragment{
      * posizione attuale dell'utente.
      * {@link RouteMap}
      */
-    public void resetCenter(){
+    public void resetCenter() {
         routeMap.resetCenter();
     }
 
@@ -112,9 +115,9 @@ public class Route_Map_Fragment extends Fragment{
      * Il metodo permette di definire il percorso/instradamento tra due località, richiamando i metodi updateStartNavigation() e updateDestinationNavigationPath() della
      * classe RouteMap. I Geopoints delle località di partenza e di arrivo vengono ricavate tramite il metodo geocodePlace() della classe Location_ViewModel, passando
      * come parametri formali le stringhe contenenti il nome delle due località.
+     *
      * @param startText
-     * @param endText
-     * {@link RouteMap}
+     * @param endText   {@link RouteMap}
      */
     public void findPathTextOnly(String startText, String endText) {
         start = true;
@@ -158,17 +161,21 @@ public class Route_Map_Fragment extends Fragment{
      * Il metodo permette di definire il percorso/instradamento tra due località, richiamando i metodi updateStartNavigation() e updateDestinationNavigationPath() della
      * classe RouteMap. Il Geopoint della località di partenza viene ricavato richiamando il metodo getMyLocation() il quale ritornerà la posizione attuale, mentre
      * il Geopoint relativo alla località di arrivo verrà passtao come parametro formale in fase di chiamata.
+     *
      * @param endNode Rappresenta un Geopoint (della località di arrivo), ossia un punto geolocalizzato sulla mappa caratterizzato da longitudine e latitudine.
-     * @param endText
-     * {@link RouteMap}
+     * @param endText {@link RouteMap}
      */
-    public void findPathWithNode(GeoPoint endNode, String endText){
-        routeMap.updateStartNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
-        try {
-            routeMap.updateDestinationNavigationPath(endNode, endText);
-        } catch (Exception e) {
-            this.printError(e.getMessage());
-        }
+    public void findPathWithNode(GeoPoint endNode, String endText) {
+        (new Handler()).postDelayed(()
+                        -> {
+                    try {
+                        routeMap.updateStartNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+                        routeMap.updateDestinationNavigationPath(endNode, endText);
+                    } catch (Exception e) {
+                        this.printError(e.getMessage());
+                    }
+                }, 500
+        );
     }
 
     @Override
@@ -186,6 +193,7 @@ public class Route_Map_Fragment extends Fragment{
     /**
      * Il metodo richiama il metodo getPathLenght() della classe RouteMap e
      * permette di ottenere attraverso una stringa, la distanza tra le due località (in Km) del cammino/instradamento generato.
+     *
      * @return Una stringa contente la distanza tra le due località (in Km) del cammino/instrdamento generato.
      * {@link RouteMap}
      */
@@ -196,6 +204,7 @@ public class Route_Map_Fragment extends Fragment{
     /**
      * Il metodo richiama il metodo getPathTime() della classe RouteMap e
      * permette di ottenere attraverso una stringa, il tempo (in ore e minuti) del cammino/instradamento generato.
+     *
      * @return Una stringa contente il tempo (in ore e minuti) del cammino/instrdamento generato.
      * {@link RouteMap}
      */
@@ -206,9 +215,9 @@ public class Route_Map_Fragment extends Fragment{
     /**
      * Il metodo richiama il metodo invertPath() della classe RouteMap e
      * permette di definire il percorso/instradamento inverso rispetto a due località.
+     *
      * @param startText
-     * @param endText
-     * {@link RouteMap}
+     * @param endText   {@link RouteMap}
      */
     public void invertPath(String startText, String endText) {
         try {
@@ -230,10 +239,10 @@ public class Route_Map_Fragment extends Fragment{
     /**
      * Il metodo tramite una Snackbar permette di evidenziare all'utente se vi è un errore dovuto alla mancanza di inserimento dei
      * parametri necessari alla creazione del percorso/intradamento.
-     * @param errorMessage
-     * {@link RouteMap}
+     *
+     * @param errorMessage {@link RouteMap}
      */
-    public void printError(String errorMessage){
+    public void printError(String errorMessage) {
         Snackbar.make(this.getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 }
