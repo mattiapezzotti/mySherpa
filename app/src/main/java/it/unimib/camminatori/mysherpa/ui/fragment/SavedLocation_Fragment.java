@@ -32,8 +32,7 @@ import java.util.ArrayList;
 import it.unimib.camminatori.mysherpa.R;
 import it.unimib.camminatori.mysherpa.model.SavedLocation;
 import it.unimib.camminatori.mysherpa.ui.recyclerview.FavLocationRecyclerViewAdapter;
-import it.unimib.camminatori.mysherpa.ui.recyclerview.FavRecordsRecyclerViewAdapter;
-import it.unimib.camminatori.mysherpa.viewmodel.Data_Location_ViewModel;
+import it.unimib.camminatori.mysherpa.viewmodel.FavLocation_ViewModel;
 
 
 public class SavedLocation_Fragment extends Fragment {
@@ -42,11 +41,9 @@ public class SavedLocation_Fragment extends Fragment {
     protected RecyclerView favLocalityView;
     private TextView noLocationTextView;
 
-    Data_Location_ViewModel dataLocationViewModel;
+    FavLocation_ViewModel dataLocationViewModel;
 
-    public SavedLocation_Fragment() {
-        // Required empty public constructor
-    }
+    public SavedLocation_Fragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +54,6 @@ public class SavedLocation_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
         favLocalityView = v.findViewById(R.id.fav_location_recycler_view);
@@ -103,30 +99,36 @@ public class SavedLocation_Fragment extends Fragment {
         });
     }
 
-    // Sovrascrivi la lista delle località
-    public void setFavData(ArrayList<SavedLocation> savedLocationList)
-    {
-        getDataLocationViewModel().setFavList(savedLocationList);
-    }
-
-    // Aggiungi una località
+    /**
+     *
+     * @param context
+     * @param localityName Nome della località.
+     * @param latitude  Valore double della latitudine della località.
+     * @param longitude Valore double della longitudine della località.
+     *
+     * @return
+     *
+     * Viene aggiunta la località alla lista della località preferite, che vengono salvate nel file
+     * JSON tramite il metodo saveToJson.
+     *
+     */
     public static ArrayList<SavedLocation> addLocation(Context context, String localityName, double latitude, double longitude) {
-        Data_Location_ViewModel viewModel = new Data_Location_ViewModel(loadFromJson(context));
-        viewModel.addRecord(localityName, latitude, longitude);
+        FavLocation_ViewModel viewModel = new FavLocation_ViewModel(loadFromJson(context));
+        viewModel.addFavLocationToList(localityName, latitude, longitude);
         saveToJson(context, viewModel.getFavList());
 
         return viewModel.getFavList();
     }
 
-    // Rimuovi una località tramite posizione
-    public ArrayList<SavedLocation> removeLocation(int position) {
-        ArrayList<SavedLocation> favList = getDataLocationViewModel().removeRecord(position);
-        saveToJson(this.getContext(), favList);
-
-        return favList;
-    }
-
-    // Rimuovi una località tramite oggetto
+    /**
+     *
+     * @param favList
+     * @param location
+     * @return
+     *
+     * Rimuove una località dall'ArrayList e poi salva il nuovo array modificato nel JSON.
+     *
+     */
     public ArrayList<SavedLocation> removeLocationFromList(ArrayList<SavedLocation> favList, SavedLocation location) {
         if (location != null)
             favList.remove(location);
@@ -136,25 +138,41 @@ public class SavedLocation_Fragment extends Fragment {
         return favList;
     }
 
-    // Leggi una località
+    /**
+     *
+     * @param position
+     *
+     */
     public SavedLocation getLocation(int position) {
-        return getDataLocationViewModel().getRecord(position);
+        return getDataLocationViewModel().getFavLocationFromList(position);
     }
 
-    // Apri una località sulla mappa
+    /**
+     * @param position
+     */
     public void openLocation(int position) {
-        SavedLocation favList = getDataLocationViewModel().getRecord(position);
+        SavedLocation favList = getDataLocationViewModel().getFavLocationFromList(position);
         transition(favList);
     }
 
+    /**
+     *
+     * @param context
+     *
+     * @return
+     * Mi permette di prendere il contenuto del mio JSON e di convertirlo in un oggetto di tipo
+     * ArrayList
+     *
+     */
     private static ArrayList<SavedLocation> loadFromJson(Context context) {
-        // Leggi il contenuto da disco
+
+        //Leggo il contenuto dal File
         String jsonString = readFromFile(context);
 
         if (jsonString == null)
             return new ArrayList<>();
         else
-            // Converti il stringa json in array list
+            // Converte la stringa formato JSON in ArrayList
             return new Gson().fromJson(jsonString, new TypeToken<ArrayList<SavedLocation>>() {
             }.getType());
     }
@@ -203,9 +221,9 @@ public class SavedLocation_Fragment extends Fragment {
         return ret;
     }
 
-    private Data_Location_ViewModel getDataLocationViewModel() {
+    private FavLocation_ViewModel getDataLocationViewModel() {
         if (dataLocationViewModel == null)
-            dataLocationViewModel = new Data_Location_ViewModel(loadFromJson(this.getContext()));
+            dataLocationViewModel = new FavLocation_ViewModel(loadFromJson(this.getContext()));
 
         return dataLocationViewModel;
     }

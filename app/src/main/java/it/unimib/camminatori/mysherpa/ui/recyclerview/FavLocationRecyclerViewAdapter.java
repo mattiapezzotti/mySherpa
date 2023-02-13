@@ -20,6 +20,11 @@ import it.unimib.camminatori.mysherpa.ui.viewholder.LocationViewHolder;
 public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationViewHolder> {
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
+    /**
+     * La localFavData sarà la lista con all'interno le nostre informazioni salvate, mentre
+     * la localFavDataBku sarà la lista che noi usaremo per filtrare le località salavate utilizzando
+     * la search bar.
+     */
     private ArrayList<SavedLocation> localFavData;
     private ArrayList<SavedLocation> localFavDataBku;
     private OnItemsChangedListener changedListener;
@@ -36,7 +41,6 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
 
     @NonNull
     @Override
-    // Alla creazione della vista
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.saved_location_list_layout, viewGroup, false);
@@ -56,18 +60,23 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         locationViewHolder.getLocationLatLon().setText(locationLatLon);
 
         locationViewHolder.getDeleteButton().setOnClickListener(v -> {
-            // Identifica elemento da rimuovere nella lista locale filtrata
+
+            /**
+             * Identifica l'elemento da rimuovere nella lista locale filtrata
+             */
             SavedLocation locationToRemove = savedLocationFragment.getLocation(locationViewHolder.getAdapterPosition());
             localFavData.remove(locationToRemove);
 
-            // Rimuovi elemento da lista completa
+            /**
+             * Rimuove l'elemento dalla lista completa
+             */
             localFavDataBku = savedLocationFragment.removeLocationFromList(localFavDataBku, locationToRemove);
 
             notifyItemRemoved(locationViewHolder.getAdapterPosition());
             callChangeListener();
         });
 
-        // OnClick Image
+
         locationViewHolder.getOpenButton().setOnClickListener(v -> {
             savedLocationFragment.openLocation(locationViewHolder.getAdapterPosition());
         });
