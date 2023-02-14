@@ -83,7 +83,6 @@ public class RouteMap extends Map {
         mapView.invalidate();
 
         waypoints.add(endPoint);
-
         Road road = roadManager.getRoad(waypoints);
 
         if (road.mStatus == Road.STATUS_TECHNICAL_ISSUE)
