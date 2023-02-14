@@ -102,8 +102,7 @@ public class Route_Fragment extends Fragment {
 
             if (!a.isEmpty() && !b.isEmpty()) {
                 rmf.findPathTextOnly(a, b);
-                (new Handler()).postDelayed(()
-                        -> updateInfoCard(), 1000
+                (new Handler()).postDelayed(this::updateInfoCard, 1000
                 );
             } else {
                 Snackbar.make(this.getView().getRootView(), "Inserisci Partenza e Destinazione", Snackbar.LENGTH_SHORT)
@@ -135,16 +134,14 @@ public class Route_Fragment extends Fragment {
                 textDestinazione.setText(getArguments().getString("destText"));
 
                 String destText = getArguments().getString("destText");
-                Double lat = getArguments().getDouble("destLat");
-                Double lon = getArguments().getDouble("destLon");
+                double lat = getArguments().getDouble("destLat");
+                double lon = getArguments().getDouble("destLon");
 
                 (new Handler()).postDelayed(()
-                        -> rmf.findPathWithNode(new GeoPoint(lat, lon), destText), 1000
+                        -> rmf.findPathWithNode(new GeoPoint(lat, lon), destText), 500
                 );
 
-                (new Handler()).postDelayed(()
-                        -> updateInfoCard(), 1000
-                );
+                (new Handler()).postDelayed(this::updateInfoCard, 2000);
             }
         }
     }

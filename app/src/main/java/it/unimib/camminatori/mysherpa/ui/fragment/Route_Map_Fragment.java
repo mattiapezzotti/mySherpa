@@ -63,15 +63,7 @@ public class Route_Map_Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_route_map, container, false);
-        routeMap = new RouteMap(rootView.findViewById(R.id.mappa_naviga));
+        routeMap = new RouteMap(view.findViewById(R.id.mappa_naviga));
 
         final Observer<Location> updateLocation = l -> {
             if (l != null) {
@@ -94,12 +86,17 @@ public class Route_Map_Fragment extends Fragment {
                         pathStart = false;
                     }
             } else {
-                Snackbar.make(this.getView(), "Qualcosa è andato storto. Riprova.", Snackbar.LENGTH_SHORT)
-                        .show();
+                this.printError("Errore nel trovare la posizione");
             }
         };
         location_viewModel.getGeocodedLocation().observe(getViewLifecycleOwner(), updateLocation);
-        return rootView;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        return inflater.inflate(R.layout.fragment_route_map, container, false);
     }
 
     /**
@@ -170,6 +167,14 @@ public class Route_Map_Fragment extends Fragment {
                         -> {
                     try {
                         routeMap.updateStartNavigationPath(routeMap.getMyLocationOverlay().getMyLocation(), "My Position");
+                    } catch (Exception e) {
+                        this.printError(e.getMessage());
+                    }
+                }, 500
+        );
+        (new Handler()).postDelayed(()
+                        -> {
+                    try {
                         routeMap.updateDestinationNavigationPath(endNode, endText);
                     } catch (Exception e) {
                         this.printError(e.getMessage());
@@ -243,6 +248,8 @@ public class Route_Map_Fragment extends Fragment {
      * @param errorMessage {@link RouteMap}
      */
     public void printError(String errorMessage) {
-        Snackbar.make(this.getView(), errorMessage, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(requireActivity().findViewById(R.id.container_main_activity),
+                        errorMessage, Snackbar.LENGTH_SHORT)
+                .show();
     }
 }
