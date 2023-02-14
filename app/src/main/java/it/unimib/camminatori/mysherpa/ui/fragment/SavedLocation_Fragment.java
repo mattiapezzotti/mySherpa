@@ -81,7 +81,6 @@ public class SavedLocation_Fragment extends Fragment {
 
         EditText favSearch = view.findViewById(R.id.fav_text_search);
         favSearch.addTextChangedListener(new TextWatcher() {
-            final private String TAG = "favSearch TextWatcher";
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -131,8 +130,10 @@ public class SavedLocation_Fragment extends Fragment {
      *
      */
     public ArrayList<SavedLocation> removeLocationFromList(ArrayList<SavedLocation> favList, SavedLocation locationToRemove) {
+
+        FavLocation_ViewModel viewModel = new FavLocation_ViewModel(favList);
         if (locationToRemove != null)
-            favList.remove(locationToRemove);
+            viewModel.removeFavLocationToList(locationToRemove);
 
         saveToJson(this.getContext(), favList);
 
@@ -224,10 +225,10 @@ public class SavedLocation_Fragment extends Fragment {
 
     /**
      *
-     * TODO: Scrivere documentazione metodo readFromFile
+     * Il metodo {@link #readFromFile(Context)} legge un file da disco
      *
      * @param context
-     * @return
+     * @return Ritorna tutto il contenuto del file su disco in formato testo.
      */
     private static String readFromFile(Context context) {
 
@@ -257,14 +258,28 @@ public class SavedLocation_Fragment extends Fragment {
         return ret;
     }
 
+    /**
+     * Il metodo {@link #dataLocationViewModel} ritorna la {@link FavLocation_ViewModel}
+     * @return
+     */
     private FavLocation_ViewModel getDataLocationViewModel() {
+
+        //Se presente prende quella memorizzata all'interno della classe, se non presente
+        //la crea.
         if (dataLocationViewModel == null)
             dataLocationViewModel = new FavLocation_ViewModel(loadFromJson(this.getContext()));
 
         return dataLocationViewModel;
     }
 
+    /**
+     * Il metodo {@link #transition(SavedLocation)} si occupa di inviare al fragment pricipale
+     * le informazioni della località da visualizzare.
+     *
+     * @param savedLocation
+     */
     private void transition(SavedLocation savedLocation) {
+        //Bundle per memorizzare le informazioni della località da iniviare al fragment.
         Bundle bundle = new Bundle();
         bundle.putDouble("destLon", savedLocation.getLongitude());
         bundle.putDouble("destLat", savedLocation.getLatitude());

@@ -36,8 +36,18 @@ public class FavLocation_ViewModel extends ViewModel {
      * @param longitude
      **/
     public void addFavLocationToList(String localityName, double latitude, double longitude) {
-        SavedLocation saveRecordInfo = new SavedLocation(localityName, latitude, longitude);
-        favList.add(saveRecordInfo);
+        SavedLocation savedLocation = new SavedLocation(localityName, latitude, longitude);
+        favList.add(savedLocation);
+    }
+
+    /**
+     * Il metodo {@link #removeFavLocationToList(SavedLocation)} rimuove dall'ArrayList un elemento
+     * delle località preferite.
+     *
+     * @param savedLocation
+     */
+    public void removeFavLocationToList(SavedLocation savedLocation) {
+        favList.remove(savedLocation);
     }
 
     /**
