@@ -24,6 +24,7 @@
         android:id="@+id/fav_text_search"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:hint="@string/searchbar_placeholder"
         android:fadingEdge="horizontal"
         android:selectAllOnFocus="false"
         android:singleLine="true" />

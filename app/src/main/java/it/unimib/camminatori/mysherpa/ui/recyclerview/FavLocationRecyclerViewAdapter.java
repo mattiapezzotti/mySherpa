@@ -21,13 +21,13 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
     final private String TAG = "FavLocationRecyclerViewAdapter";
 
     /**
-     * L'attributo localFavData sarà l'ArrayList con all'interno le località salvate.
+     * L'attributo localFavData è un'ArrayList con all'interno le località salvate.
      */
     private ArrayList<SavedLocation> localFavData;
 
     /**
-     * L'attributo localFavDataBku sarà l'ArrayList che noi usaremo per filtrare le località salavate utilizzando
-     * la search bar.
+     * L'attributo localFavDataBku è un'ArrayList che contiene una copia delle località salvate,
+     * perchè la search bar utilizza direttamente la localFavData associata all'Adapter.
      */
     private ArrayList<SavedLocation> localFavDataBku;
     private OnItemsChangedListener changedListener;
@@ -38,6 +38,7 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         this.localFavData = data;
         this.savedLocationFragment = savedLocationFragment;
 
+        // Crea la favDataBku contenente una copia delle località salvate.
         localFavDataBku = new ArrayList<>();
         localFavDataBku.addAll(localFavData);
     }
@@ -52,7 +53,6 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
     }
 
     @Override
-    // Binding
     public void onBindViewHolder(@NonNull LocationViewHolder locationViewHolder, int position) {
         DecimalFormat numberFormat = new DecimalFormat("#.000000");
         String lat = numberFormat.format(localFavData.get(position).getLatitude());
@@ -63,7 +63,6 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         locationViewHolder.getLocationLatLon().setText(locationLatLon);
 
         locationViewHolder.getDeleteButton().setOnClickListener(v -> {
-
 
             //Identifica l'elemento da rimuovere nella lista locale filtrata
             SavedLocation locationToRemove = savedLocationFragment.getLocation(locationViewHolder.getAdapterPosition());
@@ -102,19 +101,28 @@ public class FavLocationRecyclerViewAdapter extends RecyclerView.Adapter<Locatio
         return localFavData.size();
     }
 
+    /**
+     * Il metodo {@link #filter(CharSequence)} filtra la lista delle località in base al testo
+     * passato in sequence.
+     *
+     * @param sequence
+     */
     public void filter(CharSequence sequence) {
         ArrayList<SavedLocation> tmp = new ArrayList<>();
 
         if (!TextUtils.isEmpty(sequence)) {
+            //Filtra le località in base alle sequenze di caratteri passati.
             for (SavedLocation record : localFavDataBku) {
                 if (record.getDisplayName().toLowerCase().contains(sequence)) {
                     tmp.add(record);
                 }
             }
         } else {
+            //Se la sequenza è vuota caricara tutta la lista delle località.
             tmp.addAll(localFavDataBku);
         }
 
+        //Aggiorna la lista utilizzata dall'adapter in base al risultato della ricerca.
         localFavData.clear();
         localFavData.addAll(tmp);
         notifyDataSetChanged();
