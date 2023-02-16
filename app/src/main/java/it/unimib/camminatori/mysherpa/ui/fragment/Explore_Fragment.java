@@ -73,6 +73,7 @@ public class Explore_Fragment extends Fragment {
                                 -> {
                             try {
                                 rme.drawRoad(getArguments().getParcelableArrayList("waypoints"));
+                                getArguments().clear();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Snackbar.make(
@@ -91,6 +92,7 @@ public class Explore_Fragment extends Fragment {
                     (new Handler()).postDelayed(() -> {
                                 try {
                                     rme.setCenter(p);
+                                    getArguments().clear();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Snackbar.make(
@@ -102,7 +104,6 @@ public class Explore_Fragment extends Fragment {
                     );
                 }
             }
-            getArguments().clear();
         }
     }
 }

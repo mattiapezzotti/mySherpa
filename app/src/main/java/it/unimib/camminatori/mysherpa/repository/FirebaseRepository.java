@@ -61,7 +61,7 @@ public class FirebaseRepository {
 
     public void writeNewUser(String uid, String email, String name) {
         mReference.child(uid).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
+            if (task.isSuccessful()) {
                 User user = new User(email, name);
                 mReference.child(uid).setValue(user);
             }

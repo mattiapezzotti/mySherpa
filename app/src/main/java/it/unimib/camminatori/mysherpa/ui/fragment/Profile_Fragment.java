@@ -124,15 +124,15 @@ public class Profile_Fragment extends Fragment {
 
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-
             mReference.child(currentUser.getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     User user = task.getResult().getValue(User.class);
+                    if(user.getKmTot() == null)
+                        user.setKmTot(0.0);
                     kmText.setText(user.getKmTot() + " km");
                     username.setText(user.getName());
                 }
             });
-
             logout.setEnabled(true);
             googleLogin.setEnabled(false);
             register.setEnabled(false);
